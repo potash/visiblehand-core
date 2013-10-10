@@ -2,6 +2,7 @@ package visiblehand;
 
 import java.io.Console;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -11,18 +12,16 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import visiblehand.parser.AAParser;
 import visiblehand.parser.AirParser;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+import visiblehand.parser.UnitedParserOld;
 
 public class VisibleHand {
 
-	private static final AirParser[] airParsers = {new AAParser()};
+	public static final AirParser[] airParsers = {new AAParser(), new UnitedParserOld()};
 
 	public static Folder getInbox(String user, char[] password)
 			throws MessagingException {
@@ -40,9 +39,7 @@ public class VisibleHand {
 		return inbox;
 	}
 
-	public static void main(String[] args) throws OptimisticLockException,
-			JsonProcessingException, IOException, MessagingException {
-
+	public static void main(String[] args) throws MessagingException, ParseException, IOException {
 		Console console = System.console();
 		System.out.print("Username:");
 		String user = console.readLine();
@@ -54,7 +51,7 @@ public class VisibleHand {
 		for (AirParser parser : airParsers) {
 			for (Message message : inbox.search(parser.getSearchTerm())) {
 				System.out.println(message.getSubject());
-				flights.addAll(parser.getFlights(message));
+				flights.addAll(parser.parse(message));
 			}
 		}
 

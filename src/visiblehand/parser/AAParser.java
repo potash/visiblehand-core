@@ -1,14 +1,16 @@
 package visiblehand.parser;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.BodyPart;
 import javax.mail.Message;
-import javax.mail.Multipart;
+import javax.mail.MessagingException;
 import javax.persistence.Transient;
 
 import lombok.Data;
@@ -22,66 +24,65 @@ import com.avaje.ebean.Ebean;
 
 // American Airlines email receipt parser
 
-public class AAParser extends AirParser {
-	private static final String fromString = "aa.com";
-	private static final String subjectString = "ticket confirmation";
-	
-	public String getFromString() {
-		return fromString;
-	}
-	
-	public String getSubjectString() {
-		return subjectString;
-	}
+public @Data
+class AAParser extends AirParser {
+	private final String fromString = "aa.com";
+	private final String subjectString = "ticket confirmation";
 
 	@Transient
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 24);
 
-	public List<Flight> getFlights(Message message) {
-		try {
-			Multipart mp = (Multipart) message.getContent();
-			BodyPart bp = mp.getBodyPart(0);
-			return parse(bp.getContent().toString(), message.getSentDate());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList<Flight>();
-		}
+	public List<Flight> parse(Message message) throws ParseException, MessagingException, IOException {
+		return parse(getContent(message), message.getSentDate());
 	}
+	
+	public List<Flight> parse(String content, Date messageDate) throws ParseException {
+		//try {
+			List<Flight> flights = new ArrayList<Flight>();
 
-	public List<Flight> parse(String message, Date messageDate) {
-		List<Flight> flights = new ArrayList<Flight>();
-
-		Pattern pattern = Pattern
-				.compile("(\\d{2})(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC).*\\b"
-						+ "\\s*LV  ((?:\\w+\\s?)+\\w).*\\b"
-						+ "\\s*AR  ((?:\\w+\\s?)+\\w).*\\b"
-						+ "\\s*(?:OPERATED BY ((?:\\w+\\s?)+\\w))?");
-		Matcher matcher = pattern.matcher(message);
-		// groups are month, day, from airport, to airport
-		while (matcher.find()) {
-			Date date = getDate(messageDate, matcher.group(1), matcher.group(2));
-			Airport source = getAirport(matcher.group(3)), destination = getAirport(matcher
-					.group(4));
-			Airline airline = getAirline();
-			String operator = matcher.group(5);
-			if (operator != null && !operator.equalsIgnoreCase("American Eagle")) {
-				System.out.println(matcher.group(5));
-				List<Airline> airlines = Ebean.find(Airline.class).where().ieq("name", matcher.group(5)).eq("active", true).findList();
-				if (airlines.size() > 0) {
-					// TODO don't pick an airline with zero routes
-					airline = airlines.get(0);
+			Pattern pattern = Pattern
+					.compile("(\\d{2})(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC).*\\b"
+							+ "\\s*LV  ((?:\\w+\\s?)+\\w).*\\b"
+							+ "\\s*AR  ((?:\\w+\\s?)+\\w).*\\b"
+							+ "\\s*(?:OPERATED BY ((?:\\w+\\s?)+\\w))?");
+			Matcher matcher = pattern.matcher(content);
+			// groups are month, day, from airport, to airport
+			while (matcher.find()) {
+				Date date = getDate(messageDate, matcher.group(1),
+						matcher.group(2));
+				Airport source = getAirport(matcher.group(3)), destination = getAirport(matcher
+						.group(4));
+				Airline airline = getAirline();
+				String operator = matcher.group(5);
+				if (operator != null
+						&& !operator.equalsIgnoreCase("American Eagle")) {
+					System.out.println(matcher.group(5));
+					List<Airline> airlines = Ebean.find(Airline.class).where()
+							.ieq("name", matcher.group(5)).eq("active", true)
+							.findList();
+					if (airlines.size() > 0) {
+						// TODO don't pick an airline with zero routes
+						airline = airlines.get(0);
+					}
 				}
+				Route route = Ebean.find(Route.class).where()
+						.eq("airline", airline).eq("source", source)
+						.eq("destination", destination).findUnique();
+				// TODO: if route doesn't exist, add it!
+				Flight flight = new Flight();
+				flight.setDate(date);
+				flight.setRoute(route);
+				flight.setAirline(getAirline());
+				flights.add(flight);
+				System.out.println(route);
 			}
-			Route route = Ebean.find(Route.class).where()
-					.eq("airline", airline).eq("source", source)
-					.eq("destination", destination).findUnique();
-			// TODO: if route doesn't exist, add it!
-			flights.add(new Flight(date, route));
-			System.out.println(route);
-		}
 
-		return flights;
+			return flights;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ArrayList<Flight>();
+//		}
 	}
 
 	private Date getDate(Date sentDate, String group1, String group2) {

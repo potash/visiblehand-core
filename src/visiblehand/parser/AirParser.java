@@ -1,29 +1,20 @@
 package visiblehand.parser;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.mail.Message;
-import javax.mail.search.AndTerm;
-import javax.mail.search.FromStringTerm;
-import javax.mail.search.SearchTerm;
-import javax.mail.search.SubjectTerm;
+import javax.mail.MessagingException;
+import javax.mail.internet.ParseException;
 
 import lombok.Data;
-import lombok.Getter;
 import visiblehand.Flight;
 import visiblehand.entity.Airline;
 
 // A skeleton for an airline email receipt parser
 
-public abstract @Data class AirParser {
-	public abstract String getFromString();
-	public abstract String getSubjectString();
+public abstract @Data class AirParser extends MessageParser {
 	public abstract Airline getAirline();
-	
-	@Getter(lazy=true)
-	private final SearchTerm searchTerm = new AndTerm(new
-		FromStringTerm(getFromString()),
-		new SubjectTerm(getSubjectString()));
-	
-	public abstract List<Flight> getFlights(Message message);
+
+	public abstract List<Flight> parse(Message message) throws java.text.ParseException, MessagingException, IOException;
 }
