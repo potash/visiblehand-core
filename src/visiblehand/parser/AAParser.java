@@ -1,7 +1,6 @@
 package visiblehand.parser;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +56,6 @@ class AAParser extends AirParser {
 				String operator = matcher.group(5);
 				if (operator != null
 						&& !operator.equalsIgnoreCase("American Eagle")) {
-					System.out.println(matcher.group(5));
 					List<Airline> airlines = Ebean.find(Airline.class).where()
 							.ieq("name", matcher.group(5)).eq("active", true)
 							.findList();
@@ -75,14 +73,9 @@ class AAParser extends AirParser {
 				flight.setRoute(route);
 				flight.setAirline(getAirline());
 				flights.add(flight);
-				System.out.println(route);
 			}
 
 			return flights;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ArrayList<Flight>();
-//		}
 	}
 
 	private Date getDate(Date sentDate, String group1, String group2) {

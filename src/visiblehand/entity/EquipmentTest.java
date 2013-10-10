@@ -14,7 +14,7 @@ public class EquipmentTest {
 
 	@Test
 	public void test() {
-		fail("This should test fueldata coverage of the equipment dataset, weighted by route?");
+		fail("This should test fueldata coverage of equipment");
 		String sql = "select e, count(*) c from (select unnest (equipment) e from route) t group by e order by count(*) desc";
 
 		// System.out.println(getId());

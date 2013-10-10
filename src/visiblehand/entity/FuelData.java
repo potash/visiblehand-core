@@ -133,9 +133,4 @@ class FuelData {
 	@Getter(lazy = true)
 	private final List<Equipment> equipment = Ebean.find(Equipment.class)
 			.where().eq("ICAO", getICAO()).findList();
-
-	public static void main(String[] args) {
-		System.out.println(Ebean.find(FuelData.class).findList().get(0)
-				.getCruiseBurn(5000));
-	}
 }

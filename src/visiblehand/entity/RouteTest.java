@@ -1,15 +1,16 @@
 package visiblehand.entity;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.avaje.ebean.Ebean;
+import static org.junit.Assert.*;
+
 
 public class RouteTest {
 
 	@Test
-	public void testGetEquipment() {
+	public void testFuelBurn() {
+		fail("This should test the coverage of routes by fuel burn data");
 		Airline aa = Ebean.find(Airline.class, 24);
 //		List<Route> routes = Ebean.find(Route.class).where().eq("airline", aa).where().eq("codeshare", false)
 //				.findList();

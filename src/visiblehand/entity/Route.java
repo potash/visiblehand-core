@@ -92,23 +92,17 @@ class Route {
 		DescriptiveStatistics burn = new DescriptiveStatistics();
 		for (Equipment e : getEquipment()) {
 			DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
-			//System.out.println(e);
 
 			// System.out.println(seats);
 			if (e.getFuelData().size() > 0) {
-				// System.out.println(getDistance());
-				// System.out.println(Arrays.toString(burns));
 				Integer eSeats = getSeats(e);
-				//System.out.println(eSeats);
 				for (FuelData fuelData : e.getFuelData()) {
 					Integer seats = getSeats(fuelData);
 					// if no seating for the aem's icao, try one for the equipment that it came from
 					if (seats == null)
 						seats = eSeats;
-					//System.out.println(seats);
 					// TODO getSeats(aem) e.g. 752 instead of 757
 					if (seats != null) {
-						System.out.println(fuelData.getFuelBurn(getDistance()) / seats);
 						equipmentBurn.addValue(fuelData.getFuelBurn(getDistance()) / seats);
 					}
 				}
