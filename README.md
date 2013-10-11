@@ -16,7 +16,7 @@ and compile the code
 and finally execute it
 
     mvn exec:java
-When prompted enter you username and password. The program will search your Inbox for flight receipts and output a lot of information about fuel consumption.
+When prompted enter you username and password. The default mail store is gmail but can be configured using the mail.properties file (see [here](https://javamail.java.net/nonav/docs/api/javax/mail/Session.html#getInstance(java.util.Properties)) The program will search your Inbox for flight receipts and output a lot of information about fuel consumption.
 
 ## Data
 The basic data about airlines, airports and routes comes from [OpenFlights](http://openflights.org/data.html).
