@@ -1,6 +1,7 @@
 package visiblehand;
 
 import java.io.Console;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -27,16 +28,12 @@ public class VisibleHand {
 
 	public static final AirParser[] airParsers = {new AAParser(), new UnitedParserOld()};
 
-	public static Folder getInbox(String user, char[] password)
+	public static Folder getInbox(Properties props, String user, char[] password)
 			throws MessagingException {
-		Properties props = new Properties();
-		props.setProperty("mail.store.protocol", "imaps");
-
-		final String host = "imap.gmail.com";
-
+		
 		Session session = Session.getInstance(props, null);
 		Store store = session.getStore();
-		store.connect(host, user, new String(password));
+		store.connect(user, new String(password));
 		Folder inbox = store.getFolder("INBOX");
 		inbox.open(Folder.READ_ONLY);
 
@@ -62,7 +59,12 @@ public class VisibleHand {
 		System.out.print("Username:");
 		String user = console.readLine();
 		System.out.print("Password:");
-		Folder inbox = getInbox(user, console.readPassword());
+		
+		Properties props = new Properties();
+
+
+		props.load(new FileInputStream("mail.properties"));
+		Folder inbox = getInbox(props, user, console.readPassword());
 		
 		List<Flight> flights = new ArrayList<Flight>();
 		
