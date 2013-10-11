@@ -18,8 +18,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlQuery;
-import com.avaje.ebean.SqlRow;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
 //				 http://www.avcodes.co.uk/acrtypes.asp
@@ -30,11 +30,12 @@ import com.avaje.ebean.SqlRow;
 public @Data
 class Equipment {
 	@Id
-	private int id;
-	private String ICAO;
+	private Integer id;
 	private String IATA;
+	private String ICAO;
 	private String name;
 	private Character WTC;
+	
 	@ManyToOne
 	@JoinColumn(name = "similar_id")
 	private Equipment similar;
@@ -48,7 +49,6 @@ class Equipment {
 	private List<Equipment> parents;
 
 	// TODO use parents, children, similar
-	@Transient
 	@Getter(lazy = true)
 	private final List<FuelData> fuelData = fuelData();
 

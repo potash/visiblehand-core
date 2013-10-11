@@ -84,7 +84,7 @@ class AAParser extends AirParser {
 	}
 
 	// matches city to city and airport to beginning of airport
-	public static Airport getAirport(String string) {
+	public static Airport getAirport(String string) throws ParseException {
 		int index = string.lastIndexOf(' ');
 		List<Airport> airports = null;
 		if (index > 0) {
@@ -117,7 +117,7 @@ class AAParser extends AirParser {
 
 		// return best match
 		if (airports.size() == 0) {
-			return null;
+			throw new ParseException("Airport not found: " + string, 0);
 		} else if (airports.size() == 1) {
 			return airports.get(0);
 		} else {

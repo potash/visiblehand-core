@@ -20,12 +20,12 @@ class FuelData {
 	private int id;
 	private String ICAO;
 	private Double LTO;
-	private Double cruise1, cruise2, cruise3, cruise4, cruise5, cruise6,
-			cruise7, cruise8, cruise9, cruise10, cruise11, cruise12, cruise13,
-			cruise14, cruise15, cruise16;
 	private Integer distance1, distance2, distance3, distance4, distance5,
 			distance6, distance7, distance8, distance9, distance10, distance11,
 			distance12, distance13, distance14, distance15, distance16;
+	private Double cruise1, cruise2, cruise3, cruise4, cruise5, cruise6,
+	cruise7, cruise8, cruise9, cruise10, cruise11, cruise12, cruise13,
+	cruise14, cruise15, cruise16;
 
 	private Double getCruise(int i) {
 		switch (i) {

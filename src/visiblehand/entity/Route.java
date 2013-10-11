@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -17,10 +18,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "airlineCode", "airlineId", "sourceCode",
-		"sourceId", "destinationCode", "destinationId", "codeshare", "stops",
-		"equipment" })
-@ToString(exclude = { "equipment", "fuelBurn"})
+@ToString(exclude = { "equipment", "fuelBurn" })
 @Entity
 public @Data
 class Route {
@@ -37,8 +35,10 @@ class Route {
 	private Airport destination;
 	private boolean codeshare;
 	private int stops;
+	
+	// Careful, for compatability with OpenFlight data IATA is a space-separated
+	// list of iata codes of equipment used on this route
 	private String IATA;
-	private String aircraft;
 
 	@Transient
 	@Getter(lazy = true)
@@ -47,10 +47,21 @@ class Route {
 
 	@Transient
 	@Getter(lazy = true)
-	private final List<Equipment> equipment = Ebean.find(Equipment.class)
-			//.where("iata = ANY('" + (getIATA() == null ? "{}" : getIATA()) + "')")
-			.where("position(iata in '" + getAircraft() + "') > 0")
-	.findList();
+	private final List<Equipment> equipment = equipment();
+
+	private List<Equipment> equipment() {
+		List<Equipment> equipment = null;
+		for (String iata : getIATA().split(" ")) {
+			List<Equipment> e = Ebean.find(Equipment.class).where()
+					.eq("iata", iata).findList();
+			if (equipment == null) {
+				equipment = e;
+			} else {
+				equipment.addAll(e);
+			}
+		}
+		return equipment;
+	}
 
 	// get number of seats for this equipment on the given airline
 	public Integer getSeats(Equipment equipment) {
@@ -62,23 +73,22 @@ class Route {
 			return seatings.get(0).getSeats();
 			// TODO if more than one, choose domestic or international etc.
 		}
-		
-		for(Equipment e : equipment.getParents()) {
-			seatings = Ebean.find(Seating.class).where()
-					.eq("equipment", e).eq("airline", getAirline())
-					.findList();
+
+		for (Equipment e : equipment.getParents()) {
+			seatings = Ebean.find(Seating.class).where().eq("equipment", e)
+					.eq("airline", getAirline()).findList();
 			if (seatings.size() > 0) {
 				return seatings.get(0).getSeats();
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public Integer getSeats(FuelData fuelData) {
 		List<Seating> seatings = Ebean.find(Seating.class).where()
-				.in("equipment", fuelData.getEquipment()).eq("airline", getAirline())
-				.findList();
+				.in("equipment", fuelData.getEquipment())
+				.eq("airline", getAirline()).findList();
 		if (seatings.size() > 0) {
 			return seatings.get(0).getSeats();
 		}
@@ -88,22 +98,23 @@ class Route {
 	@Transient
 	@Getter(lazy = true)
 	private final DescriptiveStatistics fuelBurn = fuelBurn();
+
 	private DescriptiveStatistics fuelBurn() {
 		DescriptiveStatistics burn = new DescriptiveStatistics();
 		for (Equipment e : getEquipment()) {
 			DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
-
-			// System.out.println(seats);
 			if (e.getFuelData().size() > 0) {
 				Integer eSeats = getSeats(e);
 				for (FuelData fuelData : e.getFuelData()) {
 					Integer seats = getSeats(fuelData);
-					// if no seating for the aem's icao, try one for the equipment that it came from
+					// if no seating for the aem's icao, try one for the
+					// equipment that it came from
 					if (seats == null)
 						seats = eSeats;
 					// TODO getSeats(aem) e.g. 752 instead of 757
 					if (seats != null) {
-						equipmentBurn.addValue(fuelData.getFuelBurn(getDistance()) / seats);
+						equipmentBurn.addValue(fuelData
+								.getFuelBurn(getDistance()) / seats);
 					}
 				}
 				if (equipmentBurn.getValues().length > 0) {

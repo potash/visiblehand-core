@@ -15,8 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
-@JsonPropertyOrder(value = { "id", "name", "city", "country", "code", "icao",
-		"latitude", "longitude", "altitude", "timezone", "DST" })
 @Entity
 public @Data
 class Airport {
@@ -47,6 +45,9 @@ class Airport {
 
 	// return distance between airports in nautical miles using haversine formula
 	public static double getDistance(Airport a1, Airport a2) {
+		if (a1 == null || a2 == null) {
+			return 0;
+		}
 		double lat1 = Math.toRadians(a1.getLatitude()), lat2 = Math
 				.toRadians(a2.getLatitude()), lon1 = Math.toRadians(a1
 				.getLongitude()), lon2 = Math.toRadians(a2.getLongitude());

@@ -19,6 +19,10 @@ import visiblehand.parser.AAParser;
 import visiblehand.parser.AirParser;
 import visiblehand.parser.UnitedParserOld;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.SqlUpdate;
+
 public class VisibleHand {
 
 	public static final AirParser[] airParsers = {new AAParser(), new UnitedParserOld()};
@@ -38,8 +42,22 @@ public class VisibleHand {
 
 		return inbox;
 	}
+	
+	// loads data from csv into in memory database
+	public static void loadData() {
+		EbeanServer h2 = Ebean.getServer("h2");
+		String[] tables = new String[] { "airline", "airport", "equipment",
+				"equipment_aggregate", "fuel_data", "route", "seating" };
+
+		for (String table : tables) {
+			SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
+					+ " (select * from csvread('data/csv/" + table + ".csv'))");
+			h2.execute(update);
+		}
+	}
 
 	public static void main(String[] args) throws MessagingException, ParseException, IOException {
+		loadData();
 		Console console = System.console();
 		System.out.print("Username:");
 		String user = console.readLine();
