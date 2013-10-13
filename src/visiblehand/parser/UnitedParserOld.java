@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -42,12 +44,28 @@ class UnitedParserOld extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 24);
 
-	public List<Flight> parse(Message message) throws ParseException,
+	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
-		return parse(getContent(message));
+
+		AirReceipt receipt = new AirReceipt();
+		String content = getContent(message);
+		receipt.setFlights(getFlights(content));
+		receipt.setAirline(getAirline());
+		receipt.setConfirmation(getConfirmation(content));
+
+		return receipt;
 	}
 
-	public List<Flight> parse(String content) throws ParseException {
+	protected String getConfirmation(String content) throws ParseException {
+		Matcher matcher = Pattern.compile("(?s)Confirmation #[^\\w]*(\\w{6})").matcher(content);
+		if(matcher.find()) {
+			return matcher.group(1);
+		} else {
+			throw new ParseException("Confirmation number not found.", 0);
+		}
+	}
+
+	public List<Flight> getFlights(String content) throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
 
 		Document doc = Jsoup.parse(content);
@@ -71,12 +89,10 @@ class UnitedParserOld extends AirParser {
 					.eq("code", depart.substring(0, 3)).findUnique();
 			Airport destination = Ebean.find(Airport.class).where()
 					.eq("code", arrive.substring(0, 3)).findUnique();
-			// System.out.println(source);
-			// System.out.println(destination);
 
 			Date date = dateFormat.parse(depart.substring(4));
 			flight.setDate(date);
-
+		
 			Route route = Ebean.find(Route.class).where()
 					.eq("airline", getAirline()).eq("source", source)
 					.eq("destination", destination).findUnique();
@@ -86,7 +102,7 @@ class UnitedParserOld extends AirParser {
 			String info = flightRow.nextElementSibling().nextElementSibling()
 					.select("td").get(0).text();
 			String equipment = info.split("(Equipment:\\s*|\\W*\\|)")[1];
-			
+
 			List<Equipment> e = Ebean.find(Equipment.class).where()
 					.like("name", equipment + "%").findList();
 			if (e.size() > 0) {

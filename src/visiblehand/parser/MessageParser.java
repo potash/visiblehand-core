@@ -1,6 +1,7 @@
 package visiblehand.parser;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -21,6 +22,8 @@ public abstract class MessageParser {
 	private final SearchTerm searchTerm = new AndTerm(new
 		FromStringTerm(getFromString()),
 		new SubjectTerm(getSubjectString()));
+	
+	public abstract Receipt parse(Message message) throws ParseException, MessagingException, IOException;
 	
 	public String getContent(Message message) throws MessagingException, IOException {
 		String content;

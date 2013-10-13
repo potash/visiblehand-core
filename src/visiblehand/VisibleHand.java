@@ -25,7 +25,13 @@ import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.SqlUpdate;
 
 public class VisibleHand {
-
+	
+	public static final double MILES_PER_NM = 1.15078,
+							   KG_PER_LITER = .804,	// density of Jet A-1 fuel (wikipedia)
+							   LITERS_PER_GALLON = 3.78541,
+							   KG_CO2_PER_GALLON = 9.57; // emission factor (http://www.eia.gov/oiaf/1605/coefficients.html)
+							   
+							   
 	public static final AirParser[] airParsers = {new AAParser(), new UnitedParserOld()};
 
 	public static Folder getInbox(Properties props, String user, char[] password)
@@ -71,14 +77,14 @@ public class VisibleHand {
 		for (AirParser parser : airParsers) {
 			for (Message message : inbox.search(parser.getSearchTerm())) {
 				System.out.println(message.getSubject());
-				flights.addAll(parser.parse(message));
+				flights.addAll(parser.parse(message).getFlights());
 			}
 		}
 
 		double fuel = 0;
 		double nm = 0;
 		DescriptiveStatistics sigma = new DescriptiveStatistics(),
-				nmpg = new DescriptiveStatistics();
+				nmpkg = new DescriptiveStatistics();
 		
 		for (Flight flight : flights) {
 			System.out.println(flight.getRoute());
@@ -87,12 +93,12 @@ public class VisibleHand {
 			fuel += fuelBurn.getMean();
 			nm += flight.getRoute().getDistance();
 			sigma.addValue(fuelBurn.getStandardDeviation()/fuelBurn.getMean());
-			nmpg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
+			nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
 		}
 		System.out.println(fuel);
 		System.out.println(nm);
 		System.out.println(sigma);
-		System.out.println(nmpg);
-		System.out.println(nmpg.getMean()*1.151*.81*3.785); // miles per gallon!
+		System.out.println(nmpkg);
+		System.out.println(nmpkg.getMean() * MILES_PER_NM * KG_PER_LITER * LITERS_PER_GALLON + " mpg");
 	}
 }

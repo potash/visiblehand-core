@@ -16,5 +16,5 @@ import visiblehand.entity.Airline;
 public abstract @Data class AirParser extends MessageParser {
 	public abstract Airline getAirline();
 
-	public abstract List<Flight> parse(Message message) throws java.text.ParseException, MessagingException, IOException;
+	public abstract AirReceipt parse(Message message) throws java.text.ParseException, MessagingException, IOException;
 }
