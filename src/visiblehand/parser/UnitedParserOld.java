@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.persistence.Transient;
 
 import lombok.Data;
 import lombok.Getter;
@@ -58,7 +57,7 @@ public @Data class UnitedParserOld extends AirParser {
 	}
 
 	protected static String getConfirmation(String content) throws ParseException {
-		Matcher matcher = Pattern.compile("(?s)Confirmation #[^\\w]*(\\w{6})")
+		Matcher matcher = Pattern.compile("(?s)Confirmation (?:#|number)[^\\w]*(\\w{6})")
 				.matcher(content);
 		if (matcher.find()) {
 			return matcher.group(1);
@@ -80,13 +79,28 @@ public @Data class UnitedParserOld extends AirParser {
 		Elements flightRows = flightTable.get(0).select(
 				"tr:has(td:contains(Depart))");
 		for (Element flightRow : flightRows) {
-			Elements cells = flightRow.nextElementSibling().select("td");
+			
+			while( (flightRow = flightRow.nextElementSibling()) != null) {
+			//System.out.println(flightRow);
+			Elements cells = flightRow.select("td");
+			if (cells.size() == 1) {
+				if (cells.get(0).text().equals("<<< connecting to >>>")) {
+					flightRow = flightRow.nextElementSibling();
+					cells = flightRow.select("td");
+				} else {
+					break;
+				}
+			}
 			String number = cells.get(0).text(), depart = cells.get(1).text(), arrive = cells
 					.get(2).text(), seatClass = cells.get(3).text();
 
 			Flight flight = new Flight();
 			flight.setAirline(getAirline());
-			flight.setNumber(new Integer(number.split("United ")[1]));
+			try {
+				flight.setNumber(new Integer(number.split("(United | )")[1]));
+			} catch (NumberFormatException e) {
+				throw new ParseException("Could not parse flight number: " + number, 0);
+			}
 			Airport source = Ebean.find(Airport.class).where()
 					.eq("code", depart.substring(0, 3)).findUnique();
 			Airport destination = Ebean.find(Airport.class).where()
@@ -101,15 +115,14 @@ public @Data class UnitedParserOld extends AirParser {
 			flight.setRoute(route);
 			// next line has equipment, duration, fare code, miles and meal
 			// info
-			String info = flightRow.nextElementSibling().nextElementSibling()
-					.select("td").get(0).text();
+			flightRow = flightRow.nextElementSibling();
+			String info = flightRow.select("td").get(0).text();
 			String equipment = info.split("(Equipment:\\s*|\\W*\\|)")[1];
-
 			List<Equipment> e = Ebean.find(Equipment.class).where()
 					.like("name", equipment + "%").findList();
 			if (e.size() > 0) {
 				if (e.size() > 1) {
-					System.out.println("More than one equipment match!");
+					System.out.println("More than one equipment match: " + equipment);
 					// TODO if more than one pick the parent. or reference
 					// with seatings. or route.getEquipment()
 				}
@@ -117,6 +130,7 @@ public @Data class UnitedParserOld extends AirParser {
 			}
 
 			flights.add(flight);
+			}
 		}
 		return flights;
 	}
