@@ -30,19 +30,19 @@ import visiblehand.entity.Route;
 
 import com.avaje.ebean.Ebean;
 
-// American Airlines email receipt parser
+// United Airlines email receipt parser for older receipts
+// subjects of the form "Your United flight confirmation..."
 
-public @Data
-class UnitedParserOld extends AirParser {
-	private String fromString = "united.com";
-	private String subjectString = "Your United flight confirmation";
+public @Data class UnitedParserOld extends AirParser {
+	private final String fromString = "united-confirmation@united.com";
+	private final String subjectString = "Your United flight confirmation";
 
-	private DateFormat dateFormat = new SimpleDateFormat(
+	@Getter(lazy = true)
+	private final Airline airline = Ebean.find(Airline.class, 5209);
+
+	private static final DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");
 
-	@Transient
-	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 24);
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
@@ -52,20 +52,22 @@ class UnitedParserOld extends AirParser {
 		receipt.setFlights(getFlights(content));
 		receipt.setAirline(getAirline());
 		receipt.setConfirmation(getConfirmation(content));
+		receipt.setDate(message.getSentDate());
 
 		return receipt;
 	}
 
-	protected String getConfirmation(String content) throws ParseException {
-		Matcher matcher = Pattern.compile("(?s)Confirmation #[^\\w]*(\\w{6})").matcher(content);
-		if(matcher.find()) {
+	protected static String getConfirmation(String content) throws ParseException {
+		Matcher matcher = Pattern.compile("(?s)Confirmation #[^\\w]*(\\w{6})")
+				.matcher(content);
+		if (matcher.find()) {
 			return matcher.group(1);
 		} else {
 			throw new ParseException("Confirmation number not found.", 0);
 		}
 	}
 
-	public List<Flight> getFlights(String content) throws ParseException {
+	protected List<Flight> getFlights(String content) throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
 
 		Document doc = Jsoup.parse(content);
@@ -92,7 +94,7 @@ class UnitedParserOld extends AirParser {
 
 			Date date = dateFormat.parse(depart.substring(4));
 			flight.setDate(date);
-		
+
 			Route route = Ebean.find(Route.class).where()
 					.eq("airline", getAirline()).eq("source", source)
 					.eq("destination", destination).findUnique();
