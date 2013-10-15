@@ -37,8 +37,8 @@ public class VisibleHand {
 			
 
 
-	public static final AirParser[] airParsers = { /*new AAParser(),
-			new UnitedParserOld(),*/ new SouthwestParser() };
+	public static final AirParser[] airParsers = { new AAParser(),
+			new UnitedParserOld(), new SouthwestParser() };
 
 	public static Folder getInbox(Properties props, String user, char[] password)
 			throws MessagingException {
@@ -76,6 +76,14 @@ public class VisibleHand {
 					+ " (select * from csvread('data/csv/" + table + ".csv'))");
 			h2.execute(update);
 		}
+	}
+	
+	public static String getSearchString() {
+		String str = "";
+		for(AirParser parser : airParsers) {
+			str += "(from:" + parser.getFromString() + " and subject:\"" + parser.getSubjectString() + "\") || "; 
+		}
+		return str;
 	}
 
 	public static void main(String[] args) throws MessagingException,
