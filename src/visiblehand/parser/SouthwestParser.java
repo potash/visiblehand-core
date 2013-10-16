@@ -38,9 +38,8 @@ class SouthwestParser extends AirParser {
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 4547);
-	
-	private final DateFormat dateFormat = new SimpleDateFormat(
-			"EEE MMM d");
+
+	private final DateFormat dateFormat = new SimpleDateFormat("EEE MMM d");
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
@@ -60,23 +59,27 @@ class SouthwestParser extends AirParser {
 		return subject.substring(subject.length() - 6);
 	}
 
-	protected List<Flight> getFlights(String content, Date sentDate) throws ParseException {
+	protected List<Flight> getFlights(String content, Date sentDate)
+			throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
-		
-		content = content.replaceAll("<!-- Start Flight Info -->", "<flightInfo></flightInfo>");
+
+		content = content.replaceAll("<!-- Start Flight Info -->",
+				"<flightInfo></flightInfo>");
 		Document doc = Jsoup.parse(content);
 		Elements flightTables = doc.select("flightInfo + table");
-		
+
 		// store last date, for connections
 		Date date = null;
 
 		for (Element flightTable : flightTables) {
 			if (flightTable.hasText()) {
 				Elements cells = flightTable.select("td");
-				String dateString = cells.get(1).text(),
-					   number = cells.get(2).text(),
-					   itinerary = cells.get(3).text();
-				
+				if (cells.size() < 4) {
+					throw new ParseException("Not enough cells in flight table", 0);
+				}
+				String dateString = cells.get(1).text(), number = cells.get(2)
+						.text(), itinerary = cells.get(3).text();
+
 				Flight flight = new Flight();
 				flight.setAirline(getAirline());
 				flight.setNumber(Integer.parseInt(number));
@@ -86,11 +89,10 @@ class SouthwestParser extends AirParser {
 					date = getDate(sentDate, dateString);
 					flight.setDate(date);
 				}
-				
+
 				Matcher matcher = Pattern.compile(
-						"[^(]*\\((\\w{3})\\)[^(]*\\((\\w{3})\\).*"
-						//".*\\((\\w{3}\\)).*"
-						).matcher(itinerary);
+						"[^(]*\\((\\w{3})\\)[^(]*\\((\\w{3})\\).*").matcher(
+						itinerary);
 				if (matcher.find()) {
 					String depart = matcher.group(1);
 					String arrive = matcher.group(2);
@@ -106,13 +108,13 @@ class SouthwestParser extends AirParser {
 				}
 			}
 		}
-		
+
 		return flights;
 	}
 
 	// get the StartFlightInfo comment nodes
 	private static Date getDate(Date sentDate, String dateString) {
-		//TODO implement this
+		// TODO implement this
 		return null;
 	}
 }

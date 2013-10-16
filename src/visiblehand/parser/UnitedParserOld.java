@@ -32,16 +32,16 @@ import com.avaje.ebean.Ebean;
 // United Airlines email receipt parser for older receipts
 // subjects of the form "Your United flight confirmation..."
 
-public @Data class UnitedParserOld extends AirParser {
+public @Data
+class UnitedParserOld extends AirParser {
 	private final String fromString = "united-confirmation@united.com";
 	private final String subjectString = "Your United flight confirmation";
-	
+
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);
 
 	private static final DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");
-
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
@@ -56,8 +56,10 @@ public @Data class UnitedParserOld extends AirParser {
 		return receipt;
 	}
 
-	protected static String getConfirmation(String content) throws ParseException {
-		Matcher matcher = Pattern.compile("(?s)Confirmation (?:#|number)[^\\w]*(\\w{6})")
+	protected static String getConfirmation(String content)
+			throws ParseException {
+		Matcher matcher = Pattern.compile(
+				"(?s)Confirmation (?:#|number)[^\\w]*(\\w{6})")
 				.matcher(content);
 		if (matcher.find()) {
 			return matcher.group(1);
@@ -79,57 +81,67 @@ public @Data class UnitedParserOld extends AirParser {
 		Elements flightRows = flightTable.get(0).select(
 				"tr:has(td:contains(Depart))");
 		for (Element flightRow : flightRows) {
-			
-			while( (flightRow = flightRow.nextElementSibling()) != null) {
-			//System.out.println(flightRow);
-			Elements cells = flightRow.select("td");
-			if (cells.size() == 1) {
-				if (cells.get(0).text().equals("<<< connecting to >>>")) {
+
+			while ((flightRow = flightRow.nextElementSibling()) != null) {
+				Elements cells = flightRow.select("td");
+				if (cells.size() == 1) {
+					if (cells.get(0).text().equals("<<< connecting to >>>")) {
+						flightRow = flightRow.nextElementSibling();
+						cells = flightRow.select("td");
+					} else {
+						break;
+					}
+				}
+				if (cells.size() == 5) {
+					String number = cells.get(0).text(), depart = cells.get(1)
+							.text(), arrive = cells.get(2).text(), seatClass = cells
+							.get(3).text();
+
+					Flight flight = new Flight();
+					flight.setAirline(getAirline());
+					try {
+						flight.setNumber(new Integer(number
+								.split("(United | )")[1]));
+					} catch (NumberFormatException e) {
+						throw new ParseException(
+								"Could not parse flight number: " + number, 0);
+					}
+					Airport source = Ebean.find(Airport.class).where()
+							.eq("code", depart.substring(0, 3)).findUnique();
+					Airport destination = Ebean.find(Airport.class).where()
+							.eq("code", arrive.substring(0, 3)).findUnique();
+
+					Date date = dateFormat.parse(depart.substring(4));
+					flight.setDate(date);
+
+					Route route = Ebean.find(Route.class).where()
+							.eq("airline", getAirline()).eq("source", source)
+							.eq("destination", destination).findUnique();
+					flight.setRoute(route);
+					// next line has equipment, duration, fare code, etc.
 					flightRow = flightRow.nextElementSibling();
-					cells = flightRow.select("td");
-				} else {
-					break;
+					if (flightRow != null) {
+						Elements infoCells = flightRow.select("td");
+						if (infoCells.size() > 0) {
+							String info = infoCells.get(0).text();
+							String equipment = info
+									.split("(Equipment:\\s*|\\W*\\|)")[1];
+							List<Equipment> e = Ebean.find(Equipment.class)
+									.where().like("name", equipment + "%")
+									.findList();
+							if (e.size() > 0) {
+								if (e.size() > 1) {
+									System.out.println("More than one equipment match: " + equipment);
+								}
+								flight.setEquipment(e.get(0));
+							} else {
+								System.out.println("No equipment match: " + equipment);
+							}
+						}
+					}
+
+					flights.add(flight);
 				}
-			}
-			String number = cells.get(0).text(), depart = cells.get(1).text(), arrive = cells
-					.get(2).text(), seatClass = cells.get(3).text();
-
-			Flight flight = new Flight();
-			flight.setAirline(getAirline());
-			try {
-				flight.setNumber(new Integer(number.split("(United | )")[1]));
-			} catch (NumberFormatException e) {
-				throw new ParseException("Could not parse flight number: " + number, 0);
-			}
-			Airport source = Ebean.find(Airport.class).where()
-					.eq("code", depart.substring(0, 3)).findUnique();
-			Airport destination = Ebean.find(Airport.class).where()
-					.eq("code", arrive.substring(0, 3)).findUnique();
-
-			Date date = dateFormat.parse(depart.substring(4));
-			flight.setDate(date);
-
-			Route route = Ebean.find(Route.class).where()
-					.eq("airline", getAirline()).eq("source", source)
-					.eq("destination", destination).findUnique();
-			flight.setRoute(route);
-			// next line has equipment, duration, fare code, miles and meal
-			// info
-			flightRow = flightRow.nextElementSibling();
-			String info = flightRow.select("td").get(0).text();
-			String equipment = info.split("(Equipment:\\s*|\\W*\\|)")[1];
-			List<Equipment> e = Ebean.find(Equipment.class).where()
-					.like("name", equipment + "%").findList();
-			if (e.size() > 0) {
-				if (e.size() > 1) {
-					System.out.println("More than one equipment match: " + equipment);
-					// TODO if more than one pick the parent. or reference
-					// with seatings. or route.getEquipment()
-				}
-				flight.setEquipment(e.get(0));
-			}
-
-			flights.add(flight);
 			}
 		}
 		return flights;
