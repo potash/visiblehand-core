@@ -8,16 +8,21 @@ import org.junit.BeforeClass;
 import visiblehand.VisibleHand;
 
 public class MessageParserTest {
-	
+
 	@BeforeClass
 	public static void setup() {
 		VisibleHand.loadData();
 	}
-	
+
 	protected FilenameFilter hiddenFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			return !name.startsWith(".");
 		}
 	};
 
+	protected File[] getTestMessages() {
+		File dir = new File("data/mail/"
+				+ this.getClass().getSimpleName().replace("Test", ""));
+		return dir.listFiles(hiddenFileFilter);
+	}
 }

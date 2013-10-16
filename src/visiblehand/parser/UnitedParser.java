@@ -22,6 +22,7 @@ import com.avaje.ebean.Ebean;
 public @Data class UnitedParser extends AirParser {
 	private final  String fromString = "unitedairlines@united.com";
 	private final String subjectString = "eTicket Itinerary and Receipt for Confirmation";
+
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);
 
@@ -32,15 +33,18 @@ public @Data class UnitedParser extends AirParser {
 			MessagingException, IOException {
 
 		AirReceipt receipt = new AirReceipt();
-		receipt.setFlights(parse(getContent(message)));
+		receipt.setFlights(getFlights(getContent(message)));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(message.getSubject().substring(48));
+		receipt.setConfirmation(getConfirmation(message.getSubject()));
 		receipt.setDate(message.getSentDate());
 		
 		return receipt;
 	}
 
-	protected static List<Flight> parse(String content) throws ParseException {
+	protected static String getConfirmation(String subject) {
+		return subject.substring(48);
+	}
+	protected List<Flight> getFlights(String content) throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
 		// TODO implement this!
 		return flights;

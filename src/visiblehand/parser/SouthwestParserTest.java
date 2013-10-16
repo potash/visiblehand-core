@@ -13,9 +13,9 @@ public class SouthwestParserTest extends MessageParserTest {
 	
 	@Test
 	public void testParse() throws FileNotFoundException, ParseException {
-		File dir = new File("data/mail/SouthwestParser/");
 		SouthwestParser parser = new SouthwestParser();
-		for (File file : dir.listFiles(hiddenFileFilter)) {
+		
+		for (File file : getTestMessages()) {
 			Scanner scanner = new Scanner(file);
 			System.out.println(file.getName());
 			String content = scanner.useDelimiter("\\Z").next();

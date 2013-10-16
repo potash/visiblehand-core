@@ -19,7 +19,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import visiblehand.parser.AAParser;
 import visiblehand.parser.AirParser;
+import visiblehand.parser.DeltaParser;
 import visiblehand.parser.SouthwestParser;
+import visiblehand.parser.UnitedParser;
 import visiblehand.parser.UnitedParserOld;
 
 import com.avaje.ebean.Ebean;
@@ -38,7 +40,7 @@ public class VisibleHand {
 
 
 	public static final AirParser[] airParsers = { new AAParser(),
-			new UnitedParserOld(), new SouthwestParser() };
+			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(), new DeltaParser() };
 
 	public static Folder getInbox(Properties props, String user, char[] password)
 			throws MessagingException {
@@ -81,9 +83,9 @@ public class VisibleHand {
 	public static String getSearchString() {
 		String str = "";
 		for(AirParser parser : airParsers) {
-			str += "(from:" + parser.getFromString() + " and subject:\"" + parser.getSubjectString() + "\") || "; 
+			str += parser.getSearchString() + " || "; 
 		}
-		return str;
+		return str.substring(0, str.length()-3);
 	}
 
 	public static void main(String[] args) throws MessagingException,

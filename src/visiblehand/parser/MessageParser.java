@@ -18,8 +18,8 @@ public abstract class MessageParser {
 	public abstract String getFromString();
 	public abstract String getSubjectString();
 	
-	@Getter(lazy=true)
-	private final SearchTerm searchTerm = new AndTerm(new
+	@Getter
+	protected SearchTerm searchTerm = new AndTerm(new
 		FromStringTerm(getFromString()),
 		new SubjectTerm(getSubjectString()));
 	
@@ -35,5 +35,9 @@ public abstract class MessageParser {
 			content = message.getContent().toString();
 		}
 		return content;
+	}
+	
+	public String getSearchString() {
+		return "(from:" + getFromString() + " and subject:\"" + getSubjectString() + "\")";
 	}
 }
