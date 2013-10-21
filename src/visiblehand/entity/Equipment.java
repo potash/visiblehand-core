@@ -2,7 +2,6 @@ package visiblehand.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,15 +17,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
 //				 http://www.avcodes.co.uk/acrtypes.asp
 
 @Entity
-@ToString(exclude = { "fuelData", "similar", "children", "parents" })
-@EqualsAndHashCode(exclude = { "fuelData", "similar", "children", "parents" })
+@ToString(of = { "id", "name" })
+@EqualsAndHashCode(of={"id", "IATA", "ICAO", "name","WTC"})
 public @Data
 class Equipment {
 	@Id
@@ -35,7 +32,7 @@ class Equipment {
 	private String ICAO;
 	private String name;
 	private Character WTC;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "similar_id")
 	private Equipment similar;
@@ -45,38 +42,52 @@ class Equipment {
 	private List<Equipment> children;
 
 	@ManyToMany
-	@JoinTable(name = "equipment_aggregate", inverseJoinColumns = { @JoinColumn(name = "parent_id") }, joinColumns = { @JoinColumn(name = "child_id") })
+	@JoinTable(name = "equipment_aggregate", joinColumns = { @JoinColumn(name = "child_id") }, inverseJoinColumns = { @JoinColumn(name = "parent_id") })
 	private List<Equipment> parents;
 
-	// TODO use parents, children, similar
+	@Transient
 	@Getter(lazy = true)
-	private final List<FuelData> fuelData = fuelData();
+	private final List<Equipment> siblings = siblings();
 
-	private List<FuelData> fuelData() {
-		List<FuelData> fuelData = Ebean.find(FuelData.class).where().eq("icao", getICAO())
-				.findList();
-
-		if (fuelData.size() == 0) {
-			if (getChildren() != null) {
-				for (Equipment child : getChildren()) {
-					fuelData.addAll(child.getFuelData());
-				}
+	private List<Equipment> siblings() {
+		List<Integer> ids = new ArrayList<Integer>();
+		for (Equipment parent : getParents()) {
+			for (Equipment child : parent.getChildren()) {
+				ids.add(child.getId());
 			}
 		}
-		
-		if (fuelData.size() == 0 && getSimilar() != null) {
-			fuelData.addAll(getSimilar().getFuelData());
-		}
-		return fuelData;
+		return Ebean.find(Equipment.class).where().in("id", ids)
+				.ne("id", getId()).findList();
 	}
 
-	public static List<Object> getKeysFromValue(Map<?, ?> hm, Object value) {
-		List<Object> list = new ArrayList<Object>();
-		for (Object o : hm.keySet()) {
-			if (hm.get(o).equals(value)) {
-				list.add(o);
+	@Getter(lazy = true)
+	private final List<FuelData> fuelData = Ebean.find(FuelData.class).where()
+			.eq("icao", getICAO()).findList();
+
+	// exact fuel data matches
+	@Getter(lazy = true)
+	private final List<FuelData> allFuelData = allFuelData();
+
+	// rough fuel data matches (children, similar, siblings)
+	private List<FuelData> allFuelData() {
+		List<FuelData> allFuelData = getFuelData();
+
+		if (allFuelData.size() == 0 && getChildren() != null) {
+			for (Equipment child : getChildren()) {
+				allFuelData.addAll(child.getFuelData());
 			}
 		}
-		return list;
+
+		if (allFuelData.size() == 0 && getSimilar() != null) {
+			allFuelData.addAll(getSimilar().getFuelData());
+		}
+
+		if (allFuelData.size() == 0 && getSiblings() != null) {
+			for (Equipment sibling : getSiblings()) {
+				allFuelData.addAll(sibling.getFuelData());
+			}
+		}
+
+		return allFuelData;
 	}
 }

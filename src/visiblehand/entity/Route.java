@@ -18,7 +18,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@ToString(exclude = { "equipment", "fuelBurn" })
+@ToString(of = { "id", "airline", "source", "destination", "IATA" })
 @Entity
 public @Data
 class Route {
@@ -103,9 +103,9 @@ class Route {
 		DescriptiveStatistics burn = new DescriptiveStatistics();
 		for (Equipment e : getEquipment()) {
 			DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
-			if (e.getFuelData().size() > 0) {
+			if (e.getAllFuelData().size() > 0) {
 				Integer eSeats = getSeats(e);
-				for (FuelData fuelData : e.getFuelData()) {
+				for (FuelData fuelData : e.getAllFuelData()) {
 					Integer seats = getSeats(fuelData);
 					// if no seating for the aem's icao, try one for the
 					// equipment that it came from
