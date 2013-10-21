@@ -6,8 +6,6 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.ToString;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 @ToString(of = { "id", "name" })
 @Entity
 public @Data

@@ -6,8 +6,6 @@ import javax.persistence.Id;
 
 import lombok.Data;
 
-import com.avaje.ebean.Ebean;
-
 @Entity
 public @Data
 class Aircraft {

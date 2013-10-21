@@ -15,7 +15,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.URLName;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
