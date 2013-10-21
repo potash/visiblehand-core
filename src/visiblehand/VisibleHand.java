@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.PasswordAuthentication;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.URLName;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -42,29 +44,34 @@ public class VisibleHand {
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(), new DeltaParser() };
 
-	public static Folder getInbox(Properties props, String user, char[] password)
-			throws MessagingException {
-
-		Session session = Session.getInstance(props, null);
+	public static Folder getInbox() throws MessagingException, FileNotFoundException, IOException {
+		Session session = getSession();
+		PasswordAuthentication auth = getPasswordAuthentication();
+		
+		//System.out.println(session.getPasswordAuthentication(new URLName("imaps://imap.gmail.com")).getUserName());
 		Store store = session.getStore();
-		store.connect(user, new String(password));
+		store.connect(auth.getUserName(), new String(auth.getPassword()));
 		Folder inbox = store.getFolder("INBOX");
 		inbox.open(Folder.READ_ONLY);
-
 		return inbox;
 	}
-
-	public static Folder getInbox() throws MessagingException, FileNotFoundException, IOException {
+	
+	public static PasswordAuthentication getPasswordAuthentication() {
 		Console console = System.console();
+		
 		System.out.print("Username:");
-		String user = console.readLine();
+		final String user = console.readLine();
 		System.out.print("Password:");
-
+		final char[] pass = console.readPassword();
+		
+		return new java.net.PasswordAuthentication(user, pass);
+	}
+	
+	public static Session getSession() throws MessagingException, FileNotFoundException, IOException {
 		Properties props = new Properties();
-
 		props.load(new FileInputStream("mail.properties"));
-		Folder inbox = getInbox(props, user, console.readPassword());
-		return inbox;
+		Session session = Session.getInstance(props);
+		return session;
 	}
 
 	// loads data from csv into in memory database
