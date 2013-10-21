@@ -10,7 +10,9 @@ import javax.persistence.Transient;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString(of={"id", "airline", "seats"} )
 @Entity
 public @Data
 class Seating {

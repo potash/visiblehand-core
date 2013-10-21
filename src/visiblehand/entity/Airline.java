@@ -4,11 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
+import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "name", "alias", "iata", "icao", "callsign",
-		"country", "active" })
+@ToString(of = { "id", "name" })
 @Entity
 public @Data
 class Airline {

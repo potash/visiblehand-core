@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
+import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,8 +17,8 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 @Entity
-public @Data
-class Airport {
+@ToString(of = { "id", "name" })
+public @Data class Airport {
 	@Id
 	private int id;
 	private String name;
@@ -43,7 +44,8 @@ class Airport {
 		return airports;
 	}
 
-	// return distance between airports in nautical miles using haversine formula
+	// return distance between airports in nautical miles using haversine
+	// formula
 	public static double getDistance(Airport a1, Airport a2) {
 		if (a1 == null || a2 == null) {
 			return 0;
@@ -51,8 +53,8 @@ class Airport {
 		double lat1 = Math.toRadians(a1.getLatitude()), lat2 = Math
 				.toRadians(a2.getLatitude()), lon1 = Math.toRadians(a1
 				.getLongitude()), lon2 = Math.toRadians(a2.getLongitude());
-		
-		double a = Math.pow(Math.sin((lat2-lat1) / 2), 2) + Math.cos(lat1)
+
+		double a = Math.pow(Math.sin((lat2 - lat1) / 2), 2) + Math.cos(lat1)
 				* Math.cos(lat2) * Math.pow(Math.sin((lon2 - lon1) / 2), 2);
 
 		// haversine formula for central angle
