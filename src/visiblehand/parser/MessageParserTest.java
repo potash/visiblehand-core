@@ -3,17 +3,9 @@ package visiblehand.parser;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.junit.BeforeClass;
+import visiblehand.VisibleHandTest;
 
-import visiblehand.VisibleHand;
-
-public class MessageParserTest {
-
-	@BeforeClass
-	public static void setup() {
-		VisibleHand.loadData();
-	}
-
+public class MessageParserTest extends VisibleHandTest {
 	protected FilenameFilter hiddenFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			return !name.startsWith(".");

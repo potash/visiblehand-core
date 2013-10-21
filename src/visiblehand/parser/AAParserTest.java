@@ -14,7 +14,7 @@ import visiblehand.entity.Airline;
 
 import com.avaje.ebean.Ebean;
 
-public class AAParserTest extends MessageParserTest{
+public class AAParserTest extends MessageParserTest {
 
 	@Test
 	public void testParse() throws FileNotFoundException, ParseException {
