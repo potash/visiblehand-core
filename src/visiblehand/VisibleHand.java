@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,7 +21,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import visiblehand.parser.AAParser;
 import visiblehand.parser.AirParser;
+import visiblehand.parser.ContinentalParser;
 import visiblehand.parser.DeltaParser;
+import visiblehand.parser.JetBlueParser;
 import visiblehand.parser.SouthwestParser;
 import visiblehand.parser.UnitedParser;
 import visiblehand.parser.UnitedParserOld;
@@ -39,20 +42,22 @@ public class VisibleHand {
 	public static final double KG_PER_LITER = .804, LITERS_PER_GALLON = 3.78541;
 			
 
-
 	public static final AirParser[] airParsers = { new AAParser(),
-			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(), new DeltaParser() };
+			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
+			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
 
-	public static Folder getInbox() throws MessagingException, FileNotFoundException, IOException {
+	public static Folder getInbox(PasswordAuthentication auth) throws FileNotFoundException, MessagingException, IOException {
 		Session session = getSession();
-		PasswordAuthentication auth = getPasswordAuthentication();
-		
-		//System.out.println(session.getPasswordAuthentication(new URLName("imaps://imap.gmail.com")).getUserName());
 		Store store = session.getStore();
 		store.connect(auth.getUserName(), new String(auth.getPassword()));
+		
 		Folder inbox = store.getFolder("INBOX");
 		inbox.open(Folder.READ_ONLY);
+		
 		return inbox;
+	}
+	public static Folder getInbox() throws MessagingException, FileNotFoundException, IOException {
+		return getInbox(getPasswordAuthentication());		
 	}
 	
 	public static PasswordAuthentication getPasswordAuthentication() {
@@ -68,7 +73,10 @@ public class VisibleHand {
 	
 	public static Session getSession() throws MessagingException, FileNotFoundException, IOException {
 		Properties props = new Properties();
-		props.load(new FileInputStream("mail.properties"));
+		InputStream stream = VisibleHand.class.getResourceAsStream("/mail.properties");
+		if (stream == null) 
+			stream = new FileInputStream("mail.properties");
+		props.load(stream);//new FileInputStream("mail.properties"));
 		Session session = Session.getInstance(props);
 		return session;
 	}

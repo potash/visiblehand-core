@@ -12,8 +12,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.6</source>
+						<target>1.6</target>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -72,12 +72,12 @@
 					<configuration>
 						<archive>
 							<manifest>
-								<mainClass>visiblehand.VisibleHand</mainClass>
+								<mainClass>visiblehand.SendMessages</mainClass>
 							</manifest>
 						</archive>
-						<descriptorRefs>
-							<descriptorRef>jar-with-dependencies</descriptorRef>
-						</descriptorRefs>
+						<descriptors>
+						<descriptor>src/assemble/sendmessages-assembly.xml</descriptor>
+						</descriptors>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -96,12 +96,8 @@
 			<version>1.5.0-b01</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-csv</artifactId>
-			<version>2.1.1</version>
-			<scope>compile</scope>
-		</dependency>
+		<!-- <dependency> <groupId>com.fasterxml.jackson.dataformat</groupId> <artifactId>jackson-dataformat-csv</artifactId> 
+			<version>2.1.1</version> <scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>org.avaje</groupId>
 			<artifactId>ebean</artifactId>
@@ -124,19 +120,12 @@
 			<version>1.3.173</version>
 			<scope>compile</scope>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>1.8.2</version>
-			<scope>compile</scope>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.pdfbox</groupId> <artifactId>pdfbox</artifactId> 
+			<version>1.8.2</version> <scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -163,6 +152,30 @@
 						</executions>
 						<configuration>
 							<mainClass>visiblehand.data.FetchMail</mainClass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>sendmessages</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
+							<execution>
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>visiblehand.SendMessages</mainClass>
+							<finalName>${project.artifactId}-sendmessages</finalName>
 						</configuration>
 					</plugin>
 				</plugins>
