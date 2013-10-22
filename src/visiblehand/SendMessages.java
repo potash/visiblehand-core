@@ -16,7 +16,6 @@ import javax.mail.internet.MimeMessage;
 import visiblehand.parser.AirParser;
 
 public class SendMessages {
-	private final static String toAddress = "visiblehand@k2co3.net";
 
 	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
 		Session session = VisibleHand.getSession();
@@ -24,6 +23,8 @@ public class SendMessages {
 		Folder inbox = VisibleHand.getInbox(auth);
 		
 		Console console = System.console();
+		System.out.print("To:");
+		InternetAddress[] toAddress = InternetAddress.parse(console.readLine());
 		boolean sendAll = false;
 		
 		for (AirParser parser : VisibleHand.airParsers) {
@@ -51,7 +52,7 @@ public class SendMessages {
 					// mail hosts don't allow arbitrary from so put it in the reply-to
 					copy.setReplyTo(message.getFrom());
 					
-					copy.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
+					copy.setRecipients(Message.RecipientType.TO, toAddress);
 					Transport.send(copy, auth.getUserName(), new String(auth.getPassword()));
 				}
 			}
