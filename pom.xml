@@ -78,7 +78,9 @@
 						<descriptors>
 						<descriptor>src/assemble/sendmessages-assembly.xml</descriptor>
 						</descriptors>
-					</configuration>
+						<finalName>visiblehand-sendmessages</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+					</configuration> 
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -175,7 +177,6 @@
 						</executions>
 						<configuration>
 							<mainClass>visiblehand.SendMessages</mainClass>
-							<finalName>${project.artifactId}-sendmessages</finalName>
 						</configuration>
 					</plugin>
 				</plugins>
