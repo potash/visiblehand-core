@@ -20,6 +20,7 @@ public class SendMessages {
 	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
 		Session session = VisibleHand.getSession();
 		PasswordAuthentication auth = VisibleHand.getPasswordAuthentication();
+		System.out.println("Opening inbox...");
 		Folder inbox = VisibleHand.getInbox(auth);
 		
 		Console console = System.console();
@@ -28,6 +29,7 @@ public class SendMessages {
 		boolean sendAll = false;
 		
 		for (AirParser parser : VisibleHand.airParsers) {
+			System.out.println("Fetching messages for " + parser.getClass().getSimpleName() + "...");
 			for (Message message : inbox.search(parser.getSearchTerm())) {
 				System.out.println(message.getFrom()[0].toString() + " on " + message.getSentDate() + ": " + message.getSubject());
 				Boolean send = null;
