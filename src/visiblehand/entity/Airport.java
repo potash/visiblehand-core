@@ -1,19 +1,10 @@
 package visiblehand.entity;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
 import lombok.ToString;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 @Entity
 @ToString(of = { "id", "name" })
@@ -30,18 +21,6 @@ public @Data class Airport {
 	private int altitude;
 	private double timezone;
 	private char DST;
-
-	public static List<Airport> readAirports() throws JsonProcessingException,
-			IOException {
-		List<Airport> airports = new ArrayList<Airport>();
-
-		MappingIterator<Airport> it = new CsvMapper().readerWithSchemaFor(
-				Airport.class).readValues(new File("data/airports.dat"));
-		while (it.hasNextValue()) {
-			airports.add(it.nextValue());
-		}
-		return airports;
-	}
 
 	// return distance between airports in nautical miles using haversine
 	// formula

@@ -9,14 +9,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @ToString(of = { "id", "airline", "source", "destination", "IATA" })
 @Entity
