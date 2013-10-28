@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.Properties;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -18,10 +19,11 @@ import visiblehand.parser.AirParser;
 public class SendMessages {
 
 	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
-		Session session = VisibleHand.getSession();
+		Properties props = VisibleHand.getProperties();
+		Session session = VisibleHand.getSession(props);
 		PasswordAuthentication auth = VisibleHand.getPasswordAuthentication();
 		System.out.println("Opening inbox...");
-		Folder inbox = VisibleHand.getInbox(auth);
+		Folder inbox = VisibleHand.getFolder(props, session, auth);
 		
 		Console console = System.console();
 		System.out.print("To:");
