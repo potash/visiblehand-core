@@ -38,6 +38,8 @@ class SouthwestParser extends AirParser {
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 4547);
+	
+	private boolean active = true;
 
 	private final DateFormat dateFormat = new SimpleDateFormat("EEE MMM d");
 

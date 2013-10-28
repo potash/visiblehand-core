@@ -19,6 +19,9 @@ public abstract class MessageParser {
 	public abstract String getSubjectString();
 	
 	@Getter
+	private boolean active = false;	// inactive by default
+	
+	@Getter
 	protected SearchTerm searchTerm = new AndTerm(new
 		FromStringTerm(getFromString()),
 		new SubjectTerm(getSubjectString()));

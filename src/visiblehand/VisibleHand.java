@@ -31,17 +31,18 @@ import visiblehand.parser.UnitedParserOld;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlUpdate;
 
 public class VisibleHand {
 
 	// density of A-1 jet fuel (wikipedia)
-	public static final double MILES_PER_NM = 1.15078;
+	public static final double KG_FUEL_PER_LITER = .804;
 	// emission factor of jet fuel
 	// (http://www.eia.gov/oiaf/1605/coefficients.html)
-	public static final double KG_CO2_PER_GALLON = 9.57;
+	public static final double KG_CO2_PER_GALLON_FUEL = 9.57;
 	// unit conversions
-	public static final double KG_PER_LITER = .804,
+	public static final double MILES_PER_NM = 1.15078,
 			LITERS_PER_GALLON = 3.78541;
 
 	public static final AirParser[] airParsers = { new AAParser(),
@@ -138,9 +139,11 @@ public class VisibleHand {
 		List<Flight> flights = new ArrayList<Flight>();
 
 		for (AirParser parser : airParsers) {
-			for (Message message : inbox.search(parser.getSearchTerm())) {
-				System.out.println(message.getSubject());
-				flights.addAll(parser.parse(message).getFlights());
+			if (parser.isActive()) {
+				for (Message message : inbox.search(parser.getSearchTerm())) {
+					System.out.println(message.getSubject());
+					flights.addAll(parser.parse(message).getFlights());
+				}
 			}
 		}
 
@@ -150,18 +153,27 @@ public class VisibleHand {
 
 		for (Flight flight : flights) {
 			System.out.println(flight.getRoute());
-			DescriptiveStatistics fuelBurn = flight.getRoute().getFuelBurnStatistics();
+			DescriptiveStatistics fuelBurn = flight.getRoute()
+					.getFuelBurnStatistics();
 			System.out.println(fuelBurn);
 			fuel += fuelBurn.getMean();
-			nm += flight.getRoute().getDistance();
+			flight.setFuelBurn(fuelBurn.getMean());
+			flight.setDistance(flight.getRoute().getDistance());
+			nm += flight.getDistance();
+			Ebean.save(flight);
 			sigma.addValue(fuelBurn.getStandardDeviation() / fuelBurn.getMean());
 			nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
 		}
-		System.out.println(fuel);
-		System.out.println(nm);
-		System.out.println(sigma);
-		System.out.println(nmpkg);
-		System.out.println(nmpkg.getMean() * MILES_PER_NM * KG_PER_LITER
+		System.out.println("Fuel burned: " + fuel + " kg");
+		System.out.println("Distance traveled: " + nm + " nm");
+		
+		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM * KG_FUEL_PER_LITER
 				* LITERS_PER_GALLON + " mpg");
+		
+		System.out.println("Carbon dioxide emissions: " + fuel / KG_FUEL_PER_LITER / LITERS_PER_GALLON * KG_CO2_PER_GALLON_FUEL + " kg");
+		
+		SqlQuery writeQuery = Ebean
+				.createSqlQuery("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
+		writeQuery.findList();
 	}
 }

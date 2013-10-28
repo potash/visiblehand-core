@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.persistence.Transient;
 
 import lombok.Data;
 import lombok.Getter;
@@ -26,6 +25,7 @@ import com.avaje.ebean.Ebean;
 public @Data class AAParser extends AirParser {
 	private final String fromString = "notify@aa.globalnotifications.com";
 	private final String subjectString = "E-Ticket Confirmation-";
+	private boolean active = true;
 
 	@Getter(lazy=true)
 	private final Airline airline = Ebean.find(Airline.class, 24);

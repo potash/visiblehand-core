@@ -42,6 +42,8 @@ class UnitedParserOld extends AirParser {
 
 	private static final DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");
+	
+	private boolean active = true;
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
