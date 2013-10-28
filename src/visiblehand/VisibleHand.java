@@ -19,6 +19,7 @@ import javax.mail.Store;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import visiblehand.entity.Flight;
 import visiblehand.parser.AAParser;
 import visiblehand.parser.AirParser;
 import visiblehand.parser.ContinentalParser;
@@ -149,7 +150,7 @@ public class VisibleHand {
 
 		for (Flight flight : flights) {
 			System.out.println(flight.getRoute());
-			DescriptiveStatistics fuelBurn = flight.getRoute().getFuelBurn();
+			DescriptiveStatistics fuelBurn = flight.getRoute().getFuelBurnStatistics();
 			System.out.println(fuelBurn);
 			fuel += fuelBurn.getMean();
 			nm += flight.getRoute().getDistance();

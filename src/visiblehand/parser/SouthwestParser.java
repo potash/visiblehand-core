@@ -21,9 +21,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import visiblehand.Flight;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
+import visiblehand.entity.Flight;
 import visiblehand.entity.Route;
 
 import com.avaje.ebean.Ebean;

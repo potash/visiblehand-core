@@ -3,8 +3,8 @@ package visiblehand.parser;
 import java.util.List;
 
 import lombok.Data;
-import visiblehand.Flight;
 import visiblehand.entity.Airline;
+import visiblehand.entity.Flight;
 
 public @Data class AirReceipt extends Receipt {
 	Airline airline;

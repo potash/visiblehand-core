@@ -12,8 +12,8 @@ import javax.mail.MessagingException;
 
 import lombok.Data;
 import lombok.Getter;
-import visiblehand.Flight;
 import visiblehand.entity.Airline;
+import visiblehand.entity.Flight;
 
 import com.avaje.ebean.Ebean;
 

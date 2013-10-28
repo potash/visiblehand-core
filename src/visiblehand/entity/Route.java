@@ -95,7 +95,11 @@ class Route {
 
 	@Transient
 	@Getter(lazy = true)
-	private final DescriptiveStatistics fuelBurn = fuelBurn();
+	private final DescriptiveStatistics fuelBurnStatistics = fuelBurn();
+	
+	@Transient
+	@Getter(lazy = true)
+	private final double fuelBurn = getFuelBurnStatistics().getMean();
 
 	private DescriptiveStatistics fuelBurn() {
 		DescriptiveStatistics burn = new DescriptiveStatistics();

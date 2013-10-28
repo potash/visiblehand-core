@@ -8,8 +8,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.ParseException;
 
 import lombok.Data;
-import visiblehand.Flight;
 import visiblehand.entity.Airline;
+import visiblehand.entity.Flight;
 
 // A skeleton for an airline email receipt parser
 
