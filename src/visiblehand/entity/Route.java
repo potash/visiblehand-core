@@ -109,7 +109,7 @@ class Route {
 					// equipment that it came from
 					if (seats == null)
 						seats = eSeats;
-					// TODO getSeats(aem) e.g. 752 instead of 757
+					// TODO if still null get average seats from other airlines
 					if (seats != null) {
 						equipmentBurn.addValue(fuelData
 								.getFuelBurn(getDistance()) / seats);

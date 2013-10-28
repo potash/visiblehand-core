@@ -13,5 +13,4 @@ public @Data class Flight {
 	private Integer number;
 	private Equipment equipment;
 	private Airline airline;
-	// Route route?
 }

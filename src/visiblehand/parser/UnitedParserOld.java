@@ -131,11 +131,11 @@ class UnitedParserOld extends AirParser {
 									.findList();
 							if (e.size() > 0) {
 								if (e.size() > 1) {
-									System.out.println("More than one equipment match: " + equipment);
+									System.out.println("UnitedParserOld - More than one equipment match: " + equipment);
 								}
 								flight.setEquipment(e.get(0));
 							} else {
-								System.out.println("No equipment match: " + equipment);
+								System.out.println("UnitedParserOld - No equipment match: " + equipment);
 							}
 						}
 					}
