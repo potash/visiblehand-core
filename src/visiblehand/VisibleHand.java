@@ -36,47 +36,74 @@ public class VisibleHand {
 
 	// density of A-1 jet fuel (wikipedia)
 	public static final double MILES_PER_NM = 1.15078;
-	// emission factor of jet fuel (http://www.eia.gov/oiaf/1605/coefficients.html)
-	public static final double KG_CO2_PER_GALLON = 9.57; 
+	// emission factor of jet fuel
+	// (http://www.eia.gov/oiaf/1605/coefficients.html)
+	public static final double KG_CO2_PER_GALLON = 9.57;
 	// unit conversions
-	public static final double KG_PER_LITER = .804, LITERS_PER_GALLON = 3.78541;
-			
+	public static final double KG_PER_LITER = .804,
+			LITERS_PER_GALLON = 3.78541;
 
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
 
-	public static Folder getInbox(PasswordAuthentication auth) throws FileNotFoundException, MessagingException, IOException {
-		Session session = getSession();
+	public static Folder getFolder(Properties props, Session session,
+			PasswordAuthentication auth) throws FileNotFoundException,
+			MessagingException, IOException {
 		Store store = session.getStore();
-		store.connect(auth.getUserName(), new String(auth.getPassword()));
-		
-		Folder inbox = store.getFolder("INBOX");
-		inbox.open(Folder.READ_ONLY);
-		
-		return inbox;
+		int port = -1;
+		if (props.getProperty("mail.port") != null) {
+			try {
+				port = Integer.parseInt(props.getProperty("mail.port"));
+			} catch (NumberFormatException e) {
+				System.err.println("NumberFormatException mail.port="
+						+ props.getProperty("mail.port"));
+			}
+		}
+		store.connect(null, port, auth.getUserName(),
+				new String(auth.getPassword()));
+
+		String name = props.getProperty("mail.folder");
+		if (name == null)
+			name = "Inbox";
+		Folder folder = store.getFolder(name);
+		folder.open(Folder.READ_ONLY);
+
+		return folder;
 	}
-	public static Folder getInbox() throws MessagingException, FileNotFoundException, IOException {
-		return getInbox(getPasswordAuthentication());		
+
+	public static Folder getInbox() throws MessagingException,
+			FileNotFoundException, IOException {
+		Properties props = getProperties();
+		Session session = getSession(props);
+		return getFolder(props, session, getPasswordAuthentication());
 	}
-	
+
 	public static PasswordAuthentication getPasswordAuthentication() {
 		Console console = System.console();
-		
+
 		System.out.print("Username:");
 		final String user = console.readLine();
 		System.out.print("Password:");
 		final char[] pass = console.readPassword();
-		
+
 		return new java.net.PasswordAuthentication(user, pass);
 	}
-	
-	public static Session getSession() throws MessagingException, FileNotFoundException, IOException {
+
+	public static Properties getProperties() throws IOException {
 		Properties props = new Properties();
-		InputStream stream = VisibleHand.class.getResourceAsStream("/mail.properties");
-		if (stream == null) 
+
+		InputStream stream = VisibleHand.class
+				.getResourceAsStream("/mail.properties");
+		if (stream == null)
 			stream = new FileInputStream("mail.properties");
-		props.load(stream);//new FileInputStream("mail.properties"));
+		props.load(stream);
+
+		return props;
+	}
+
+	public static Session getSession(Properties props)
+			throws MessagingException, FileNotFoundException, IOException {
 		Session session = Session.getInstance(props);
 		return session;
 	}
@@ -93,18 +120,18 @@ public class VisibleHand {
 			h2.execute(update);
 		}
 	}
-	
+
 	public static String getSearchString() {
 		String str = "";
-		for(AirParser parser : airParsers) {
-			str += parser.getSearchString() + " || "; 
+		for (AirParser parser : airParsers) {
+			str += parser.getSearchString() + " || ";
 		}
-		return str.substring(0, str.length()-3);
+		return str.substring(0, str.length() - 3);
 	}
 
 	public static void main(String[] args) throws MessagingException,
 			ParseException, IOException {
-		
+
 		loadData();
 		Folder inbox = getInbox();
 		List<Flight> flights = new ArrayList<Flight>();
