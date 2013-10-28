@@ -20,6 +20,7 @@ import com.avaje.ebean.Ebean;
 public @Data class JetBlueParser extends AirParser {
 	private final  String fromString = "reservations@jetblue.com";
 	private final String subjectString = "Itinerary for your upcoming trip";
+	private final String bodyString = "";
 	
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 3029);

@@ -25,6 +25,8 @@ import com.avaje.ebean.Ebean;
 public @Data class AAParser extends AirParser {
 	private final String fromString = "notify@aa.globalnotifications.com";
 	private final String subjectString = "E-Ticket Confirmation-";
+	private final String bodyString = "";
+	
 	private boolean active = true;
 
 	@Getter(lazy=true)

@@ -22,6 +22,7 @@ import com.avaje.ebean.Ebean;
 public @Data class UnitedParser extends AirParser {
 	private final  String fromString = "unitedairlines@united.com";
 	private final String subjectString = "eTicket Itinerary and Receipt for Confirmation";
+	private final String bodyString = "";
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);

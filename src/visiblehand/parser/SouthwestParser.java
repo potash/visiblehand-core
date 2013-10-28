@@ -35,6 +35,7 @@ public @Data
 class SouthwestParser extends AirParser {
 	private final String fromString = "SouthwestAirlines@luv.southwest.com";
 	private final String subjectString = "Southwest Airlines Confirmation";
+	private final String bodyString = "";
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 4547);

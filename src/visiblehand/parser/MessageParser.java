@@ -8,6 +8,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.search.AndTerm;
+import javax.mail.search.BodyTerm;
 import javax.mail.search.FromStringTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
@@ -17,14 +18,24 @@ import lombok.Getter;
 public abstract class MessageParser {
 	public abstract String getFromString();
 	public abstract String getSubjectString();
+	public abstract String getBodyString();
 	
 	@Getter
 	private boolean active = false;	// inactive by default
 	
-	@Getter
-	protected SearchTerm searchTerm = new AndTerm(new
-		FromStringTerm(getFromString()),
-		new SubjectTerm(getSubjectString()));
+	@Getter(lazy = true)
+	private final SearchTerm searchTerm = searchTerm();
+	
+	private SearchTerm searchTerm() {
+		SearchTerm searchTerm = new FromStringTerm(getFromString());
+		if (!(getSubjectString() == null || getSubjectString().isEmpty())) {
+			searchTerm = new AndTerm(searchTerm, new SubjectTerm(getSubjectString()));
+		}
+		if (!(getBodyString() == null || getBodyString().isEmpty())) {
+			searchTerm = new AndTerm(searchTerm, new BodyTerm(getBodyString()));
+		}
+		return searchTerm;
+	}
 	
 	public abstract Receipt parse(Message message) throws ParseException, MessagingException, IOException;
 	

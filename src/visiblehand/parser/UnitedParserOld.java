@@ -36,6 +36,7 @@ public @Data
 class UnitedParserOld extends AirParser {
 	private final String fromString = "united-confirmation@united.com";
 	private final String subjectString = "Your United flight confirmation";
+	private final String bodyString = "";
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);

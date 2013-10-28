@@ -9,11 +9,6 @@ import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.search.AndTerm;
-import javax.mail.search.FromStringTerm;
-import javax.mail.search.NotTerm;
-import javax.mail.search.SearchTerm;
-import javax.mail.search.SubjectTerm;
 
 import lombok.Data;
 import lombok.Getter;
@@ -25,8 +20,9 @@ import com.avaje.ebean.Ebean;
 // United Airlines email receipt parser
 
 public @Data class DeltaParser extends AirParser {
-	private final  String fromString = "DeltaAirLines@e.delta.com";
+	private final String fromString = "DeltaAirLines@e.delta.com";
 	private final String subjectString = "";
+	private final String  bodyString = "Delta Reservation Receipt";
 	
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);
@@ -34,7 +30,8 @@ public @Data class DeltaParser extends AirParser {
 	private DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");
 	{
-	searchTerm = new AndTerm(new FromStringTerm(getFromString()), new NotTerm(new SubjectTerm("Check-In")));
+	//searchTerm = new AndTerm(new FromStringTerm(getFromString()), new NotTerm(new SubjectTerm("Check-In")));
+	//searchTerm = new AndTerm(new FromStringTerm(getFromString()), new BodyTerm("Delta Reservation Receipt"));
 	}
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
