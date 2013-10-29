@@ -10,6 +10,8 @@ import javax.mail.Multipart;
 import javax.mail.search.AndTerm;
 import javax.mail.search.BodyTerm;
 import javax.mail.search.FromStringTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.OrTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
@@ -27,7 +29,9 @@ public abstract class MessageParser {
 	private final SearchTerm searchTerm = searchTerm();
 	
 	private SearchTerm searchTerm() {
-		SearchTerm searchTerm = new FromStringTerm(getFromString());
+		SearchTerm searchTerm = new OrTerm(
+				new FromStringTerm(getFromString()),
+				new HeaderTerm("reply-to", getFromString()));
 		if (!(getSubjectString() == null || getSubjectString().isEmpty())) {
 			searchTerm = new AndTerm(searchTerm, new SubjectTerm(getSubjectString()));
 		}
@@ -39,7 +43,7 @@ public abstract class MessageParser {
 	
 	public abstract Receipt parse(Message message) throws ParseException, MessagingException, IOException;
 	
-	public String getContent(Message message) throws MessagingException, IOException {
+	public static String getContent(Message message) throws MessagingException, IOException {
 		String content;
 		if (message.getContent() instanceof Multipart) {
 			Multipart mp = (Multipart) message.getContent();
