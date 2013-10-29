@@ -21,6 +21,12 @@ public class AAParserTest extends MessageParserTest {
 		Airport airport = AAParser.getAirport("RALEIGH DURHAM");
 		assertEquals(airport.getId(), 3626);
 		
+		airport = AAParser.getAirport("ALBUQUERQUE");
+		assertEquals(airport.getId(), 4019);
+		
+		airport = AAParser.getAirport("LOS ANGELES");
+		assertEquals(airport.getId(), 3484);
+		
 		airport = AAParser.getAirport("WASHINGTON REAGAN");
 		assertEquals(airport.getId(), 3520);
 		

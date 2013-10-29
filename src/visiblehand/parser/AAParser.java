@@ -137,7 +137,7 @@ public @Data class AAParser extends AirParser {
 		if (airports.size() == 0) {
 			String sql = "select id, name, city, country, code, icao as ICAO, latitude, longitude, altitude, timezone, dst as DST "
 					+ "from airport "
-					+ "order by levenshtein(name, '" + string + "') asc limit 1";
+					+ "order by levenshtein(upper(replace(name, ' Intl', '')), '" + string + "') asc limit 1";
 			RawSql rawSql = RawSqlBuilder.parse(sql).create();
 			Query<Airport> query = Ebean.find(Airport.class);
 			query.setRawSql(rawSql);

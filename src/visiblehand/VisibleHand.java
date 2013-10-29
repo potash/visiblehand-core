@@ -123,7 +123,7 @@ public class VisibleHand {
 			c.setDdlRun(true);
 			c.setDefaultServer(true);
 			EbeanServer h2 = EbeanServerFactory.create(c);//Ebean.getServer("h2");
-			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.levenshtein\"");
+			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
 			lev.execute();
 			String[] tables = new String[] { "airline", "airport", "equipment",
 					"equipment_aggregate", "fuel_data", "route", "seating" };
