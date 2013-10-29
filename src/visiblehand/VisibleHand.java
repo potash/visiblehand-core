@@ -31,8 +31,10 @@ import visiblehand.parser.UnitedParserOld;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.EbeanServerFactory;
 import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlUpdate;
+import com.avaje.ebean.config.ServerConfig;
 
 public class VisibleHand {
 
@@ -44,6 +46,7 @@ public class VisibleHand {
 	// unit conversions
 	public static final double MILES_PER_NM = 1.15078,
 			LITERS_PER_GALLON = 3.78541;
+	private static final boolean EBEAN_USE_H2 = true;
 
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
@@ -112,15 +115,31 @@ public class VisibleHand {
 
 	// loads data from csv into in memory database
 	public static void loadData() {
-		EbeanServer h2 = Ebean.getServer("h2");
-		String[] tables = new String[] { "airline", "airport", "equipment",
-				"equipment_aggregate", "fuel_data", "route", "seating" };
+		if (EBEAN_USE_H2) {
+			ServerConfig c = new ServerConfig();
+			c.setName("h2");
+			c.loadFromProperties();
+			c.setDdlGenerate(true);
+			c.setDdlRun(true);
+			c.setDefaultServer(true);
+			EbeanServer h2 = EbeanServerFactory.create(c);//Ebean.getServer("h2");
+			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.levenshtein\"");
+			lev.execute();
+			String[] tables = new String[] { "airline", "airport", "equipment",
+					"equipment_aggregate", "fuel_data", "route", "seating" };
 
-		for (String table : tables) {
-			SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
-					+ " (select * from csvread('data/csv/" + table + ".csv'))");
-			h2.execute(update);
+			for (String table : tables) {
+				SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
+						+ " (select * from csvread('data/csv/" + table
+						+ ".csv'))");
+				h2.execute(update);
+			}
 		}
+	}
+	
+	// h2 needs the method to take Strings, not CharSequences
+	public static int getLevenshteinDistance(String s1, String s2) {
+		return org.apache.commons.lang3.StringUtils.getLevenshteinDistance(s1, s2);
 	}
 
 	public static String getSearchString() {
@@ -166,12 +185,14 @@ public class VisibleHand {
 		}
 		System.out.println("Fuel burned: " + fuel + " kg");
 		System.out.println("Distance traveled: " + nm + " nm");
-		
-		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM * KG_FUEL_PER_LITER
-				* LITERS_PER_GALLON + " mpg");
-		
-		System.out.println("Carbon dioxide emissions: " + fuel / KG_FUEL_PER_LITER / LITERS_PER_GALLON * KG_CO2_PER_GALLON_FUEL + " kg");
-		
+
+		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM
+				* KG_FUEL_PER_LITER * LITERS_PER_GALLON + " mpg");
+
+		System.out.println("Carbon dioxide emissions: " + fuel
+				/ KG_FUEL_PER_LITER / LITERS_PER_GALLON
+				* KG_CO2_PER_GALLON_FUEL + " kg");
+
 		SqlQuery writeQuery = Ebean
 				.createSqlQuery("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
 		writeQuery.findList();
