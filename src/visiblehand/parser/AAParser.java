@@ -19,6 +19,9 @@ import visiblehand.entity.Flight;
 import visiblehand.entity.Route;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Query;
+import com.avaje.ebean.RawSql;
+import com.avaje.ebean.RawSqlBuilder;
 
 // American Airlines email receipt parser
 
@@ -95,11 +98,19 @@ public @Data class AAParser extends AirParser {
 		return null;
 	}
 
-	// matches city to city and airport to beginning of airport
 	protected static Airport getAirport(String string) throws ParseException {
+		string = string.trim();
 		int index = string.lastIndexOf(' ');
 		List<Airport> airports = null;
-		if (index > 0) {
+		if(index == -1) {
+			if (string.length() == 3) {
+				airports = Ebean.find(Airport.class).where().eq("code", string).findList();
+			} else if (string.length() == 4) {
+				airports = Ebean.find(Airport.class).where().eq("ICAO", string).findList();
+			} else {
+				airports = Ebean.find(Airport.class).where().istartsWith("city", string).findList();
+			}
+		} else if (index > 0) {
 			String city = "", airport = "";
 			airport = string.substring(index + 1);
 			city = string.substring(0, index);
@@ -121,21 +132,26 @@ public @Data class AAParser extends AirParser {
 						.findList();
 			}
 		}
-		if (airports == null || airports.size() == 0) {
-			// only one word (or above didn't match) means its a city?
-			airports = Ebean.find(Airport.class).where()
-					.istartsWith("city", string).isNotNull("code").findList();
-		}
 
-		// return best match
+		// if no match just try Levenshtein distance on airport name
 		if (airports.size() == 0) {
-			throw new ParseException("Airport not found: " + string, 0);
+			String sql = "select id, name, city, country, code, icao as ICAO, latitude, longitude, altitude, timezone, dst as DST "
+					+ "from airport "
+					+ "order by levenshtein(name, '" + string + "') asc limit 1";
+			RawSql rawSql = RawSqlBuilder.parse(sql).create();
+			Query<Airport> query = Ebean.find(Airport.class);
+			query.setRawSql(rawSql);
+			Airport airport = query.findUnique();
+			if (airport == null)
+				throw new ParseException("Airport not found: " + string, 0);
+			return airport;
 		} else if (airports.size() == 1) {
 			return airports.get(0);
 		} else {
+			//System.out.println(airports);
 			// if there is more than one, prefer one that has an ICAO?
 			List<Airport> filtered = Ebean.filter(Airport.class)
-					.ne("ICAO", "\\N").filter(airports);
+					.ne("ICAO", "").filter(airports);
 			// then pick the first (arbitrary)
 			if (filtered.size() >= 1) {
 				return filtered.get(0);
