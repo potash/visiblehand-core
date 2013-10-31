@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import visiblehand.parser.MessageParserTest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @EqualsAndHashCode(of={"id"})
 public @Data
 class Equipment {
-	@Id @JsonView(JsonViews.Id.class)
+	@Id @JsonView(MessageParserTest.TestView.class)
 	private Integer id;
 	private String IATA;
 	private String ICAO;

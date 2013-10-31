@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import visiblehand.parser.MessageParserTest;
 import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -17,18 +18,18 @@ public @Data class Flight {
 	private int id;
 	@ManyToOne
 	@JoinColumn(name="airline_id")
-	@JsonView(JsonViews.Id.class)
+	@JsonView(MessageParserTest.TestView.class)
 	private Airline airline;
 	@ManyToOne
 	@JoinColumn(name="route_id")
-	@JsonView(JsonViews.Id.class)
+	@JsonView(MessageParserTest.TestView.class)
 	private Route route;
-	@JsonView(JsonViews.Id.class)
+	@JsonView(MessageParserTest.TestView.class)
 	private Date date;
-	@JsonView(JsonViews.Id.class)
+	@JsonView(MessageParserTest.TestView.class)
 	private Integer number;
 	@ManyToOne
 	@JoinColumn(name="equipment_id")
-	@JsonView(JsonViews.Id.class)
+	@JsonView(MessageParserTest.TestView.class)
 	private Equipment equipment;
 }

@@ -15,6 +15,8 @@ import lombok.ToString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import visiblehand.parser.MessageParserTest;
+
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -23,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 public @Data
 class Route {
-	@Id @JsonView(JsonViews.Id.class)
+	@Id @JsonView(MessageParserTest.TestView.class)
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")

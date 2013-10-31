@@ -15,6 +15,9 @@ import javax.mail.internet.MimeMessage;
 import visiblehand.VisibleHandTest;
 
 public class MessageParserTest extends VisibleHandTest {
+	// Jackson view for serializing test results
+	public static class TestView { }
+
 	public static FilenameFilter testFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			return name.matches("\\d+");
