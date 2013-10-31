@@ -98,37 +98,30 @@ public @Data class AAParser extends AirParser {
 		return null;
 	}
 
-	protected static Airport getAirport(String string) throws ParseException {
+	protected Airport getAirport(String string) throws ParseException {
 		string = string.trim();
 		int index = string.lastIndexOf(' ');
 		List<Airport> airports = null;
-		if(index == -1) {
-			if (string.length() == 3) {
-				airports = Ebean.find(Airport.class).where().eq("code", string).findList();
-			} else if (string.length() == 4) {
-				airports = Ebean.find(Airport.class).where().eq("ICAO", string).findList();
-			} else {
-				airports = Ebean.find(Airport.class).where().istartsWith("city", string).findList();
-			}
-		} else if (index > 0) {
-			String city = "", airport = "";
-			airport = string.substring(index + 1);
-			city = string.substring(0, index);
+		airports = Ebean.find(Airport.class).where().ieq("city", string).findList();
+		if (airports == null || airports.size() == 0) {
+			String string1 = "", string2 = "";
+			string2 = string.substring(index + 1);
+			string1 = string.substring(0, index);
 
-			if (airport.length() == 3) {
+			if (string2.length() == 3) {
 				// guessing its an airport code
 				airports = Ebean.find(Airport.class).where()
-						.istartsWith("city", city).icontains("code", airport)
+						.istartsWith("city", string1).icontains("code", string2)
 						.findList();
-			} else if (airport.length() == 4) {
+			} else if (string2.length() == 4) {
 				airports = Ebean.find(Airport.class).where()
-						.istartsWith("city", city).icontains("ICAO", airport)
+						.istartsWith("city", string1).icontains("ICAO", string2)
 						.findList();
 			}
 
 			if (airports == null || airports.size() == 0) {
 				airports = Ebean.find(Airport.class).where()
-						.istartsWith("city", city).icontains("name", airport)
+						.istartsWith("city", string1).icontains("name", string2)
 						.findList();
 			}
 		}
@@ -148,16 +141,14 @@ public @Data class AAParser extends AirParser {
 		} else if (airports.size() == 1) {
 			return airports.get(0);
 		} else {
-			//System.out.println(airports);
-			// if there is more than one, prefer one that has an ICAO?
-			List<Airport> filtered = Ebean.filter(Airport.class)
-					.ne("ICAO", "").filter(airports);
-			// then pick the first (arbitrary)
-			if (filtered.size() >= 1) {
-				return filtered.get(0);
-			} else {
-				return airports.get(0);
+			//if more than one, look for one that aa actually flies to!
+			for (Airport airport : airports) {
+				List<Route> routes = Ebean.find(Route.class).where()
+						.eq("airline", getAirline()).eq("source", airport).findList();
+				if (routes.size() > 0)
+					return airport;
 			}
+			return airports.get(0);
 		}
 	}
 }

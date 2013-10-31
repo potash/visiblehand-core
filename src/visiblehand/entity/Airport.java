@@ -4,12 +4,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @ToString(of = { "id", "name" })
+@EqualsAndHashCode(of={"id"})
 public @Data class Airport {
-	@Id
+	@Id @JsonView(JsonViews.Id.class)
 	private int id;
 	private String name;
 	private String city;

@@ -17,16 +17,17 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.annotation.JsonView;
 
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
 //				 http://www.avcodes.co.uk/acrtypes.asp
 
 @Entity
 @ToString(of = { "id", "name" })
-@EqualsAndHashCode(of={"id", "IATA", "ICAO", "name","WTC"})
+@EqualsAndHashCode(of={"id"})
 public @Data
 class Equipment {
-	@Id
+	@Id @JsonView(JsonViews.Id.class)
 	private Integer id;
 	private String IATA;
 	private String ICAO;

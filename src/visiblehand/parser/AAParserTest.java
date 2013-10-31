@@ -18,43 +18,47 @@ public class AAParserTest extends MessageParserTest {
 	
 	@Test
 	public void testGetAirport() throws ParseException {
-		Airport airport = AAParser.getAirport("RALEIGH DURHAM");
+		AAParser parser = new AAParser();
+		Airport airport = parser.getAirport("RALEIGH DURHAM");
 		assertEquals(airport.getId(), 3626);
 		
-		airport = AAParser.getAirport("ALBUQUERQUE");
+		airport = parser.getAirport("ALBUQUERQUE");
 		assertEquals(airport.getId(), 4019);
 		
-		airport = AAParser.getAirport("LOS ANGELES");
+		airport = parser.getAirport("LOS ANGELES");
 		assertEquals(airport.getId(), 3484);
 		
-		airport = AAParser.getAirport("WASHINGTON REAGAN");
+		airport = parser.getAirport("WASHINGTON REAGAN");
 		assertEquals(airport.getId(), 3520);
 		
-		airport = AAParser.getAirport("DALLAS FT WORTH");
+		airport = parser.getAirport("DALLAS FT WORTH");
 		assertEquals(airport.getId(), 3670);
 		
-		airport = AAParser.getAirport("AUSTIN");
+		airport = parser.getAirport("AUSTIN");
 		assertEquals(airport.getId(), 3673);
 		
-		airport = AAParser.getAirport("NEW YORK JFK");
+		airport = parser.getAirport("NEW YORK JFK");
 		assertEquals(airport.getId(), 3797);
 		
-		airport = AAParser.getAirport("NEW YORK LGA");
+		airport = parser.getAirport("NEW YORK LGA");
 		assertEquals(airport.getId(), 3697);
 		
-		airport = AAParser.getAirport("CHICAGO OHARE");
+		airport = parser.getAirport("CHICAGO OHARE");
 		assertEquals(airport.getId(), 3830);
 		
-		airport = AAParser.getAirport("NEWARK");
+		airport = parser.getAirport("NEWARK");
 		assertEquals(airport.getId(), 3494);
 		
-		airport = AAParser.getAirport("SALT LAKE CITY");
+		airport = parser.getAirport("SALT LAKE CITY");
 		assertEquals(airport.getId(), 3536);
 		
-		airport = AAParser.getAirport("LONDON HEATHROW");
+		airport = parser.getAirport("LONDON HEATHROW");
 		assertEquals(airport.getId(), 507);
 		
-		airport = AAParser.getAirport("BARCELONA");
+		airport = parser.getAirport("BARCELONA");
 		assertEquals(airport.getId(), 1218);
+		
+		airport = parser.getAirport("SAN JUAN");
+		assertEquals(airport.getId(), 2890);
 	}
 }

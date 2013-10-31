@@ -9,18 +9,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @ToString(of = { "id", "airline", "source", "destination", "IATA" })
+@EqualsAndHashCode(of={"id"})
 @Entity
 public @Data
 class Route {
-	@Id
+	@Id @JsonView(JsonViews.Id.class)
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")
