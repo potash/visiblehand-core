@@ -19,7 +19,7 @@ import visiblehand.parser.AirParser;
 public class SendMessages {
 
 	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
-		Properties props = VisibleHand.getProperties();
+		Properties props = VisibleHand.getProperties("mail.properties");
 		Session session = VisibleHand.getSession(props);
 		PasswordAuthentication auth = VisibleHand.getPasswordAuthentication();
 		System.out.println("Opening inbox...");
