@@ -6,16 +6,13 @@ import java.text.ParseException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import visiblehand.VisibleHand;
-
 public class AirParserTest extends MessageParserTest {
-	@BeforeClass
-	public static void setup() {
-		VisibleHand.loadData();
-	}
+	//@BeforeClass
+	//public static void setup() {
+	//	VisibleHand.loadData();
+	//}
 
 	@Test
 	public void testAAParser() throws ParseException, MessagingException, IOException {
@@ -57,7 +54,8 @@ public class AirParserTest extends MessageParserTest {
 		for (Message message : getTestMessages(airParser)) {
 			try {
 				AirReceipt receipt = airParser.parse(message);
-				//System.out.println(receipt.getFlights());
+				System.out.println(MessageParser.getContent(message));
+				System.out.println(receipt.getFlights());
 			} catch (Exception e) {
 				System.out.println(MessageParser.getContent(message));
 				e.printStackTrace();

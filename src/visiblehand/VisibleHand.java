@@ -46,7 +46,6 @@ public class VisibleHand {
 	// unit conversions
 	public static final double MILES_PER_NM = 1.15078,
 			LITERS_PER_GALLON = 3.78541;
-	private static final boolean EBEAN_USE_H2 = true;
 
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
@@ -79,7 +78,7 @@ public class VisibleHand {
 
 	public static Folder getInbox() throws MessagingException,
 			FileNotFoundException, IOException {
-		Properties props = getProperties();
+		Properties props = getProperties("mail.properties");
 		Session session = getSession(props);
 		return getFolder(props, session, getPasswordAuthentication());
 	}
@@ -95,13 +94,14 @@ public class VisibleHand {
 		return new java.net.PasswordAuthentication(user, pass);
 	}
 
-	public static Properties getProperties() throws IOException {
+	// get properties file either in classpath or current dir
+	public static Properties getProperties(String name) throws IOException {
 		Properties props = new Properties();
 
 		InputStream stream = VisibleHand.class
-				.getResourceAsStream("/mail.properties");
+				.getResourceAsStream("/" + name);
 		if (stream == null)
-			stream = new FileInputStream("mail.properties");
+			stream = new FileInputStream("" + name);
 		props.load(stream);
 
 		return props;
@@ -114,15 +114,17 @@ public class VisibleHand {
 	}
 
 	// loads data from csv into in memory database
-	public static void loadData() {
-		if (EBEAN_USE_H2) {
+	public static void initEbean() throws IOException {
+		Properties props = getProperties("ebean.properties");
+		String db = props.getProperty("datasource.default");
+		if (db.equals("h2")) {
 			ServerConfig c = new ServerConfig();
 			c.setName("h2");
 			c.loadFromProperties();
 			c.setDdlGenerate(true);
 			c.setDdlRun(true);
 			c.setDefaultServer(true);
-			EbeanServer h2 = EbeanServerFactory.create(c);//Ebean.getServer("h2");
+			EbeanServer h2 = EbeanServerFactory.create(c);
 			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
 			lev.execute();
 			String[] tables = new String[] { "airline", "airport", "equipment",
@@ -153,7 +155,7 @@ public class VisibleHand {
 	public static void main(String[] args) throws MessagingException,
 			ParseException, IOException {
 
-		loadData();
+		initEbean();
 		Folder inbox = getInbox();
 		List<Flight> flights = new ArrayList<Flight>();
 
