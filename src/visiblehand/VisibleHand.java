@@ -178,9 +178,7 @@ public class VisibleHand {
 					.getFuelBurnStatistics();
 			System.out.println(fuelBurn);
 			fuel += fuelBurn.getMean();
-			flight.setFuelBurn(fuelBurn.getMean());
-			flight.setDistance(flight.getRoute().getDistance());
-			nm += flight.getDistance();
+			nm += flight.getRoute().getDistance();
 			Ebean.save(flight);
 			sigma.addValue(fuelBurn.getStandardDeviation() / fuelBurn.getMean());
 			nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
