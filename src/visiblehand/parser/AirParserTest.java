@@ -17,11 +17,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AirParserTest extends MessageParserTest {
-	// @BeforeClass
-	// public static void setup() {
-	// VisibleHand.loadData();
-	// }
-
 	@Test
 	public void testAAParser() throws ParseException, MessagingException,
 			IOException {
@@ -70,6 +65,8 @@ public class AirParserTest extends MessageParserTest {
 		AirReceipt[] receipts = getTestReceipts(airParser);
 		for (int i = 0; i < messages.length; i++) {
 			AirReceipt receipt = airParser.parse(messages[i]);
+			System.out.println(receipt);
+			System.out.println(receipts[i]);
 			assertEquals(receipt, receipts[i]);
 		}
 	}
