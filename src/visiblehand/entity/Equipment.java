@@ -11,11 +11,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import visiblehand.parser.MessageParserTest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -28,8 +28,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 @EqualsAndHashCode(of={"id"})
 public @Data
 class Equipment {
-	@Id @JsonView(MessageParserTest.TestView.class)
+	@Id
 	private Integer id;
+	@JsonView(MessageParserTest.TestView.class)
 	private String IATA;
 	private String ICAO;
 	private String name;

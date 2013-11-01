@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @ToString(of = { "id", "name" })
 @EqualsAndHashCode(of={"id"})
 public @Data class Airport {
-	@Id @JsonView(MessageParserTest.TestView.class)
+	@Id
 	private int id;
 	@JsonView(MessageParserTest.TestView.class)
 	private String name;

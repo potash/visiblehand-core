@@ -22,6 +22,8 @@ public abstract class MessageParser {
 	public abstract String getSubjectString();
 	public abstract String getBodyString();
 	
+	public abstract Class getReceiptClass();
+	
 	@Getter
 	private boolean active = false;	// inactive by default
 	

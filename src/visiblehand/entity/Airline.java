@@ -3,10 +3,10 @@ package visiblehand.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import visiblehand.parser.MessageParserTest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import visiblehand.parser.MessageParserTest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -15,8 +15,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 public @Data
 class Airline {
-	@Id @JsonView(MessageParserTest.TestView.class)
+	@Id
 	private int id;
+	@JsonView(MessageParserTest.TestView.class)
 	private String name;
 	private String alias;
 	private String IATA;

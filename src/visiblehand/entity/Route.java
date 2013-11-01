@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 public @Data
 class Route {
-	@Id @JsonView(MessageParserTest.TestView.class)
+	@Id
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")
