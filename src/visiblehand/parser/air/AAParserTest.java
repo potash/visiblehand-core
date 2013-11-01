@@ -1,4 +1,4 @@
-package visiblehand.parser;
+package visiblehand.parser.air;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import org.junit.Test;
 
 import visiblehand.entity.Airport;
+import visiblehand.parser.MessageParserTest;
 
 public class AAParserTest extends MessageParserTest {
 	@Test

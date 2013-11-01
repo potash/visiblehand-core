@@ -18,26 +18,26 @@ public class MessageParserTest extends VisibleHandTest {
 	// Jackson view for serializing test results
 	public static class TestView { }
 
-	public static FilenameFilter testFileFilter = new FilenameFilter() {
+	public static final FilenameFilter msgFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
-			return name.matches("\\d+");
+			return name.matches("\\d+.msg");
 		}
 	};
 	
-	public static FilenameFilter resultFileFilter = new FilenameFilter() {
+	public static final FilenameFilter jsonFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
 			return name.matches("\\d+.json");
 		}
 	};
 	
-	public static String testDirectoryName = "data/test/";
+	public static final String testDirectoryName = "data/test/";
 	
 	// returns alphabetical-order list of test messages
 	// corresponding to the given parser
 	protected static Message[] getTestMessages(MessageParser parser) throws FileNotFoundException, MessagingException {
 		File dir = new File(testDirectoryName
 				+ parser.getClass().getSimpleName());
-		File[] files = dir.listFiles(testFileFilter);
+		File[] files = dir.listFiles(msgFileFilter);
 		Arrays.sort(files);
 		Message[] messages = new Message[files.length];
 		Session session = Session.getDefaultInstance(new Properties());

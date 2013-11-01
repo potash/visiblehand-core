@@ -1,10 +1,13 @@
-package visiblehand.parser;
+package visiblehand.parser.air;
 
 import java.util.List;
 
 import lombok.Data;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Flight;
+import visiblehand.parser.MessageParserTest;
+import visiblehand.parser.Receipt;
+import visiblehand.parser.MessageParserTest.TestView;
 
 import com.fasterxml.jackson.annotation.JsonView;
 

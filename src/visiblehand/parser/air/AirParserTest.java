@@ -1,4 +1,4 @@
-package visiblehand.parser;
+package visiblehand.parser.air;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.junit.Test;
+
+import visiblehand.parser.MessageParserTest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -76,7 +78,7 @@ public class AirParserTest extends MessageParserTest {
 	protected AirReceipt[] getTestReceipts(AirParser parser)
 			throws JsonParseException, JsonMappingException, IOException {
 		File dir = new File(testDirectoryName + parser.getClass().getSimpleName());
-		File[] files = dir.listFiles(resultFileFilter);
+		File[] files = dir.listFiles(jsonFileFilter);
 		Arrays.sort(files);
 		AirReceipt[] receipts = new AirReceipt[files.length];
 		ObjectMapper mapper = new ObjectMapper();

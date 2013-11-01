@@ -1,4 +1,4 @@
-package visiblehand.parser;
+package visiblehand.parser.air;
 
 import java.io.IOException;
 import java.text.DateFormat;

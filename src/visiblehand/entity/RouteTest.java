@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import visiblehand.VisibleHand;
 import visiblehand.VisibleHandTest;
-import visiblehand.parser.AirParser;
+import visiblehand.parser.air.AirParser;
 
 import com.avaje.ebean.Ebean;
 

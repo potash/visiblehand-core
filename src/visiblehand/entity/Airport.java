@@ -3,10 +3,10 @@ package visiblehand.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import visiblehand.parser.MessageParserTest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import visiblehand.parser.MessageParserTest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public @Data class Airport {
 	@Id @JsonView(MessageParserTest.TestView.class)
 	private int id;
+	@JsonView(MessageParserTest.TestView.class)
 	private String name;
 	private String city;
 	private String country;

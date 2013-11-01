@@ -4,6 +4,9 @@ import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Folder;
@@ -14,7 +17,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import visiblehand.parser.AirParser;
+import visiblehand.parser.MessageParser;
 
 public class SendMessages {
 
@@ -30,7 +33,11 @@ public class SendMessages {
 		InternetAddress[] toAddress = InternetAddress.parse(console.readLine());
 		boolean sendAll = false;
 		
-		for (AirParser parser : VisibleHand.airParsers) {
+		List<MessageParser> parsers = new ArrayList<MessageParser>();
+		parsers.addAll(Arrays.asList(VisibleHand.airParsers));
+		parsers.addAll(Arrays.asList(VisibleHand.utilityParsers));
+		
+		for (MessageParser parser : parsers) {
 			System.out.println("Fetching messages for " + parser.getClass().getSimpleName() + "...");
 			for (Message message : inbox.search(parser.getSearchTerm())) {
 				System.out.println(message.getFrom()[0].toString() + " on " + message.getSentDate() + ": " + message.getSubject());

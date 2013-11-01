@@ -32,8 +32,10 @@ class Route {
 	private Airline airline;
 	@ManyToOne
 	@JoinColumn(name = "source_id")
+	@JsonView(MessageParserTest.TestView.class)
 	private Airport source;
 	@ManyToOne
+	@JsonView(MessageParserTest.TestView.class)
 	@JoinColumn(name = "destination_id")
 	private Airport destination;
 	private boolean codeshare;

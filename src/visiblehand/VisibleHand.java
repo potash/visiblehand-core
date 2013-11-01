@@ -20,14 +20,17 @@ import javax.mail.Store;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import visiblehand.entity.Flight;
-import visiblehand.parser.AAParser;
-import visiblehand.parser.AirParser;
-import visiblehand.parser.ContinentalParser;
-import visiblehand.parser.DeltaParser;
-import visiblehand.parser.JetBlueParser;
-import visiblehand.parser.SouthwestParser;
-import visiblehand.parser.UnitedParser;
-import visiblehand.parser.UnitedParserOld;
+import visiblehand.parser.air.AAParser;
+import visiblehand.parser.air.AirParser;
+import visiblehand.parser.air.ContinentalParser;
+import visiblehand.parser.air.DeltaParser;
+import visiblehand.parser.air.JetBlueParser;
+import visiblehand.parser.air.SouthwestParser;
+import visiblehand.parser.air.UnitedParser;
+import visiblehand.parser.air.UnitedParserOld;
+import visiblehand.parser.utility.ComEdParser;
+import visiblehand.parser.utility.PeoplesGasParser;
+import visiblehand.parser.utility.UtilityParser;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
@@ -50,6 +53,8 @@ public class VisibleHand {
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
+	
+	public static final UtilityParser[] utilityParsers = { new ComEdParser(), new PeoplesGasParser() };
 
 	public static Folder getFolder(Properties props, Session session,
 			PasswordAuthentication auth) throws FileNotFoundException,
