@@ -2,8 +2,10 @@ package visiblehand.parser;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import org.junit.Test;
 
@@ -11,9 +13,12 @@ import visiblehand.entity.Airport;
 
 public class AAParserTest extends MessageParserTest {
 	@Test
-	public void testGetDate() {
-		assertEquals(AAParser.getDate(new Date(2012,2,1), "JAN", "01"), new Date(2013,1,1));
-		//TODO add more tests
+	public void testGetDate() throws ParseException {
+		DateFormat format = new SimpleDateFormat("ddMMMyyyy hh:mm aa");
+		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		assertEquals(AAParser.getDate(
+				format.parse("11NOV2012 12:00 am"), "01JAN", "1:23 AM"), 
+				format.parse("01JAN2013 1:23 AM"));
 	}
 	
 	@Test

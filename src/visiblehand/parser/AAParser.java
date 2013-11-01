@@ -1,10 +1,14 @@
 package visiblehand.parser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,26 +57,25 @@ public @Data class AAParser extends AirParser {
 
 	protected List<Flight> getFlights(String content, Date messageDate)
 			throws ParseException {
-		// try {
 		List<Flight> flights = new ArrayList<Flight>();
 
 		Pattern pattern = Pattern
-				.compile("(\\d{2})(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC).*\\b"
-						+ "\\s*LV  ((?:\\w+\\s?)+\\w).*\\b"
-						+ "\\s*AR  ((?:\\w+\\s?)+\\w).*\\b"
-						+ "\\s*(?:OPERATED BY ((?:\\w+\\s?)+\\w))?");
+				.compile("(?<date>(?<day>\\d{2})(?<month>JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)).*\\b"
+						//+ "\\s*LV  (?<source>(?:\\w+\\s?)+\\w).*\\b"
+						+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
+						+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
+						+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");
 		Matcher matcher = pattern.matcher(content);
-		// groups are month, day, from airport, to airport
 		while (matcher.find()) {
-			Date date = getDate(messageDate, matcher.group(1), matcher.group(2));
-			Airport source = getAirport(matcher.group(3)), destination = getAirport(matcher
-					.group(4));
+			Date date = getDate(messageDate, matcher.group("date"), matcher.group("time"));//matcher.group("month"), matcher.group("day"));
+			Airport source = getAirport(matcher.group("source")),
+					destination = getAirport(matcher.group("destination"));
 			Airline airline = getAirline();
-			String operator = matcher.group(5);
+			String operator = matcher.group("operator");
 			if (operator != null
 					&& !operator.equalsIgnoreCase("American Eagle")) {
 				List<Airline> airlines = Ebean.find(Airline.class).where()
-						.ieq("name", matcher.group(5)).eq("active", true)
+						.ieq("name", operator).eq("active", true)
 						.findList();
 				if (airlines.size() > 0) {
 					// TODO don't pick an airline with zero routes
@@ -87,19 +90,30 @@ public @Data class AAParser extends AirParser {
 			flight.setDate(date);
 			flight.setRoute(route);
 			flight.setAirline(airline);
+			flight.setNumber(Integer.parseInt(matcher.group("number")));
 			flights.add(flight);
 		}
 
 		return flights;
 	}
 
-	protected static Date getDate(Date sentDate, String month, String day) {
-		// TODO Auto-generated method stub
-		return null;
+	protected static Date getDate(Date sentDate, String dateString, String timeString) throws ParseException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sentDate);
+		int sentYear = cal.get(Calendar.YEAR);
+		
+		DateFormat format = new SimpleDateFormat("ddMMMyyyyhh:mm aa");
+		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		Date date = format.parse(dateString + sentYear + timeString);
+		if (date.compareTo(sentDate) < 0) {
+			date = format.parse(dateString + (sentYear + 1) + timeString);
+		}
+		return date;
 	}
 
 	protected Airport getAirport(String string) throws ParseException {
 		string = string.trim();
+		string = string.replaceAll("\\s+", " ");
 		int index = string.lastIndexOf(' ');
 		List<Airport> airports = null;
 		airports = Ebean.find(Airport.class).where().ieq("city", string).findList();
