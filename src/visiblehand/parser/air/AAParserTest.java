@@ -64,7 +64,28 @@ public class AAParserTest extends MessageParserTest {
 		airport = parser.getAirport("BARCELONA");
 		assertEquals(airport.getId(), 1218);
 		
-		airport = parser.getAirport("SAN JUAN");
+		airport = parser.getAirport("SAN JUAN       PR");
 		assertEquals(airport.getId(), 2890);
+		
+		airport = parser.getAirport("SARASOTA/BRADENTN");
+		assertEquals(airport.getId(), 4067);
+		
+		airport = parser.getAirport("HONOLULU");
+		assertEquals(airport.getId(), 3728);
+		
+		airport = parser.getAirport("LAS VEGAS");
+		assertEquals(airport.getId(), 3877);
+		
+		airport = parser.getAirport("SAN FRANCISCO");
+		assertEquals(airport.getId(), 3469);
+		
+		airport = parser.getAirport("ORLANDO INTL");
+		assertEquals(airport.getId(), 3878);
+		
+		airport = parser.getAirport("CHAMPAIGN");
+		assertEquals(airport.getId(), 4049);
+		
+		airport = parser.getAirport("BOSTON");
+		assertEquals(airport.getId(), 3448);
 	}
 }

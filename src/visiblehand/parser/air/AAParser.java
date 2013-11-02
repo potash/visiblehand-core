@@ -120,7 +120,7 @@ public @Data class AAParser extends AirParser {
 		if (airports == null || airports.size() == 0) {
 			String string1 = "", string2 = "";
 			string2 = string.substring(index + 1);
-			string1 = string.substring(0, index);
+			string1 = string.substring(0, Math.max(index, 0));
 
 			if (string2.length() == 3) {
 				// guessing its an airport code
