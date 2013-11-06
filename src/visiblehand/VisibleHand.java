@@ -133,7 +133,7 @@ public class VisibleHand {
 			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
 			lev.execute();
 			String[] tables = new String[] { "airline", "airport", "equipment",
-					"equipment_aggregate", "fuel_data", "route", "seating" };
+					"equipment_aggregate", "fuel_data", "route", "seating", "country" };
 
 			for (String table : tables) {
 				SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
