@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 //				 http://www.avcodes.co.uk/acrtypes.asp
 
 @Entity
-@ToString(of = { "id", "name" })
+@ToString(of = { "id", "IATA", "name" })
 @EqualsAndHashCode(of={"id"})
 public @Data
 class Equipment {
