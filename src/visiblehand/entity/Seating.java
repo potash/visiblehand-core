@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
-@ToString(of={"id", "airline", "seats"} )
+@ToString(of={"id", "airline", "name", "seats"} )
 @Entity
 public @Data
 class Seating {
