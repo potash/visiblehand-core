@@ -3,6 +3,8 @@ package visiblehand.entity;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 public @Data
 class Route {
-	@Id
+	@Id 
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="route_id_seq")
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")
@@ -133,5 +136,11 @@ class Route {
 		}
 
 		return burn;
+	}
+
+	// TODO: search for routes of this airline to the destination, from the origin of a similar distance
+	// and get their most common equipment
+	public String findIATA() {
+		return null;
 	}
 }
