@@ -19,6 +19,7 @@ import lombok.Data;
 import lombok.Getter;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
+import visiblehand.entity.Country;
 import visiblehand.entity.Flight;
 import visiblehand.entity.Route;
 
@@ -85,7 +86,20 @@ public @Data class AAParser extends AirParser {
 			Route route = Ebean.find(Route.class).where()
 					.eq("airline", airline).eq("source", source)
 					.eq("destination", destination).findUnique();
-			// TODO: if route doesn't exist, add it!
+			if (route == null) {
+				route = new Route();
+				route.setAirline(airline);
+				// TODO: if airline is not aa, need an AA entry with codeshare=true
+				route.setCodeshare(false);
+				route.setSource(source);
+				route.setDestination(destination);
+				route.setStops(0);
+				route.setIATA(route.findIATA());
+				// TODO route.datasource?
+				System.out.println(route.getId());
+				Ebean.save(route);
+			}
+			
 			Flight flight = new Flight();
 			flight.setDate(date);
 			flight.setRoute(route);
@@ -114,14 +128,25 @@ public @Data class AAParser extends AirParser {
 	protected Airport getAirport(String string) throws ParseException {
 		string = string.trim();
 		string = string.replaceAll("\\s+", " ");
+		
 		int index = string.lastIndexOf(' ');
+		String string1 = "", string2 = "";
+		string2 = string.substring(index + 1);
+		string1 = string.substring(0, Math.max(index, 0));
+		
 		List<Airport> airports = null;
-		airports = Ebean.find(Airport.class).where().ieq("city", string).findList();
+		// is the last word a country code?
+		if (string2.length() == 2) {
+			Country country = Ebean.find(Country.class, string2);
+			if (country != null) {
+				String city = string.substring(0, Math.max(index, 0));
+				airports = Ebean.find(Airport.class).where().ieq("city", string1).ieq("country", country.getName()).findList();
+			}
+		}
 		if (airports == null || airports.size() == 0) {
-			String string1 = "", string2 = "";
-			string2 = string.substring(index + 1);
-			string1 = string.substring(0, Math.max(index, 0));
-
+			airports = Ebean.find(Airport.class).where().ieq("city", string).findList();
+		}
+		if (airports == null || airports.size() == 0) {
 			if (string2.length() == 3) {
 				// guessing its an airport code
 				airports = Ebean.find(Airport.class).where()
@@ -145,6 +170,10 @@ public @Data class AAParser extends AirParser {
 			String sql = "select id, name, city, country, code, icao as ICAO, latitude, longitude, altitude, timezone, dst as DST "
 					+ "from airport "
 					+ "order by levenshtein(upper(replace(name, ' Intl', '')), '" + string + "') asc limit 1";
+			// TODO: if string contains intl or interntnl or international...
+			// replace it with intl and dont remove it from name? 
+			// or easier to remove it and add name like '%Intl%'?
+			
 			RawSql rawSql = RawSqlBuilder.parse(sql).create();
 			Query<Airport> query = Ebean.find(Airport.class);
 			query.setRawSql(rawSql);
