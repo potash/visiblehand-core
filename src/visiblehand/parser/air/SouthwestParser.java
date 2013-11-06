@@ -51,7 +51,7 @@ class SouthwestParser extends AirParser {
 		String content = getContent(message);
 		receipt.setFlights(getFlights(content, message.getSentDate()));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(getConfirmation(content));
+		receipt.setConfirmation(getConfirmation(message.getSubject()));
 		receipt.setDate(message.getSentDate());
 
 		return receipt;
@@ -59,6 +59,7 @@ class SouthwestParser extends AirParser {
 
 	protected static String getConfirmation(String subject)
 			throws ParseException {
+		System.out.println(subject);
 		return subject.substring(subject.length() - 6);
 	}
 
