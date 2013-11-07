@@ -1,5 +1,7 @@
 package visiblehand.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,11 +14,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 @ToString(of={"id", "airline", "name", "seats"} )
 @Entity
 public @Data
 class Seating {
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seating_id_seq")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Id
 	private int id;
 	@ManyToOne
@@ -83,5 +87,13 @@ class Seating {
 		default:
 			break;
 		}
+	}
+	
+	public static DescriptiveStatistics getSeatStatistics(List<Seating> seatings) {
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		for (Seating seating : seatings) {
+			stats.addValue(seating.getSeats());
+		}
+		return stats;
 	}
 }

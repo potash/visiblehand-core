@@ -1,5 +1,6 @@
 package visiblehand.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public @Data
 class Route {
 	@Id 
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="route_id_seq")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")
@@ -58,47 +59,56 @@ class Route {
 	private final List<Equipment> equipment = equipment();
 
 	private List<Equipment> equipment() {
-		List<Equipment> equipment = null;
-		for (String iata : getIATA().split(" ")) {
-			List<Equipment> e = Ebean.find(Equipment.class).where()
-					.eq("iata", iata).findList();
-			if (equipment == null) {
-				equipment = e;
-			} else {
-				equipment.addAll(e);
+		if (getIATA() == null) {
+			return new ArrayList<Equipment>();
+		} else {
+			List<Equipment> equipment = null;
+			for (String iata : getIATA().split(" ")) {
+				List<Equipment> e = Ebean.find(Equipment.class).where()
+						.eq("iata", iata).findList();
+				if (equipment == null) {
+					equipment = e;
+				} else {
+					equipment.addAll(e);
+				}
 			}
+			return equipment;
 		}
-		return equipment;
 	}
 
-	// get number of seats for this equipment on the given airline
+	// get seats for this equipment on the given airline
 	public Integer getSeats(Equipment equipment) {
-		List<Seating> seatings = Ebean.find(Seating.class).where()
-				.eq("equipment", equipment).eq("airline", getAirline())
-				.findList();
-		// pick the first
-		if (seatings.size() > 0) {
-			return seatings.get(0).getSeats();
-			// TODO if more than one, choose domestic or international etc.
-		}
-
-		for (Equipment e : equipment.getParents()) {
-			seatings = Ebean.find(Seating.class).where().eq("equipment", e)
-					.eq("airline", getAirline()).findList();
-			if (seatings.size() > 0) {
-				return seatings.get(0).getSeats();
-			}
-		}
-
-		return null;
+		List<Equipment> equipments = new ArrayList<Equipment>(1);
+		equipments.add(equipment);
+		return getSeats(equipments);
 	}
 
-	public Integer getSeats(FuelData fuelData) {
+	// get seats matching a list of equipment, preferring those matching this route's airline
+	public Integer getSeats(List<Equipment> equipments) {
+		// try exact matches on this airline
 		List<Seating> seatings = Ebean.find(Seating.class).where()
-				.in("equipment", fuelData.getEquipment())
+				.in("equipment", equipments)
 				.eq("airline", getAirline()).findList();
 		if (seatings.size() > 0) {
-			return seatings.get(0).getSeats();
+			return (int)Seating.getSeatStatistics(seatings).getMean();
+		}
+		// try parent matches on this airline
+		List<Equipment> parents = new ArrayList<Equipment>();
+		for (Equipment equipment : equipments) {
+			parents.addAll(equipment.getParents());
+		}
+		seatings = Ebean.find(Seating.class).where()
+				.in("equipment", parents)
+				.eq("airline", getAirline()).findList();
+		if (seatings.size() > 0) {
+			return (int)Seating.getSeatStatistics(seatings).getMean();
+		}
+		
+		// try exact matches on any airline
+		seatings = Ebean.find(Seating.class).where()
+				.in("equipment", equipments).findList();
+		if (seatings.size() > 0) {
+			return (int)Seating.getSeatStatistics(seatings).getMean();
 		}
 		return null;
 	}
@@ -118,7 +128,7 @@ class Route {
 			if (e.getAllFuelData().size() > 0) {
 				Integer eSeats = getSeats(e);
 				for (FuelData fuelData : e.getAllFuelData()) {
-					Integer seats = getSeats(fuelData);
+					Integer seats = getSeats(fuelData.getEquipment());
 					// if no seating for the aem's icao, try one for the
 					// equipment that it came from
 					if (seats == null)
