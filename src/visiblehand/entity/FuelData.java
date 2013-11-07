@@ -27,7 +27,7 @@ class FuelData {
 	cruise7, cruise8, cruise9, cruise10, cruise11, cruise12, cruise13,
 	cruise14, cruise15, cruise16;
 
-	private Double getCruise(int i) {
+	protected Double getCruise(int i) {
 		switch (i) {
 		case 0:
 			return cruise1;
@@ -67,7 +67,7 @@ class FuelData {
 		}
 	}
 
-	private Integer getDistance(int i) {
+	protected Integer getDistance(int i) {
 		switch (i) {
 		case 0:
 			return distance1;
