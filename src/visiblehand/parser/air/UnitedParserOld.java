@@ -129,17 +129,7 @@ class UnitedParserOld extends AirParser {
 							String info = infoCells.get(0).text();
 							String equipment = info
 									.split("(Equipment:\\s*|\\W*\\|)")[1];
-							List<Equipment> e = Ebean.find(Equipment.class)
-									.where().like("name", equipment + "%")
-									.findList();
-							if (e.size() > 0) {
-								if (e.size() > 1) {
-									System.out.println("UnitedParserOld - More than one equipment match: " + equipment);
-								}
-								flight.setEquipment(e.get(0));
-							} else {
-								System.out.println("UnitedParserOld - No equipment match: " + equipment);
-							}
+							flight.setEquipment(getEquipment(equipment));
 						}
 					}
 
@@ -148,5 +138,21 @@ class UnitedParserOld extends AirParser {
 			}
 		}
 		return flights;
+	}
+
+	protected static Equipment getEquipment(String equipment) {
+		System.out.println(equipment.replaceAll("(^|$|\\s)", "%"));
+		List<Equipment> e = Ebean.find(Equipment.class)
+				.where().like("name", equipment.replaceAll("(^|$|\\s)", "%"))
+				.findList();
+		if (e.size() > 0) {
+			if (e.size() > 1) {
+				System.out.println("UnitedParserOld - More than one equipment match: " + equipment);
+			}
+			return e.get(0);
+		} else {
+			System.out.println("UnitedParserOld - No equipment match: " + equipment);
+			return null;
+		}
 	}
 }
