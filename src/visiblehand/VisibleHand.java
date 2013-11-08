@@ -178,9 +178,8 @@ public class VisibleHand {
 		DescriptiveStatistics sigma = new DescriptiveStatistics(), nmpkg = new DescriptiveStatistics();
 
 		for (Flight flight : flights) {
-			System.out.println(flight.getRoute());
-			DescriptiveStatistics fuelBurn = flight.getRoute()
-					.getFuelBurnStatistics();
+			System.out.println(flight);
+			DescriptiveStatistics fuelBurn = flight.getFuelBurnStatistics();
 			System.out.println(fuelBurn);
 			fuel += fuelBurn.getMean();
 			nm += flight.getRoute().getDistance();

@@ -123,11 +123,20 @@ class Route {
 
 	private DescriptiveStatistics fuelBurn() {
 		DescriptiveStatistics burn = new DescriptiveStatistics();
-		for (Equipment e : getEquipment()) {
+		for (Equipment equipment : getEquipment()) {
+			DescriptiveStatistics equipmentBurn = getFuelBurnStatistics(equipment);
+			if (equipmentBurn.getValues().length > 0) {
+					burn.addValue(equipmentBurn.getMean());
+			}
+		}
+		return burn;
+	}
+	
+	public DescriptiveStatistics getFuelBurnStatistics(Equipment equipment) {
 			DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
-			if (e.getAllFuelData().size() > 0) {
-				Integer eSeats = getSeats(e);
-				for (FuelData fuelData : e.getAllFuelData()) {
+			if (equipment.getAllFuelData().size() > 0) {
+				Integer eSeats = getSeats(equipment);
+				for (FuelData fuelData : equipment.getAllFuelData()) {
 					Integer seats = getSeats(fuelData.getEquipment());
 					// if no seating for the aem's icao, try one for the
 					// equipment that it came from
@@ -139,13 +148,8 @@ class Route {
 								.getFuelBurn(getDistance()) / seats);
 					}
 				}
-				if (equipmentBurn.getValues().length > 0) {
-					burn.addValue(equipmentBurn.getMean());
-				}
 			}
-		}
-
-		return burn;
+		return equipmentBurn;
 	}
 
 	// TODO: search for routes of this airline to the destination, from the origin of a similar distance

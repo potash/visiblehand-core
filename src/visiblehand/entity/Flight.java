@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.Data;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import visiblehand.parser.MessageParserTest;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -34,4 +37,15 @@ public @Data class Flight {
 	@JoinColumn(name="equipment_id")
 	@JsonView(MessageParserTest.TestView.class)
 	private Equipment equipment;
+	
+	public DescriptiveStatistics getFuelBurnStatistics() {
+		DescriptiveStatistics burn = null;
+		if (getEquipment() != null) {
+			burn = getRoute().getFuelBurnStatistics(getEquipment());
+		}
+		if (burn == null || burn.getValues().length == 0) {
+			burn = getRoute().getFuelBurnStatistics();
+		}
+		return burn;
+	}
 }
