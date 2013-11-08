@@ -40,14 +40,16 @@ import com.avaje.ebean.config.ServerConfig;
 
 public class VisibleHand {
 
-	// density of A-1 jet fuel (wikipedia)
-	public static final double KG_FUEL_PER_LITER = .804;
+	// A-1 jet fuel properties (wikipedia)
+	public static final double KG_FUEL_PER_LITER = .804,
+			MEGAJOULE_PER_LITER_FUEL = 34.7;
 	// emission factor of jet fuel
 	// (http://www.eia.gov/oiaf/1605/coefficients.html)
 	public static final double KG_CO2_PER_GALLON_FUEL = 9.57;
 	// unit conversions
 	public static final double MILES_PER_NM = 1.15078,
-			LITERS_PER_GALLON = 3.78541;
+			LITERS_PER_GALLON = 3.78541,
+			BTU_PER_MEGAJOULE = 947.81712;
 
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
