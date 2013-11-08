@@ -6,13 +6,13 @@ import java.util.List;
 import org.junit.Test;
 
 import visiblehand.VisibleHand;
-import visiblehand.VisibleHandTest;
+import visiblehand.EbeanTest;
 import visiblehand.parser.air.AirParser;
 
 import com.avaje.ebean.Ebean;
 
 
-public class RouteTest extends VisibleHandTest {
+public class RouteTest extends EbeanTest {
 
 	@Test
 	public void test() {

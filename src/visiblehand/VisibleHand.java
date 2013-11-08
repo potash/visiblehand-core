@@ -35,7 +35,6 @@ import visiblehand.parser.utility.UtilityParser;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.EbeanServerFactory;
-import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlUpdate;
 import com.avaje.ebean.config.ServerConfig;
 
@@ -173,6 +172,13 @@ public class VisibleHand {
 			}
 		}
 
+		printStatistics(flights);
+		SqlUpdate write = Ebean
+				.createSqlUpdate("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
+		Ebean.execute(write);
+	}
+
+	public static void printStatistics(List<Flight> flights) {
 		double fuel = 0;
 		double nm = 0;
 		DescriptiveStatistics sigma = new DescriptiveStatistics(), nmpkg = new DescriptiveStatistics();
@@ -181,13 +187,17 @@ public class VisibleHand {
 			System.out.println(flight);
 			DescriptiveStatistics fuelBurn = flight.getFuelBurnStatistics();
 			System.out.println(fuelBurn);
-			fuel += fuelBurn.getMean();
-			nm += flight.getRoute().getDistance();
+			if (fuelBurn.getValues().length > 0) {
+				fuel += fuelBurn.getMean();
+				nm += flight.getRoute().getDistance();
+				sigma.addValue(fuelBurn.getStandardDeviation() / fuelBurn.getMean());
+				nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
+			}
 			Ebean.save(flight);
-			sigma.addValue(fuelBurn.getStandardDeviation() / fuelBurn.getMean());
-			nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
+			
 		}
 		System.out.println("Fuel burned: " + fuel + " kg");
+		System.out.println("Average std dev: " + (sigma.getMean()*100) + "%");
 		System.out.println("Distance traveled: " + nm + " nm");
 
 		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM
@@ -196,9 +206,5 @@ public class VisibleHand {
 		System.out.println("Carbon dioxide emissions: " + fuel
 				/ KG_FUEL_PER_LITER / LITERS_PER_GALLON
 				* KG_CO2_PER_GALLON_FUEL + " kg");
-
-		SqlQuery writeQuery = Ebean
-				.createSqlQuery("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
-		writeQuery.findList();
 	}
 }

@@ -96,7 +96,6 @@ public @Data class AAParser extends AirParser {
 				route.setStops(0);
 				route.setIATA(route.findIATA());
 				// TODO route.datasource?
-				System.out.println(route.getId());
 				Ebean.save(route);
 			}
 			

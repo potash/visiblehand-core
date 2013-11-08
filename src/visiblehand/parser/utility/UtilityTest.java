@@ -2,12 +2,12 @@ package visiblehand.parser.utility;
 
 import org.junit.Test;
 
-import visiblehand.VisibleHandTest;
+import visiblehand.EbeanTest;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlQuery;
 
-public class UtilityTest extends VisibleHandTest {
+public class UtilityTest extends EbeanTest {
 
 	@Test
 	public void test() {

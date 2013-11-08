@@ -17,7 +17,7 @@ import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 import lombok.Getter;
-import visiblehand.VisibleHandTest;
+import visiblehand.EbeanTest;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-public class MessageParserTest extends VisibleHandTest {
+public class MessageParserTest extends EbeanTest {
 	// Jackson view for serializing test results
 	public static class TestView {
 	}
@@ -63,7 +63,7 @@ public class MessageParserTest extends VisibleHandTest {
 
 	// returns alphabetical-order list of test messages
 	// corresponding to the given parser
-	protected static Message[] getTestMessages(MessageParser parser)
+	public static Message[] getTestMessages(MessageParser parser)
 			throws FileNotFoundException, MessagingException {
 		File dir = new File(getTestDirectory(parser));
 		File[] files = dir.listFiles(msgFileFilter);
@@ -77,7 +77,7 @@ public class MessageParserTest extends VisibleHandTest {
 		return messages;
 	}
 
-	protected void testParser(MessageParser parser) throws ParseException,
+	public void testParser(MessageParser parser) throws ParseException,
 			MessagingException, IOException {
 		Message[] messages = getTestMessages(parser);
 		Receipt[] receipts = getTestReceipts(parser);
@@ -92,7 +92,7 @@ public class MessageParserTest extends VisibleHandTest {
 
 	// return (alphabetical-order) array of serialized AirReceipts
 	// corresponding to expected parse results
-	protected Receipt[] getTestReceipts(MessageParser parser)
+	public Receipt[] getTestReceipts(MessageParser parser)
 			throws JsonParseException, JsonMappingException, IOException {
 		File dir = new File(getTestDirectory(parser));
 		File[] files = dir.listFiles(jsonFileFilter);

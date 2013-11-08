@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import visiblehand.VisibleHandTest;
+import visiblehand.EbeanTest;
 
 import com.avaje.ebean.Ebean;
 
-public class FuelDataTest extends VisibleHandTest {
+public class FuelDataTest extends EbeanTest {
 
 	@Test
 	public void testCruiseBurnAscending() {

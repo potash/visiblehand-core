@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import visiblehand.VisibleHandTest;
+import visiblehand.EbeanTest;
 
 import com.avaje.ebean.Ebean;
 
-public class EquipmentTest extends VisibleHandTest {
+public class EquipmentTest extends EbeanTest {
 
 	// How many equipment have fuel data?
 	@Test

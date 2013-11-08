@@ -132,24 +132,36 @@ class Route {
 		return burn;
 	}
 	
-	public DescriptiveStatistics getFuelBurnStatistics(Equipment equipment) {
-			DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
-			if (equipment.getAllFuelData().size() > 0) {
-				Integer eSeats = getSeats(equipment);
-				for (FuelData fuelData : equipment.getAllFuelData()) {
-					Integer seats = getSeats(fuelData.getEquipment());
-					// if no seating for the aem's icao, try one for the
-					// equipment that it came from
-					if (seats == null)
-						seats = eSeats;
-					// TODO if still null get average seats from other airlines
-					if (seats != null) {
-						equipmentBurn.addValue(fuelData
-								.getFuelBurn(getDistance()) / seats);
-					}
+	// get fuel burn statistics. use all flag to allow equipment's relatives fuel data
+	public DescriptiveStatistics getFuelBurnStatistics(Equipment equipment, boolean all) {
+		DescriptiveStatistics equipmentBurn = new DescriptiveStatistics();
+		List<FuelData> fuelDatas = all ? equipment.getAllFuelData() : equipment.getFuelData();
+		if (fuelDatas.size() > 0) {
+			Integer eSeats = getSeats(equipment);
+			for (FuelData fuelData : fuelDatas) {
+				Integer seats = getSeats(fuelData.getEquipment());
+				// if no seating for the aem's icao, try one for the
+				// equipment that it came from
+				if (seats == null) {
+					seats = eSeats;
+				}
+				// TODO if still null get average seats from other airlines
+				if (seats != null) {
+					equipmentBurn.addValue(fuelData
+							.getFuelBurn(getDistance()) / seats);
 				}
 			}
+		}
 		return equipmentBurn;
+	}
+	
+	// get "best" fuel burn statistics, ie use relatives only if no exact matches
+	public DescriptiveStatistics getFuelBurnStatistics(Equipment equipment) {
+		DescriptiveStatistics burn = getFuelBurnStatistics(equipment, false);
+		if (burn.getValues().length == 0) {
+			burn = getFuelBurnStatistics(equipment, true);
+		}
+		return burn;
 	}
 
 	// TODO: search for routes of this airline to the destination, from the origin of a similar distance
