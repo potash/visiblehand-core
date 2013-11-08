@@ -39,30 +39,44 @@ public @Data class AAParser extends AirParser {
 
 	@Getter(lazy=true)
 	private final Airline airline = Ebean.find(Airline.class, 24);
+	
+	private static final String months = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 		AirReceipt receipt = new AirReceipt();
-		receipt.setFlights(getFlights(getContent(message),
-				message.getSentDate()));
+		String content = getContent(message);
+		Date date = getIssueDate(content);
+		receipt.setFlights(getFlights(content,
+				date));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(getConfirmation(message.getSubject()));
-		receipt.setDate(message.getSentDate());
+		receipt.setConfirmation(getConfirmation(content));
+		receipt.setDate(date);
 		
 		return receipt;
 	}
 
-	protected static String getConfirmation(String subject) {
-		return subject.substring(22, 28);
+	protected static String getConfirmation(String content) {
+		Pattern pattern = Pattern.compile("E-TICKET CONFIRMATION/RECORD LOCATOR - (?<confirmation>[A-Z]{6})");
+		Matcher matcher = pattern.matcher(content);
+		matcher.find();
+		return matcher.group("confirmation");
+	}
+	
+	protected static Date getIssueDate(String content) throws ParseException {
+		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+months+"\\d{2})");
+		Matcher matcher = pattern.matcher(content);
+		matcher.find();
+		DateFormat format = new SimpleDateFormat("ddMMMyy");
+		return format.parse(matcher.group("issue"));
 	}
 
 	protected List<Flight> getFlights(String content, Date messageDate)
 			throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
-
+		
 		Pattern pattern = Pattern
-				.compile("(?<date>(?<day>\\d{2})(?<month>JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)).*\\b"
-						//+ "\\s*LV  (?<source>(?:\\w+\\s?)+\\w).*\\b"
+				.compile("(?<date>(?<day>\\d{2})(?<month>" + months + ")).*\\b"
 						+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
 						+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
 						+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");
