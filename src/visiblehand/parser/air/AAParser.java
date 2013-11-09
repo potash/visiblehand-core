@@ -40,8 +40,6 @@ public @Data class AAParser extends AirParser {
 	@Getter(lazy=true)
 	private final Airline airline = Ebean.find(Airline.class, 24);
 	
-	private static final String months = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
-
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 		AirReceipt receipt = new AirReceipt();
@@ -64,7 +62,7 @@ public @Data class AAParser extends AirParser {
 	}
 	
 	protected static Date getIssueDate(String content) throws ParseException {
-		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+months+"\\d{2})");
+		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+monthsRegex+"\\d{2})");
 		Matcher matcher = pattern.matcher(content);
 		matcher.find();
 		DateFormat format = new SimpleDateFormat("ddMMMyy");
@@ -76,7 +74,7 @@ public @Data class AAParser extends AirParser {
 		List<Flight> flights = new ArrayList<Flight>();
 		
 		Pattern pattern = Pattern
-				.compile("(?<date>(?<day>\\d{2})(?<month>" + months + ")).*\\b"
+				.compile("(?<date>(?<day>\\d{2})(?<month>" + monthsRegex + ")).*\\b"
 						+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
 						+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
 						+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");

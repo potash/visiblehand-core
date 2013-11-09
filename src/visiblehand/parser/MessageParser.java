@@ -26,6 +26,9 @@ public abstract class MessageParser {
 	
 	public abstract Class getReceiptClass();
 	
+	protected static final String monthsRegex = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
+	protected static final String daysRegex = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
+
 	@Getter
 	private boolean active = false;	// inactive by default
 	
