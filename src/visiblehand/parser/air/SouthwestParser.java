@@ -29,9 +29,6 @@ import visiblehand.entity.Route;
 
 import com.avaje.ebean.Ebean;
 
-// United Airlines email receipt parser for older receipts
-// subjects of the form "Your United flight confirmation..."
-
 public @Data
 class SouthwestParser extends AirParser {
 	private final String fromString = "SouthwestAirlines@luv.southwest.com";
