@@ -1,7 +1,9 @@
 package visiblehand.parser.air;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,32 +19,32 @@ import com.avaje.ebean.Ebean;
 
 // United Airlines email receipt parser
 
-public @Data class JetBlueParser extends AirParser {
-	private final  String fromString = "reservations@jetblue.com";
-	private final String[] subjectStrings = {"Itinerary for your upcoming trip"};
+public @Data class UnitedParser2 extends AirParser {
+	private final String fromString = "unitedairlines@united.com";
+	private final String[] subjectStrings = {"eTicket Itinerary and Receipt for Confirmation"};
 	private final String bodyString = "";
-	
+
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 3029);
+	private final Airline airline = Ebean.find(Airline.class, 5209);
+
+	private DateFormat dateFormat = new SimpleDateFormat(
+			"h:mm a EEE, MMM d, yyyy");
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
 		AirReceipt receipt = new AirReceipt();
-		String content = getContent(message);
 		receipt.setFlights(getFlights(getContent(message)));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(getConfirmation(content));
+		receipt.setConfirmation(getConfirmation(message.getSubject()));
 		receipt.setDate(message.getSentDate());
-	
+		
 		return receipt;
 	}
 
-	protected static String getConfirmation(String content) {
-		// TODO Auto-generated method stub
-		return null;
+	protected static String getConfirmation(String subject) {
+		return subject.substring(48);
 	}
-
 	protected List<Flight> getFlights(String content) throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
 		// TODO implement this!

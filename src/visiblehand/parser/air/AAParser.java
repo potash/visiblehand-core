@@ -32,7 +32,7 @@ import com.avaje.ebean.RawSqlBuilder;
 
 public @Data class AAParser extends AirParser {
 	private final String fromString = "notify@aa.globalnotifications.com";
-	private final String subjectString = "E-Ticket Confirmation-";
+	private final String[] subjectStrings = {"E-Ticket Confirmation-"};
 	private final String bodyString = "";
 	
 	private boolean active = true;

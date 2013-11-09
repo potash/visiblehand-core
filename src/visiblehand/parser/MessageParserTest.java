@@ -1,6 +1,7 @@
 package visiblehand.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,6 +74,7 @@ public class MessageParserTest extends EbeanTest {
 		for (int i = 0; i < files.length; i++) {
 			messages[i] = new MimeMessage(session,
 					new FileInputStream(files[i]));
+			assertTrue(files[i].toString() + " does not match search term.", parser.getSearchTerm().match(messages[i]));
 		}
 		return messages;
 	}

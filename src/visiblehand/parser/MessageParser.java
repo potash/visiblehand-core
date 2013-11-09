@@ -17,9 +17,11 @@ import javax.mail.search.SubjectTerm;
 
 import lombok.Getter;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class MessageParser {
 	public abstract String getFromString();
-	public abstract String getSubjectString();
+	public abstract String[] getSubjectStrings();
 	public abstract String getBodyString();
 	
 	public abstract Class getReceiptClass();
@@ -34,8 +36,12 @@ public abstract class MessageParser {
 		SearchTerm searchTerm = new OrTerm(
 				new FromStringTerm(getFromString()),
 				new HeaderTerm("reply-to", getFromString()));
-		if (!(getSubjectString() == null || getSubjectString().isEmpty())) {
-			searchTerm = new AndTerm(searchTerm, new SubjectTerm(getSubjectString()));
+		if (!(getSubjectStrings() == null || getSubjectStrings().length == 0)) {
+			SearchTerm subjectTerm = new SubjectTerm(getSubjectStrings()[0]);
+			for (int i = 1; i < getSubjectStrings().length; i++) {
+				subjectTerm = new OrTerm(subjectTerm, new SubjectTerm(getSubjectStrings()[i]));
+			}
+			searchTerm = new AndTerm(searchTerm, subjectTerm);
 		}
 		if (!(getBodyString() == null || getBodyString().isEmpty())) {
 			searchTerm = new AndTerm(searchTerm, new BodyTerm(getBodyString()));
@@ -58,6 +64,6 @@ public abstract class MessageParser {
 	}
 	
 	public String getSearchString() {
-		return "(from:" + getFromString() + " and subject:\"" + getSubjectString() + "\")";
+		return "(from:" + getFromString() + " and (subject:\"" + StringUtils.join(getSubjectStrings(), "subject:\"") + "\")";
 	}
 }

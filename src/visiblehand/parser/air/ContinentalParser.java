@@ -19,8 +19,8 @@ import com.avaje.ebean.Ebean;
 
 public @Data class ContinentalParser extends AirParser {
 	private final  String fromString = "continentalairlines@continental.com";
-	private final String subjectString = "eTicket Itinerary and Receipt";
-	private final String bodyString = "";
+	private final String[] subjectStrings = {"eTicket Itinerary and Receipt"};
+	private final String bodyString = null;
 	
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 1881);

@@ -41,14 +41,14 @@ public class AirParserTest extends MessageParserTest {
 	}
 
 	@Test
-	public void testUnitedParser() throws ParseException, MessagingException,
+	public void testUnitedParser2() throws ParseException, MessagingException,
 			IOException {
-		testParser(new UnitedParser());
+		testParser(new UnitedParser2());
 	}
 
 	@Test
-	public void testUnitedParserOld() throws ParseException,
+	public void testUnitedParser() throws ParseException,
 			MessagingException, IOException {
-		testParser(new UnitedParserOld());
+		testParser(new UnitedParser());
 	}
 }

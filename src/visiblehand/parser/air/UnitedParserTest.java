@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import visiblehand.EbeanTest;
 
-public class UnitedParserOldTest extends EbeanTest {
+public class UnitedParserTest extends EbeanTest {
 
 	@Test
 	public void testGetEquipment() {
-		System.out.println(UnitedParserOld.getEquipment("Embraer 120"));
+		System.out.println(UnitedParser.getEquipment("Embraer 120"));
 	}
 
 }

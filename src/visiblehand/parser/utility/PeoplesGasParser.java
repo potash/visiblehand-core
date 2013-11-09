@@ -15,7 +15,7 @@ import com.sun.mail.imap.Utility;
 
 public @Data class PeoplesGasParser extends UtilityParser {
 	private final String fromString = "CustomerService@peoplesgas.ebillservice.net";
-	private final String subjectString = "Your latest Peoples Gas e-Bill is now available";
+	private final String[] subjectStrings = {"Your latest Peoples Gas e-Bill is now available"};
 	private final String  bodyString = "";
 	
 	@Getter(lazy = true)

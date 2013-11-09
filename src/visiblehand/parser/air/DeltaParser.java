@@ -21,7 +21,7 @@ import com.avaje.ebean.Ebean;
 
 public @Data class DeltaParser extends AirParser {
 	private final String fromString = "DeltaAirLines@e.delta.com";
-	private final String subjectString = "";
+	private final String[] subjectStrings = null;
 	private final String  bodyString = "Delta Reservation Receipt";
 	
 	@Getter(lazy = true)

@@ -27,7 +27,7 @@ import visiblehand.parser.air.DeltaParser;
 import visiblehand.parser.air.JetBlueParser;
 import visiblehand.parser.air.SouthwestParser;
 import visiblehand.parser.air.UnitedParser;
-import visiblehand.parser.air.UnitedParserOld;
+import visiblehand.parser.air.UnitedParser2;
 import visiblehand.parser.utility.ComEdParser;
 import visiblehand.parser.utility.PeoplesGasParser;
 import visiblehand.parser.utility.UtilityParser;
@@ -52,7 +52,7 @@ public class VisibleHand {
 			BTU_PER_MEGAJOULE = 947.81712;
 
 	public static final AirParser[] airParsers = { new AAParser(),
-			new UnitedParserOld(), new SouthwestParser(), new UnitedParser(),
+			new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
 	
 	public static final UtilityParser[] utilityParsers = { new ComEdParser(), new PeoplesGasParser() };

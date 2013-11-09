@@ -15,7 +15,7 @@ import com.sun.mail.imap.Utility;
 
 public @Data class ComEdParser extends UtilityParser {
 	private final String fromString = "mycheckfree@customercenter.net";
-	private final String subjectString = "You have a new bill from ComEd - Commonwealth Edison.";
+	private final String[] subjectStrings = {"You have a new bill from ComEd - Commonwealth Edison."};
 	private final String  bodyString = "";
 	
 	@Getter(lazy = true)

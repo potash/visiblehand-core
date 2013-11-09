@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ import com.avaje.ebean.Ebean;
 public @Data
 class SouthwestParser extends AirParser {
 	private final String fromString = "SouthwestAirlines@luv.southwest.com";
-	private final String subjectString = "Southwest Airlines Confirmation";
+	private final String[] subjectStrings = {"Southwest Airlines Confirmation", "Flight reservation"};
 	private final String bodyString = "";
 
 	@Getter(lazy = true)
@@ -42,34 +43,49 @@ class SouthwestParser extends AirParser {
 	
 	private boolean active = true;
 
-	private final DateFormat dateFormat = new SimpleDateFormat("EEE MMM d");
+	private static final DateFormat flightDateFormat = new SimpleDateFormat("EEE MMM d");
+	private static final DateFormat confirmationDateFormat = new SimpleDateFormat("M/d/yyyy");
+	{
+		flightDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		confirmationDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+	}
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
 		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
-		receipt.setFlights(getFlights(content, message.getSentDate()));
+		content = content.replaceAll("<!-- Start Flight Info -->",
+				"<flightInfo></flightInfo>");
+		Document doc = Jsoup.parse(content);
+		receipt.setFlights(getFlights(doc, message.getSentDate()));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(getConfirmation(message.getSubject()));
-		receipt.setDate(message.getSentDate());
+		receipt.setConfirmation(getConfirmation(doc));
+		receipt.setDate(getConfirmationDate(doc));
 
 		return receipt;
 	}
 
-	protected static String getConfirmation(String subject)
-			throws ParseException {
-		System.out.println(subject);
-		return subject.substring(subject.length() - 6);
+	private Date getConfirmationDate(Document doc) throws ParseException {
+		Element e =  doc.select(":containsOwn(Confirmation Date)").first();
+		Matcher matcher = Pattern.compile("\\s*Confirmation Date:\\s*(?<date>\\d{2}/\\d{1,2}/\\d{4})\\s*")
+				.matcher(e.text());
+		matcher.find();
+		return confirmationDateFormat.parse(matcher.group("date"));
 	}
 
-	protected List<Flight> getFlights(String content, Date sentDate)
+	protected static String getConfirmation(Document doc)
+			throws ParseException {
+		Element e =  doc.select(":containsOwn(AIR Confirmation)").first();
+		Matcher matcher = Pattern.compile("\\s*AIR Confirmation:\\s*(?<confirmation>\\w*)\\s*")
+				.matcher(e.text());
+		matcher.find();
+		return matcher.group("confirmation");
+	}
+
+	protected List<Flight> getFlights(Document doc, Date sentDate)
 			throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
-
-		content = content.replaceAll("<!-- Start Flight Info -->",
-				"<flightInfo></flightInfo>");
-		Document doc = Jsoup.parse(content);
 		Elements flightTables = doc.select("flightInfo + table");
 
 		// store last date, for connections
