@@ -3,12 +3,9 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +33,9 @@ public @Data class AAParser extends AirParser {
 	private final String bodyString = "";
 	
 	private boolean active = true;
-
+	
+	private static DateFormat dateFormat = getGMTSimpleDateFormat("ddMMMhh:mm aa"),
+							  issueFormat = getGMTSimpleDateFormat("ddMMMyy");
 	@Getter(lazy=true)
 	private final Airline airline = Ebean.find(Airline.class, 24);
 	
@@ -65,8 +64,8 @@ public @Data class AAParser extends AirParser {
 		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+monthsRegex+"\\d{2})");
 		Matcher matcher = pattern.matcher(content);
 		matcher.find();
-		DateFormat format = new SimpleDateFormat("ddMMMyy");
-		return format.parse(matcher.group("issue"));
+		
+		return issueFormat.parse(matcher.group("issue"));
 	}
 
 	protected List<Flight> getFlights(String content, Date messageDate)
@@ -123,17 +122,8 @@ public @Data class AAParser extends AirParser {
 	}
 
 	protected static Date getDate(Date sentDate, String dateString, String timeString) throws ParseException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(sentDate);
-		int sentYear = cal.get(Calendar.YEAR);
-		
-		DateFormat format = new SimpleDateFormat("ddMMMyyyyhh:mm aa");
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-		Date date = format.parse(dateString + sentYear + timeString);
-		if (date.compareTo(sentDate) < 0) {
-			date = format.parse(dateString + (sentYear + 1) + timeString);
-		}
-		return date;
+		Date date = dateFormat.parse(dateString + timeString);
+		return setYear(date, sentDate);
 	}
 
 	protected Airport getAirport(String string) throws ParseException {

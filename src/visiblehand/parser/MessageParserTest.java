@@ -87,8 +87,8 @@ public class MessageParserTest extends EbeanTest {
 		for (int i = 0; i < messages.length; i++) {
 			Receipt receipt = parser.parse(messages[i]);
 			System.out.println(writer.writeValueAsString(receipt));
-			assertEquals(writer.writeValueAsString(receipt),
-					writer.writeValueAsString(receipts[i]));
+			assertEquals(writer.writeValueAsString(receipts[i]),
+					writer.writeValueAsString(receipt));
 		}
 	}
 

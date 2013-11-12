@@ -1,7 +1,12 @@
 package visiblehand.parser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -68,5 +73,27 @@ public abstract class MessageParser {
 	
 	public String getSearchString() {
 		return "(from:" + getFromString() + " and (subject:\"" + StringUtils.join(getSubjectStrings(), "subject:\"") + "\")";
+	}
+	
+	protected static DateFormat getGMTSimpleDateFormat(String format) {
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return dateFormat;
+	}
+	
+	// set year of date0 to minimum such that date0 > date1
+	protected static Date setYear(Date date0, Date date1) {
+		Calendar calDate = Calendar.getInstance();
+		calDate.setTime(date1);
+		int year = calDate.get(Calendar.YEAR);
+	
+		Calendar calDay = Calendar.getInstance();
+		calDay.setTime(date0);
+		calDay.set(Calendar.YEAR, year);
+		
+		if (calDay.compareTo(calDate) < 0) {
+			calDay.set(Calendar.YEAR, year+1);
+		}
+		return calDay.getTime();
 	}
 }

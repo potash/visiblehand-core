@@ -3,7 +3,6 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,8 +40,7 @@ class UnitedParser extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 5209);
 
-	private static final DateFormat dateFormat = new SimpleDateFormat(
-			"h:mm a EEE, MMM d, yyyy");
+	private static final DateFormat dateFormat = getGMTSimpleDateFormat("h:mm a EEE, MMM d, yyyy");
 	
 	private boolean active = true;
 
@@ -62,7 +60,7 @@ class UnitedParser extends AirParser {
 	protected static String getConfirmation(String content)
 			throws ParseException {
 		Matcher matcher = Pattern.compile(
-				"(?s)Confirmation (?:#|number)[^\\w]*(\\w{6})")
+				"Confirmation (?:#|number)[^\\w]*(\\w{6})")
 				.matcher(content);
 		if (matcher.find()) {
 			return matcher.group(1);
@@ -82,7 +80,8 @@ class UnitedParser extends AirParser {
 		}
 
 		Elements flightRows = flightTable.get(0).select(
-				"tr:has(td:contains(Depart))");
+				"tr:has(td:containsOwn(Flight) ~ td:containsOwn(Depart) ~ td:containsOwn(Arrive) "
+				+ "~ td:containsOwn(Cabin) ~ td:containsOwn(Seats))");
 		for (Element flightRow : flightRows) {
 
 			while ((flightRow = flightRow.nextElementSibling()) != null) {

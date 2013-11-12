@@ -3,11 +3,9 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +38,8 @@ class SouthwestParser extends AirParser {
 	
 	private boolean active = true;
 
-	private static final DateFormat flightDateFormat = new SimpleDateFormat("EEE MMM d");
-	private static final DateFormat confirmationDateFormat = new SimpleDateFormat("M/d/yyyy");
-	{
-		flightDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-		confirmationDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-	}
+	private static final DateFormat flightDateFormat = getGMTSimpleDateFormat("EEE MMM d");
+	private static final DateFormat confirmationDateFormat = getGMTSimpleDateFormat("M/d/yyyy");
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
