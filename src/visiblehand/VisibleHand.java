@@ -51,6 +51,8 @@ public class VisibleHand {
 			LITERS_PER_GALLON = 3.78541,
 			BTU_PER_MEGAJOULE = 947.81712;
 
+	private static boolean ebeanInitialized = false;
+	
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
@@ -121,27 +123,30 @@ public class VisibleHand {
 
 	// loads data from csv into in memory database
 	public static void initEbean() throws IOException {
-		Properties props = getProperties("ebean.properties");
-		String db = props.getProperty("datasource.default");
-		if (db.equals("h2")) {
-			ServerConfig c = new ServerConfig();
-			c.setName("h2");
-			c.loadFromProperties();
-			c.setDdlGenerate(true);
-			c.setDdlRun(true);
-			c.setDefaultServer(true);
-			EbeanServer h2 = EbeanServerFactory.create(c);
-			SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
-			lev.execute();
-			String[] tables = new String[] { "airline", "airport", "equipment",
-					"equipment_aggregate", "fuel_data", "route", "seating", "country" };
-
-			for (String table : tables) {
-				SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
-						+ " (select * from csvread('data/csv/" + table
-						+ ".csv'))");
-				h2.execute(update);
+		if (!ebeanInitialized) {
+			Properties props = getProperties("ebean.properties");
+			String db = props.getProperty("datasource.default");
+			if (db.equals("h2")) {
+				ServerConfig c = new ServerConfig();
+				c.setName("h2");
+				c.loadFromProperties();
+				c.setDdlGenerate(true);
+				c.setDdlRun(true);
+				c.setDefaultServer(true);
+				EbeanServer h2 = EbeanServerFactory.create(c);
+				SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
+				lev.execute();
+				String[] tables = new String[] { "airline", "airport", "equipment",
+						"equipment_aggregate", "fuel_data", "route", "seating", "country" };
+	
+				for (String table : tables) {
+					SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
+							+ " (select * from csvread('data/csv/" + table
+							+ ".csv'))");
+					h2.execute(update);
+				}
 			}
+			ebeanInitialized = true;
 		}
 	}
 	
