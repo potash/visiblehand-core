@@ -37,6 +37,7 @@ class JetBlueParser extends AirParser {
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class, 3029);
+	private boolean active = true;
 	
 	private static final DateFormat[] dateFormats = {
 		getGMTSimpleDateFormat("EEE, MMM d h:mma"),
