@@ -65,7 +65,7 @@ public class AAParserTest extends MessageParserTest {
 		assertEquals(airport.getId(), 1218);
 		
 		airport = parser.getAirport("SAN JUAN       PR");
-		//assertEquals(airport.getId(), 2890);
+		assertEquals(airport.getId(), 2890);
 		
 		airport = parser.getAirport("SARASOTA/BRADENTN");
 		assertEquals(airport.getId(), 4067);
@@ -89,7 +89,7 @@ public class AAParserTest extends MessageParserTest {
 		assertEquals(airport.getId(), 3448);
 		
 		airport = parser.getAirport("MIAMI INTERNTNL");
-		//assertEquals(airport.getId(), 3576);
+		assertEquals(airport.getId(), 3576);
 		
 		airport = parser.getAirport("SANTA ANA");
 		assertEquals(airport.getId(), 3867);

@@ -96,4 +96,15 @@ public abstract class MessageParser {
 		}
 		return calDay.getTime();
 	}
+	
+	public static String[] splitLastInstanceOf(String string, String str) {
+		int index = string.lastIndexOf(str);
+		if (index == -1) {
+			String s = new String(string);
+			return new String[] {s, ""};
+		} else {
+			return new String[] {string.substring(0,index), 
+					string.substring(index+str.length())};
+		}
+	}
 }
