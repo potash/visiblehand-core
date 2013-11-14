@@ -25,7 +25,7 @@ public @Data class DeltaParser extends AirParser {
 	private final String  bodyString = "Delta Reservation Receipt";
 	
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 5209);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Delta Air Lines").findUnique();
 
 	private DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");

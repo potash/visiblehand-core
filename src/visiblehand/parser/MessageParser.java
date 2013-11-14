@@ -31,9 +31,10 @@ public abstract class MessageParser {
 	
 	public abstract Class getReceiptClass();
 	
-	protected static final String monthsRegex = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
-	protected static final String daysRegex = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
-
+	protected static final String MONTHS_REGEX = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
+	protected static final String DAYS_REGEX = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
+	protected static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+	
 	@Getter
 	private boolean active = false;	// inactive by default
 	
@@ -77,24 +78,24 @@ public abstract class MessageParser {
 	
 	protected static DateFormat getGMTSimpleDateFormat(String format) {
 		DateFormat dateFormat = new SimpleDateFormat(format);
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		dateFormat.setTimeZone(GMT);
 		return dateFormat;
 	}
 	
-	// set year of date0 to minimum such that date0 > date1
-	protected static Date setYear(Date date0, Date date1) {
-		Calendar calDate = Calendar.getInstance();
-		calDate.setTime(date1);
+	// set year of time to minimum such that it is later than date
+	protected static Date getNextDate(String timeOfYearFormat, String timeOfYear, Date date) throws ParseException {
+		Calendar calDate = Calendar.getInstance(GMT);
+		calDate.setTime(date);
 		int year = calDate.get(Calendar.YEAR);
-	
-		Calendar calDay = Calendar.getInstance();
-		calDay.setTime(date0);
-		calDay.set(Calendar.YEAR, year);
 		
-		if (calDay.compareTo(calDate) < 0) {
-			calDay.set(Calendar.YEAR, year+1);
+		DateFormat format = getGMTSimpleDateFormat("yyyy" + timeOfYearFormat);
+		Date d = format.parse(year + timeOfYear);
+		
+		if (d.compareTo(date) < 0) {
+			d = format.parse((year+1) + timeOfYear);
 		}
-		return calDay.getTime();
+		
+		return d;
 	}
 	
 	public static String[] splitLastInstanceOf(String string, String str) {

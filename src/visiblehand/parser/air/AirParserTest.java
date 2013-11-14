@@ -1,5 +1,8 @@
 package visiblehand.parser.air;
 
+import static org.junit.Assert.assertNotEquals;
+import static visiblehand.parser.MessageParserTest.testParser;
+
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -7,9 +10,16 @@ import javax.mail.MessagingException;
 
 import org.junit.Test;
 
-import visiblehand.parser.MessageParserTest;
+import visiblehand.EbeanTest;
+import visiblehand.VisibleHand;
 
-public class AirParserTest extends MessageParserTest {
+public class AirParserTest extends EbeanTest {
+	@Test
+	public void testGetAirlines() {
+		for (AirParser parser : VisibleHand.airParsers) {
+			assertNotEquals(parser.getAirline(), null);
+		}
+	}
 	@Test
 	public void testAAParser() throws ParseException, MessagingException,
 			IOException {

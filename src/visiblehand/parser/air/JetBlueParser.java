@@ -1,7 +1,6 @@
 package visiblehand.parser.air;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,12 +35,12 @@ class JetBlueParser extends AirParser {
 	private final String bodyString = "";
 
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 3029);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "JetBlue Airways").findUnique();
+	
 	private boolean active = true;
 	
-	private static final DateFormat[] dateFormats = {
-		getGMTSimpleDateFormat("EEE, MMM d h:mma"),
-		getGMTSimpleDateFormat("MMMM d hh:mma")
+	private static final String[] datePatterns = {
+		"EEE, MMM d h:mma", "MMMM d hh:mma"
 	};
 
 	public AirReceipt parse(Message message) throws ParseException,
@@ -109,16 +108,16 @@ class JetBlueParser extends AirParser {
 		Matcher matcher = Pattern.compile("\u00a0(a|p)\\.m\\..*").matcher(timeString);
 		matcher.find();
 		String text = dateString + " " + matcher.replaceFirst(matcher.group(1)+"m");
-		for(DateFormat dateFormat : dateFormats) {
+		for(String datePattern : datePatterns) {
 			try {
-				date = dateFormat.parse(text);
+				date = getNextDate(datePattern, text, sentDate);
 				break;
 			} catch (ParseException e) { }
 		}
 		if (date == null) {
 			throw new ParseException("Could not parse date: " + text, 0);
 		}
-		return setYear(date, sentDate);
+		return date;
 	}
 	
 	protected Airport getAirport(String string) throws ParseException {

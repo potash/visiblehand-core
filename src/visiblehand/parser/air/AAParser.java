@@ -31,10 +31,11 @@ public @Data class AAParser extends AirParser {
 	
 	private boolean active = true;
 	
-	private static DateFormat dateFormat = getGMTSimpleDateFormat("ddMMMhh:mm aa"),
-							  issueFormat = getGMTSimpleDateFormat("ddMMMyy");
+	private static final String DATE_PATTERN ="ddMMMhh:mm aa";
+	private static final DateFormat ISSUE_FORMAT = getGMTSimpleDateFormat("ddMMMyy");
+	
 	@Getter(lazy=true)
-	private final Airline airline = Ebean.find(Airline.class, 24);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "American Airlines").findUnique();
 	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
@@ -58,11 +59,11 @@ public @Data class AAParser extends AirParser {
 	}
 	
 	protected static Date getIssueDate(String content) throws ParseException {
-		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+monthsRegex+"\\d{2})");
+		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+MONTHS_REGEX+"\\d{2})");
 		Matcher matcher = pattern.matcher(content);
 		matcher.find();
 		
-		return issueFormat.parse(matcher.group("issue"));
+		return ISSUE_FORMAT.parse(matcher.group("issue"));
 	}
 
 	protected List<Flight> getFlights(String content, Date messageDate)
@@ -70,7 +71,7 @@ public @Data class AAParser extends AirParser {
 		List<Flight> flights = new ArrayList<Flight>();
 		
 		Pattern pattern = Pattern
-				.compile("(?<date>(?<day>\\d{2})(?<month>" + monthsRegex + ")).*\\b"
+				.compile("(?<date>(?<day>\\d{2})(?<month>" + MONTHS_REGEX + ")).*\\b"
 						+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
 						+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
 						+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");
@@ -119,8 +120,7 @@ public @Data class AAParser extends AirParser {
 	}
 
 	protected static Date getDate(Date sentDate, String dateString, String timeString) throws ParseException {
-		Date date = dateFormat.parse(dateString + timeString);
-		return setYear(date, sentDate);
+		return getNextDate(DATE_PATTERN, dateString + timeString, sentDate);
 	}
 
 	protected Airport getAirport(String string) throws ParseException {

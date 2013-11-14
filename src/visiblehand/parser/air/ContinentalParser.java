@@ -23,7 +23,7 @@ public @Data class ContinentalParser extends AirParser {
 	private final String bodyString = null;
 	
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 1881);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Continental Airlines").findUnique();
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {

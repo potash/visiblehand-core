@@ -34,7 +34,7 @@ class SouthwestParser extends AirParser {
 	private final String bodyString = "";
 
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 4547);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Southwest Airlines").findUnique();
 	
 	private boolean active = true;
 

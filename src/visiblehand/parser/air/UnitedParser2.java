@@ -25,7 +25,7 @@ public @Data class UnitedParser2 extends AirParser {
 	private final String bodyString = "";
 
 	@Getter(lazy = true)
-	private final Airline airline = Ebean.find(Airline.class, 5209);
+	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "United Airlines").findUnique();
 
 	private DateFormat dateFormat = new SimpleDateFormat(
 			"h:mm a EEE, MMM d, yyyy");

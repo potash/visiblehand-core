@@ -6,12 +6,12 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
+import visiblehand.EbeanTest;
 import visiblehand.entity.Airport;
-import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.Ebean;
 
-public class JetBlueParserTest extends MessageParserTest {
+public class JetBlueParserTest extends EbeanTest {
 	JetBlueParser parser = new JetBlueParser();
 	
 	@Test

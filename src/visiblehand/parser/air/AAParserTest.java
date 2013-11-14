@@ -9,10 +9,10 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 
+import visiblehand.EbeanTest;
 import visiblehand.entity.Airport;
-import visiblehand.parser.MessageParserTest;
 
-public class AAParserTest extends MessageParserTest {
+public class AAParserTest extends EbeanTest {
 	@Test
 	public void testGetDate() throws ParseException {
 		DateFormat format = new SimpleDateFormat("ddMMMyyyy hh:mm aa");
@@ -20,6 +20,10 @@ public class AAParserTest extends MessageParserTest {
 		assertEquals(AAParser.getDate(
 				format.parse("11NOV2012 12:00 am"), "01JAN", "1:23 AM"), 
 				format.parse("01JAN2013 1:23 AM"));
+		
+		assertEquals(AAParser.getDate(
+				format.parse("28FEB2012 12:00 am"), "16MAR", "4:15 PM"), 
+				format.parse("16MAR2012 4:15 PM"));
 	}
 	
 	@Test

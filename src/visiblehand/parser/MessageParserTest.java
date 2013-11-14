@@ -8,9 +8,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -18,6 +21,9 @@ import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 import lombok.Getter;
+
+import org.junit.Test;
+
 import visiblehand.EbeanTest;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -31,6 +37,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class MessageParserTest extends EbeanTest {
 	// Jackson view for serializing test results
 	public static class TestView {
+	}
+	
+	@Test
+	public void testSetYear() throws ParseException {
+		DateFormat format = new SimpleDateFormat("ddMMMyyyy");
+		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		assertEquals(MessageParser.getNextDate("ddMMM", "29FEB", format.parse("01NOV2011")), 
+				format.parse("29FEB2012"));
 	}
 
 	public static ObjectWriter getTestWriter() {
@@ -79,7 +93,7 @@ public class MessageParserTest extends EbeanTest {
 		return messages;
 	}
 
-	public void testParser(MessageParser parser) throws ParseException,
+	public static void testParser(MessageParser parser) throws ParseException,
 			MessagingException, IOException {
 		Message[] messages = getTestMessages(parser);
 		Receipt[] receipts = getTestReceipts(parser);
@@ -94,7 +108,7 @@ public class MessageParserTest extends EbeanTest {
 
 	// return (alphabetical-order) array of serialized AirReceipts
 	// corresponding to expected parse results
-	public Receipt[] getTestReceipts(MessageParser parser)
+	public static Receipt[] getTestReceipts(MessageParser parser)
 			throws JsonParseException, JsonMappingException, IOException {
 		File dir = new File(getTestDirectory(parser));
 		File[] files = dir.listFiles(jsonFileFilter);
