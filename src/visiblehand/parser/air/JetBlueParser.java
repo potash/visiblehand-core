@@ -39,6 +39,9 @@ class JetBlueParser extends AirParser {
 	
 	private boolean active = true;
 	
+	private static final Pattern confirmationPattern = Pattern.compile("Your confirmation number is (?<confirmation>\\w*)"),
+								 timePattern = Pattern.compile("\u00a0(a|p)\\.m\\..*");
+	
 	private static final String[] datePatterns = {
 		"EEE, MMM d h:mma", "MMMM d hh:mma"
 	};
@@ -58,8 +61,7 @@ class JetBlueParser extends AirParser {
 
 	protected static String getConfirmation(String content)
 			throws ParseException {
-		Matcher matcher = Pattern.compile(
-				"Your confirmation number is (?<confirmation>\\w*)").matcher(content);
+		Matcher matcher = confirmationPattern.matcher(content);
 		if (matcher.find()) {
 			return matcher.group("confirmation");
 		} else {
@@ -105,7 +107,7 @@ class JetBlueParser extends AirParser {
 
 	protected static Date getDate(Date sentDate, String dateString, String timeString) throws ParseException {
 		Date date = null;
-		Matcher matcher = Pattern.compile("\u00a0(a|p)\\.m\\..*").matcher(timeString);
+		Matcher matcher = timePattern.matcher(timeString);
 		matcher.find();
 		String text = dateString + " " + matcher.replaceFirst(matcher.group(1)+"m");
 		for(String datePattern : datePatterns) {

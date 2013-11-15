@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import visiblehand.parser.MessageParserTest;
 
+import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -46,5 +47,9 @@ public @Data class Airport {
 
 		// one degree is 60 nautical miles
 		return 60 * Math.toDegrees(angle);
+	}
+
+	public static Airport byCode(String code) {
+		return Ebean.find(Airport.class).where().eq("code", code).findUnique();
 	}
 }

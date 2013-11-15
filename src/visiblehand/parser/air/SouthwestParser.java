@@ -40,7 +40,11 @@ class SouthwestParser extends AirParser {
 
 	private static final DateFormat flightDateFormat = getGMTSimpleDateFormat("EEE MMM d");
 	private static final DateFormat confirmationDateFormat = getGMTSimpleDateFormat("M/d/yyyy");
-
+	
+	private static final Pattern confirmationDatePattern = Pattern.compile("\\s*Confirmation Date:\\s*(?<date>\\d{2}/\\d{1,2}/\\d{4})\\s*"),
+								 confirmationCodePattern = Pattern.compile("\\s*AIR Confirmation:\\s*(?<confirmation>\\w*)\\s*"),
+							     flightPattern = Pattern.compile("[^(]*\\((\\w{3})\\)[^(]*\\((\\w{3})\\).*");
+	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
@@ -59,8 +63,7 @@ class SouthwestParser extends AirParser {
 
 	private Date getConfirmationDate(Document doc) throws ParseException {
 		Element e =  doc.select(":containsOwn(Confirmation Date)").first();
-		Matcher matcher = Pattern.compile("\\s*Confirmation Date:\\s*(?<date>\\d{2}/\\d{1,2}/\\d{4})\\s*")
-				.matcher(e.text());
+		Matcher matcher = confirmationDatePattern.matcher(e.text());
 		matcher.find();
 		return confirmationDateFormat.parse(matcher.group("date"));
 	}
@@ -68,8 +71,7 @@ class SouthwestParser extends AirParser {
 	protected static String getConfirmation(Document doc)
 			throws ParseException {
 		Element e =  doc.select(":containsOwn(AIR Confirmation)").first();
-		Matcher matcher = Pattern.compile("\\s*AIR Confirmation:\\s*(?<confirmation>\\w*)\\s*")
-				.matcher(e.text());
+		Matcher matcher = confirmationCodePattern.matcher(e.text());
 		matcher.find();
 		return matcher.group("confirmation");
 	}
@@ -101,9 +103,7 @@ class SouthwestParser extends AirParser {
 					flight.setDate(date);
 				}
 
-				Matcher matcher = Pattern.compile(
-						"[^(]*\\((\\w{3})\\)[^(]*\\((\\w{3})\\).*").matcher(
-						itinerary);
+				Matcher matcher = flightPattern.matcher(itinerary);
 				if (matcher.find()) {
 					String depart = matcher.group(1);
 					String arrive = matcher.group(2);

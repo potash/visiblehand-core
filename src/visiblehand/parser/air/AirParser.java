@@ -3,6 +3,7 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -28,6 +29,8 @@ public abstract class AirParser extends MessageParser {
 
 	@Getter
 	private final Class receiptClass = AirReceipt.class;
+	
+	protected static final Pattern flightCodePattern = Pattern.compile("(?i)(?<airline>[A-Z]{2})(?<number>\\d+)");
 
 	// find airport whose name is closest to the argument string
 	protected static List<Airport> getAirportsLevenshtein(String string) {

@@ -3,7 +3,6 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +26,8 @@ public @Data class DeltaParser extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Delta Air Lines").findUnique();
 
-	private DateFormat dateFormat = new SimpleDateFormat(
-			"h:mm a EEE, MMM d, yyyy");
-	{
-	//searchTerm = new AndTerm(new FromStringTerm(getFromString()), new NotTerm(new SubjectTerm("Check-In")));
-	//searchTerm = new AndTerm(new FromStringTerm(getFromString()), new BodyTerm("Delta Reservation Receipt"));
-	}
+	private DateFormat dateFormat = getGMTSimpleDateFormat("h:mm a EEE, MMM d, yyyy");
+	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 

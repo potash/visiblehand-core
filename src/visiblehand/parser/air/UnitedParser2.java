@@ -3,17 +3,28 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Data;
 import lombok.Getter;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import visiblehand.entity.Airline;
+import visiblehand.entity.Airport;
+import visiblehand.entity.Equipment;
 import visiblehand.entity.Flight;
+import visiblehand.entity.Route;
 
 import com.avaje.ebean.Ebean;
 
@@ -27,27 +38,81 @@ public @Data class UnitedParser2 extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "United Airlines").findUnique();
 
-	private DateFormat dateFormat = new SimpleDateFormat(
-			"h:mm a EEE, MMM d, yyyy");
-
+	private static final DateFormat issueFormat = getGMTSimpleDateFormat("MMMM dd, yyyy"),
+									dateFormat = getGMTSimpleDateFormat("EEE, ddMMMyyhh:mm a");
+	
+	private static final Pattern airportPattern = Pattern.compile("\\((?<code>[A-Z]*).*\\)"),
+								 timePattern = Pattern.compile("(?<time>\\d{1,2}:\\d{2} (A|P)M)"),
+						 		 issuePattern = Pattern.compile("(?i)(?<date>" + mmmmRegex + " \\d{2}, \\d{4})");
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
 		AirReceipt receipt = new AirReceipt();
-		receipt.setFlights(getFlights(getContent(message)));
+		String content = getContent(message);
+		Document doc = Jsoup.parse(content);
+		receipt.setFlights(getFlights(doc));
 		receipt.setAirline(getAirline());
-		receipt.setConfirmation(getConfirmation(message.getSubject()));
-		receipt.setDate(message.getSentDate());
+		receipt.setConfirmation(getConfirmation(doc));
+		receipt.setDate(getIssueDate(doc));
 		
 		return receipt;
 	}
-
-	protected static String getConfirmation(String subject) {
-		return subject.substring(48);
+	
+	private static Date getIssueDate(Document doc) throws ParseException {
+		Element e =  doc.select(":containsOwn(Issue Date:)").first();
+		System.out.println(e.text());
+		Matcher matcher = issuePattern.matcher(e.text());
+		matcher.find();
+		return issueFormat.parse(matcher.group("date"));
 	}
-	protected List<Flight> getFlights(String content) throws ParseException {
+
+	protected static String getConfirmation(Document doc) {
+		Element e = doc.select(".eTicketConfirmation").first();
+		return e.text();
+	}
+	protected List<Flight> getFlights(Document doc) throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
-		// TODO implement this!
+		Element flightTable = doc.select(":containsOwn(FLIGHT INFORMATION)").first().parent().parent();
+		
+		for (Element flightRow : flightTable.select("tr:gt(1):has(td:gt(0))")) {
+			Elements cells = flightRow.select("td");
+			Flight flight = new Flight();
+
+			System.out.println(flightRow);
+			
+			
+			
+			Matcher matcher = flightCodePattern.matcher(cells.get(1).select("span").html());
+			matcher.find();
+			flight.setNumber(Integer.parseInt(matcher.group("number")));
+			Airline airline = Airline.byIATA(matcher.group("airline"));
+			System.out.println(airline);
+			
+			System.out.println(cells.get(3).text());
+			matcher = airportPattern.matcher(cells.get(3).text());
+			matcher.find();
+			Airport source = Airport.byCode(matcher.group("code"));
+			
+			matcher = timePattern.matcher(cells.get(3).text());
+			matcher.find();
+			String time = matcher.group("time");
+			flight.setDate(dateFormat.parse(cells.get(0).text() + time));
+			
+			System.out.println(cells.get(4).text());
+			matcher = airportPattern.matcher(cells.get(4).text());
+			matcher.find();
+			Airport destination = Airport.byCode(matcher.group("code"));
+			
+			Route route = Ebean.find(Route.class).where()
+					.eq("airline", getAirline()).eq("source", source)
+					.eq("destination", destination).findUnique();
+			flight.setRoute(route);
+			
+			Equipment equipment = Equipment.byName(cells.get(5).text());
+			flight.setEquipment(equipment);
+			
+			flights.add(flight);
+		}
 		return flights;
 	}
 }

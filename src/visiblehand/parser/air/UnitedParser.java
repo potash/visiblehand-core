@@ -42,6 +42,8 @@ class UnitedParser extends AirParser {
 	
 	private static final DateFormat dateFormat = getGMTSimpleDateFormat("h:mm a EEE, MMM d, yyyy");
 	
+	private static Pattern confirmationPattern =  Pattern.compile("Confirmation (?:#|number)[^\\w]*(\\w{6})");
+	
 	private boolean active = true;
 
 	public AirReceipt parse(Message message) throws ParseException,
@@ -59,14 +61,9 @@ class UnitedParser extends AirParser {
 
 	protected static String getConfirmation(String content)
 			throws ParseException {
-		Matcher matcher = Pattern.compile(
-				"Confirmation (?:#|number)[^\\w]*(\\w{6})")
-				.matcher(content);
-		if (matcher.find()) {
-			return matcher.group(1);
-		} else {
-			throw new ParseException("Confirmation number not found.", 0);
-		}
+		Matcher matcher = confirmationPattern.matcher(content);
+		matcher.find();
+		return matcher.group(1);
 	}
 
 	protected List<Flight> getFlights(String content) throws ParseException {
@@ -108,10 +105,8 @@ class UnitedParser extends AirParser {
 						throw new ParseException(
 								"Could not parse flight number: " + number, 0);
 					}
-					Airport source = Ebean.find(Airport.class).where()
-							.eq("code", depart.substring(0, 3)).findUnique();
-					Airport destination = Ebean.find(Airport.class).where()
-							.eq("code", arrive.substring(0, 3)).findUnique();
+					Airport source = Airport.byCode(depart.substring(0, 3));
+					Airport destination = Airport.byCode(arrive.substring(0, 3));
 
 					Date date = dateFormat.parse(depart.substring(4));
 					flight.setDate(date);
@@ -119,6 +114,7 @@ class UnitedParser extends AirParser {
 					Route route = Ebean.find(Route.class).where()
 							.eq("airline", getAirline()).eq("source", source)
 							.eq("destination", destination).findUnique();
+
 					flight.setRoute(route);
 					// next line has equipment, duration, fare code, etc.
 					flightRow = flightRow.nextElementSibling();
@@ -128,7 +124,7 @@ class UnitedParser extends AirParser {
 							String info = infoCells.get(0).text();
 							String equipment = info
 									.split("(Equipment:\\s*|\\W*\\|)")[1];
-							flight.setEquipment(getEquipment(equipment));
+							flight.setEquipment(Equipment.byName(equipment));
 						}
 					}
 
@@ -137,21 +133,5 @@ class UnitedParser extends AirParser {
 			}
 		}
 		return flights;
-	}
-
-	protected static Equipment getEquipment(String equipment) {
-		System.out.println(equipment.replaceAll("(^|$|\\s)", "%"));
-		List<Equipment> e = Ebean.find(Equipment.class)
-				.where().like("name", equipment.replaceAll("(^|$|\\s)", "%"))
-				.findList();
-		if (e.size() > 0) {
-			if (e.size() > 1) {
-				System.out.println("UnitedParserOld - More than one equipment match: " + equipment);
-			}
-			return e.get(0);
-		} else {
-			System.out.println("UnitedParserOld - No equipment match: " + equipment);
-			return null;
-		}
 	}
 }

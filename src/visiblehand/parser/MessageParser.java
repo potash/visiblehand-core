@@ -31,8 +31,9 @@ public abstract class MessageParser {
 	
 	public abstract Class getReceiptClass();
 	
-	protected static final String MONTHS_REGEX = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
-	protected static final String DAYS_REGEX = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
+	protected static final String mmmmRegex = "(JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)";
+	protected static final String mmmRegex = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
+	protected static final String dddRegex = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
 	protected static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 	
 	@Getter

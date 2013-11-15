@@ -31,8 +31,16 @@ public @Data class AAParser extends AirParser {
 	
 	private boolean active = true;
 	
-	private static final String DATE_PATTERN ="ddMMMhh:mm aa";
-	private static final DateFormat ISSUE_FORMAT = getGMTSimpleDateFormat("ddMMMyy");
+	private static final String datePattern ="ddMMMhh:mm aa";
+	private static final DateFormat issueFormat = getGMTSimpleDateFormat("ddMMMyy");
+	
+	private static final Pattern issuePattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+mmmRegex+"\\d{2})"),
+								 confirmationPattern = Pattern.compile("E-TICKET CONFIRMATION/RECORD LOCATOR - (?<confirmation>[A-Z]{6})"),
+								 internationalPattern = Pattern.compile("(?i)( INTL| INTERNTNL| INTERNATIONAL)$"),
+								 flightPattern = Pattern.compile("(?<date>(?<day>\\d{2})(?<month>" + mmmRegex + ")).*\\b"
+													+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
+													+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
+													+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");
 	
 	@Getter(lazy=true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "American Airlines").findUnique();
@@ -52,30 +60,23 @@ public @Data class AAParser extends AirParser {
 	}
 
 	protected static String getConfirmation(String content) {
-		Pattern pattern = Pattern.compile("E-TICKET CONFIRMATION/RECORD LOCATOR - (?<confirmation>[A-Z]{6})");
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = confirmationPattern.matcher(content);
 		matcher.find();
 		return matcher.group("confirmation");
 	}
 	
 	protected static Date getIssueDate(String content) throws ParseException {
-		Pattern pattern = Pattern.compile("DATE OF ISSUE - (?<issue>\\d{2}"+MONTHS_REGEX+"\\d{2})");
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = issuePattern.matcher(content);
 		matcher.find();
 		
-		return ISSUE_FORMAT.parse(matcher.group("issue"));
+		return issueFormat.parse(matcher.group("issue"));
 	}
 
 	protected List<Flight> getFlights(String content, Date messageDate)
 			throws ParseException {
 		List<Flight> flights = new ArrayList<Flight>();
 		
-		Pattern pattern = Pattern
-				.compile("(?<date>(?<day>\\d{2})(?<month>" + MONTHS_REGEX + ")).*\\b"
-						+ "\\s*LV  (?<source>(?:\\w+\\s*)+[A-Z])\\s*(?<time>\\d{1,2}:\\d{2} (AM|PM)) (?<number>\\d+).*\\b"
-						+ "\\s*AR  (?<destination>(?:\\w+\\s?)+[A-Z])\\s*(\\d{1,2}:\\d{2} (AM|PM)).*\\b"
-						+ "\\s*(?:OPERATED BY (?<operator>(?:\\w+\\s?)+\\w))?");
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = flightPattern.matcher(content);
 		while (matcher.find()) {
 			Date date = getDate(messageDate, matcher.group("date"), matcher.group("time"));//matcher.group("month"), matcher.group("day"));
 			Airport source = getAirport(matcher.group("source")),
@@ -120,7 +121,7 @@ public @Data class AAParser extends AirParser {
 	}
 
 	protected static Date getDate(Date sentDate, String dateString, String timeString) throws ParseException {
-		return getNextDate(DATE_PATTERN, dateString + timeString, sentDate);
+		return getNextDate(datePattern, dateString + timeString, sentDate);
 	}
 
 	protected Airport getAirport(String string) throws ParseException {
@@ -128,7 +129,7 @@ public @Data class AAParser extends AirParser {
 		string = string.replaceAll("\\s+", " ");	// get rid of multiple spaces
 		
 		// international
-		Matcher intlMatcher = Pattern.compile("(?i)( INTL| INTERNTNL| INTERNATIONAL)$").matcher(string);
+		Matcher intlMatcher = internationalPattern.matcher(string);
 		boolean intl = intlMatcher.find();
 		if (intl) {
 			string = intlMatcher.replaceFirst("");

@@ -93,4 +93,23 @@ class Equipment {
 
 		return allFuelData;
 	}
+
+	public static Equipment byName(String name) {
+		name = name.replaceAll("CRJ", "Canadair");
+		name = name.replaceAll("ERJ", "Embraer");
+		name = name.replaceAll("Q(1|2|3|4)", "DHC \\1");
+		name = name.replaceAll("(^|$|\\s|-|/)", "%");
+		List<Equipment> e = Ebean.find(Equipment.class)
+				.where().ilike("name", name)
+				.findList();
+		if (e.size() > 0) {
+			if (e.size() > 1) {
+				System.out.println(" More than one equipment match: " + name);
+			}
+			return e.get(0);
+		} else {
+			System.out.println("No equipment match: " + name);
+			return null;
+		}
+	}
 }
