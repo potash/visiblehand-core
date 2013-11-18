@@ -49,7 +49,7 @@ public @Data class Airport {
 		return 60 * Math.toDegrees(angle);
 	}
 
-	public static Airport byCode(String code) {
+	public static Airport findByCode(String code) {
 		return Ebean.find(Airport.class).where().eq("code", code).findUnique();
 	}
 }

@@ -91,10 +91,7 @@ class JetBlueParser extends AirParser {
 			String[] airports = cells.get(2).text().split(" to ");
 			Airport source = getAirport(airports[0]),
 					destination = getAirport(airports[1]);
-			Route route = Ebean.find(Route.class).where()
-					.eq("source", source)
-					.eq("destination", destination)
-					.eq("airline", getAirline()).findUnique();
+			Route route = Route.find(getAirline(), source, destination);
 			flight.setRoute(route);
 			
 			int number = Integer.parseInt(cells.get(3).text());

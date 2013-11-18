@@ -93,9 +93,7 @@ public @Data class AAParser extends AirParser {
 					airline = airlines.get(0);
 				}
 			}
-			Route route = Ebean.find(Route.class).where()
-					.eq("airline", airline).eq("source", source)
-					.eq("destination", destination).findUnique();
+			Route route = Route.find(airline, source, destination);
 			if (route == null) {
 				route = new Route();
 				route.setAirline(airline);

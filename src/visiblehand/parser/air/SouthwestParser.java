@@ -111,9 +111,7 @@ class SouthwestParser extends AirParser {
 							.eq("code", depart).findUnique();
 					Airport destination = Ebean.find(Airport.class).where()
 							.eq("code", arrive).findUnique();
-					Route route = Ebean.find(Route.class).where()
-							.eq("airline", getAirline()).eq("source", source)
-							.eq("destination", destination).findUnique();
+					Route route = Route.find(getAirline(), source, destination);
 					flight.setRoute(route);
 					flights.add(flight);
 				}

@@ -31,7 +31,7 @@ class Airline {
 	
 	// Get Airline by IATA. It's not actually unique (e.g. LH, SQ)
 	// If more than one, return the first one with routes in the database
-	public static Airline byIATA(String IATA) {
+	public static Airline findByIATA(String IATA) {
 		List<Airline> airlines = Ebean.find(Airline.class).where().eq("IATA", IATA).findList();
 		if (airlines.size() == 0) {
 			return null;

@@ -94,7 +94,7 @@ class Equipment {
 		return allFuelData;
 	}
 
-	public static Equipment byName(String name) {
+	public static Equipment findByName(String name) {
 		name = name.replaceAll("CRJ", "Canadair");
 		name = name.replaceAll("ERJ", "Embraer");
 		name = name.replaceAll("Q(1|2|3|4)", "DHC \\1");

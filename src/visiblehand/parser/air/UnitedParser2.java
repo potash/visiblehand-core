@@ -85,13 +85,13 @@ public @Data class UnitedParser2 extends AirParser {
 			Matcher matcher = flightCodePattern.matcher(cells.get(1).select("span").html());
 			matcher.find();
 			flight.setNumber(Integer.parseInt(matcher.group("number")));
-			Airline airline = Airline.byIATA(matcher.group("airline"));
+			Airline airline = Airline.findByIATA(matcher.group("airline"));
 			System.out.println(airline);
 			
 			System.out.println(cells.get(3).text());
 			matcher = airportPattern.matcher(cells.get(3).text());
 			matcher.find();
-			Airport source = Airport.byCode(matcher.group("code"));
+			Airport source = Airport.findByCode(matcher.group("code"));
 			
 			matcher = timePattern.matcher(cells.get(3).text());
 			matcher.find();
@@ -101,14 +101,12 @@ public @Data class UnitedParser2 extends AirParser {
 			System.out.println(cells.get(4).text());
 			matcher = airportPattern.matcher(cells.get(4).text());
 			matcher.find();
-			Airport destination = Airport.byCode(matcher.group("code"));
+			Airport destination = Airport.findByCode(matcher.group("code"));
 			
-			Route route = Ebean.find(Route.class).where()
-					.eq("airline", getAirline()).eq("source", source)
-					.eq("destination", destination).findUnique();
+			Route route = Route.find(getAirline(), source, destination);
 			flight.setRoute(route);
 			
-			Equipment equipment = Equipment.byName(cells.get(5).text());
+			Equipment equipment = Equipment.findByName(cells.get(5).text());
 			flight.setEquipment(equipment);
 			
 			flights.add(flight);

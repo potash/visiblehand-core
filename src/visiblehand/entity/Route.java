@@ -163,6 +163,11 @@ class Route {
 		}
 		return burn;
 	}
+	
+	public static Route find(Airline airline, Airport source, Airport destination) {
+		return Ebean.find(Route.class).where().eq("airline", airline)
+				.eq("source", source).eq("destination", destination).findUnique();
+	}
 
 	// TODO: search for routes of this airline to the destination, from the origin of a similar distance
 	// and get their most common equipment

@@ -105,15 +105,13 @@ class UnitedParser extends AirParser {
 						throw new ParseException(
 								"Could not parse flight number: " + number, 0);
 					}
-					Airport source = Airport.byCode(depart.substring(0, 3));
-					Airport destination = Airport.byCode(arrive.substring(0, 3));
+					Airport source = Airport.findByCode(depart.substring(0, 3));
+					Airport destination = Airport.findByCode(arrive.substring(0, 3));
 
 					Date date = dateFormat.parse(depart.substring(4));
 					flight.setDate(date);
 
-					Route route = Ebean.find(Route.class).where()
-							.eq("airline", getAirline()).eq("source", source)
-							.eq("destination", destination).findUnique();
+					Route route = Route.find(getAirline(), source, destination);
 
 					flight.setRoute(route);
 					// next line has equipment, duration, fare code, etc.
@@ -124,7 +122,7 @@ class UnitedParser extends AirParser {
 							String info = infoCells.get(0).text();
 							String equipment = info
 									.split("(Equipment:\\s*|\\W*\\|)")[1];
-							flight.setEquipment(Equipment.byName(equipment));
+							flight.setEquipment(Equipment.findByName(equipment));
 						}
 					}
 
