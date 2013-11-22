@@ -12,22 +12,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import visiblehand.parser.MessageParserTest;
-
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonView;
 
-@ToString(of = { "id", "airline", "source", "destination", "IATA" })
-@EqualsAndHashCode(of={"id"})
 @Entity
-public @Data
-class Route {
+public @Data class Route {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
@@ -36,10 +28,8 @@ class Route {
 	private Airline airline;
 	@ManyToOne
 	@JoinColumn(name = "source_id")
-	@JsonView(MessageParserTest.TestView.class)
 	private Airport source;
 	@ManyToOne
-	@JsonView(MessageParserTest.TestView.class)
 	@JoinColumn(name = "destination_id")
 	private Airport destination;
 	private boolean codeshare;
@@ -113,9 +103,11 @@ class Route {
 		return null;
 	}
 
-	@Transient
-	@Getter(lazy = true)
-	private final DescriptiveStatistics fuelBurnStatistics = fuelBurn();
+	//@Transient
+	//private final DescriptiveStatistics fuelBurnStatistics = fuelBurn();
+	public DescriptiveStatistics getFuelBurnStatistics() {
+		return fuelBurn();
+	}
 	
 	@Transient
 	@Getter(lazy = true)

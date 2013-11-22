@@ -28,7 +28,7 @@ public abstract class AirParser extends MessageParser {
 			throws java.text.ParseException, MessagingException, IOException;
 
 	@Getter
-	private final Class receiptClass = AirReceipt.class;
+	private final Class<AirReceipt> receiptClass = AirReceipt.class;
 	
 	protected static final Pattern flightCodePattern = Pattern.compile("(?i)(?<airline>[A-Z]{2})(?<number>\\d+)");
 

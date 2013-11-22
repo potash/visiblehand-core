@@ -8,10 +8,8 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonView;
 
 @ToString(of = { "id", "name" })
 @EqualsAndHashCode(of={"id"})
@@ -20,7 +18,6 @@ public @Data
 class Airline {
 	@Id
 	private int id;
-	@JsonView(MessageParserTest.TestView.class)
 	private String name;
 	private String alias;
 	private String IATA;

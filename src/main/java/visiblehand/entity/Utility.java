@@ -1,4 +1,4 @@
-package visiblehand.parser.utility;
+package visiblehand.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -6,10 +6,8 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonView;
 
 @ToString(of = { "id", "name" })
 @EqualsAndHashCode(of={"id"})
@@ -22,7 +20,7 @@ class Utility {
 		@EnumValue("G")
 		GAS
 	};
-	@Id @JsonView(MessageParserTest.TestView.class)
+	@Id
 	private int id;
 	private String name;
 	private Type type;

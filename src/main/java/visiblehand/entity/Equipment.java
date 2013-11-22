@@ -15,10 +15,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonView;
 
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
 //				 http://www.avcodes.co.uk/acrtypes.asp
@@ -30,7 +28,6 @@ public @Data
 class Equipment {
 	@Id
 	private Integer id;
-	@JsonView(MessageParserTest.TestView.class)
 	private String IATA;
 	private String ICAO;
 	private String name;
@@ -63,11 +60,13 @@ class Equipment {
 				.ne("id", getId()).findList();
 	}
 
+	@Transient
 	@Getter(lazy = true)
 	private final List<FuelData> fuelData = Ebean.find(FuelData.class).where()
 			.eq("icao", getICAO()).findList();
 
 	// exact fuel data matches
+	@Transient
 	@Getter(lazy = true)
 	private final List<FuelData> allFuelData = allFuelData();
 

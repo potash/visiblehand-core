@@ -60,7 +60,6 @@ public @Data class UnitedParser2 extends AirParser {
 	
 	private static Date getIssueDate(Document doc) throws ParseException {
 		Element e =  doc.select(":containsOwn(Issue Date:)").first();
-		System.out.println(e.text());
 		Matcher matcher = issuePattern.matcher(e.text());
 		matcher.find();
 		return issueFormat.parse(matcher.group("date"));
@@ -77,18 +76,12 @@ public @Data class UnitedParser2 extends AirParser {
 		for (Element flightRow : flightTable.select("tr:gt(1):has(td:gt(0))")) {
 			Elements cells = flightRow.select("td");
 			Flight flight = new Flight();
-
-			System.out.println(flightRow);
-			
-			
 			
 			Matcher matcher = flightCodePattern.matcher(cells.get(1).select("span").html());
 			matcher.find();
 			flight.setNumber(Integer.parseInt(matcher.group("number")));
 			Airline airline = Airline.findByIATA(matcher.group("airline"));
-			System.out.println(airline);
 			
-			System.out.println(cells.get(3).text());
 			matcher = airportPattern.matcher(cells.get(3).text());
 			matcher.find();
 			Airport source = Airport.findByCode(matcher.group("code"));
@@ -98,7 +91,6 @@ public @Data class UnitedParser2 extends AirParser {
 			String time = matcher.group("time");
 			flight.setDate(dateFormat.parse(cells.get(0).text() + time));
 			
-			System.out.println(cells.get(4).text());
 			matcher = airportPattern.matcher(cells.get(4).text());
 			matcher.find();
 			Airport destination = Airport.findByCode(matcher.group("code"));

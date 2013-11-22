@@ -29,15 +29,10 @@ import visiblehand.EbeanTest;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class MessageParserTest extends EbeanTest {
-	// Jackson view for serializing test results
-	public static class TestView {
-	}
 	
 	@Test
 	public void testSetYear() throws ParseException {
@@ -47,18 +42,20 @@ public class MessageParserTest extends EbeanTest {
 				format.parse("29FEB2012"));
 	}
 
-	public static ObjectWriter getTestWriter() {
+	@Getter(lazy=true)
+	private final static ObjectMapper testMapper = testMapper();
+	
+	private static final ObjectMapper testMapper() {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		mapper.setSerializationInclusion(Include.NON_NULL);
-		ObjectWriter writer = mapper
-				.writerWithView(MessageParserTest.TestView.class);
-		return writer;
+		mapper.registerModule(new TestModule());
+		return mapper;
 	}
 
 	public static final FilenameFilter msgFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
+			System.out.println(name);
 			return name.matches("\\d+.msg");
 		}
 	};
@@ -70,7 +67,7 @@ public class MessageParserTest extends EbeanTest {
 	};
 
 	@Getter
-	public static final String testDirectory = "data/test/";
+	public static final String testDirectory = MessageParserTest.class.getResource("/data/parser").getFile().toString();
 	
 	public static String getTestDirectory(MessageParser parser) {
 		return getTestDirectory() + "/" + parser.getClass().getSimpleName();
@@ -80,8 +77,11 @@ public class MessageParserTest extends EbeanTest {
 	// corresponding to the given parser
 	public static Message[] getTestMessages(MessageParser parser)
 			throws FileNotFoundException, MessagingException {
+		System.out.println(getTestDirectory(parser));
 		File dir = new File(getTestDirectory(parser));
+		System.out.println(dir.exists());
 		File[] files = dir.listFiles(msgFileFilter);
+		System.out.println(Arrays.toString(files));
 		Arrays.sort(files);
 		Message[] messages = new Message[files.length];
 		Session session = Session.getDefaultInstance(new Properties());
@@ -97,7 +97,7 @@ public class MessageParserTest extends EbeanTest {
 			MessagingException, IOException {
 		Message[] messages = getTestMessages(parser);
 		Receipt[] receipts = getTestReceipts(parser);
-		ObjectWriter writer = getTestWriter();
+		ObjectMapper writer = getTestMapper();
 		for (int i = 0; i < messages.length; i++) {
 			Receipt receipt = parser.parse(messages[i]);
 			System.out.println(writer.writeValueAsString(receipt));
@@ -114,7 +114,7 @@ public class MessageParserTest extends EbeanTest {
 		File[] files = dir.listFiles(jsonFileFilter);
 		Arrays.sort(files);
 		Receipt[] receipts = new Receipt[files.length];
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = getTestMapper();
 		for (int i = 0; i < files.length; i++) {
 			receipts[i] = mapper.readValue(files[i], parser.getReceiptClass());
 		}

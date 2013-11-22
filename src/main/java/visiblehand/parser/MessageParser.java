@@ -29,7 +29,7 @@ public abstract class MessageParser {
 	public abstract String[] getSubjectStrings();
 	public abstract String getBodyString();
 	
-	public abstract Class getReceiptClass();
+	public abstract Class<? extends Receipt> getReceiptClass();
 	
 	protected static final String mmmmRegex = "(JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)";
 	protected static final String mmmRegex = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";

@@ -1,7 +1,6 @@
 package visiblehand;
 
 import java.io.Console;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +35,7 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.EbeanServerFactory;
 import com.avaje.ebean.SqlUpdate;
+import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
 
 public class VisibleHand {
@@ -48,16 +48,16 @@ public class VisibleHand {
 	public static final double KG_CO2_PER_GALLON_FUEL = 9.57;
 	// unit conversions
 	public static final double MILES_PER_NM = 1.15078,
-			LITERS_PER_GALLON = 3.78541,
-			BTU_PER_MEGAJOULE = 947.81712;
+			LITERS_PER_GALLON = 3.78541, BTU_PER_MEGAJOULE = 947.81712;
 
 	private static boolean ebeanInitialized = false;
-	
+
 	public static final AirParser[] airParsers = { new AAParser(),
 			new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
-	
-	public static final UtilityParser[] utilityParsers = { new ComEdParser(), new PeoplesGasParser() };
+
+	public static final UtilityParser[] utilityParsers = { new ComEdParser(),
+			new PeoplesGasParser() };
 
 	public static Folder getFolder(Properties props, Session session,
 			PasswordAuthentication auth) throws FileNotFoundException,
@@ -106,10 +106,9 @@ public class VisibleHand {
 	public static Properties getProperties(String name) throws IOException {
 		Properties props = new Properties();
 
-		InputStream stream = VisibleHand.class
-				.getResourceAsStream("/" + name);
-		if (stream == null)
-			stream = new FileInputStream("" + name);
+		InputStream stream = VisibleHand.class.getResourceAsStream("/" + name);
+		// if (stream == null)
+		// stream = new FileInputStream("" + name);
 		props.load(stream);
 
 		return props;
@@ -126,33 +125,54 @@ public class VisibleHand {
 		if (!ebeanInitialized) {
 			Properties props = getProperties("ebean.properties");
 			String db = props.getProperty("datasource.default");
-			if (db.equals("h2")) {
+			System.out.println(db);
+			if (!db.equals("pg")) {
 				ServerConfig c = new ServerConfig();
 				c.setName("h2");
-				c.loadFromProperties();
 				c.setDdlGenerate(true);
 				c.setDdlRun(true);
 				c.setDefaultServer(true);
+
+				DataSourceConfig config = new DataSourceConfig();
+				config.setDriver("org.h2.Driver");
+				config.setUsername("sa");
+				config.setPassword("");
+				config.setUrl("jdbc:h2:mem:visiblehand");
+				c.setDataSourceConfig(config);
+				c.addPackage("visiblehand.entity");
+				/*c.setClasses(Arrays.asList(new Class<?>[] { Aircraft.class,
+						Airline.class, Airport.class, Country.class,
+						Equipment.class, Flight.class, FuelData.class,
+						Route.class, Seating.class, Utility.class }));*/
+
 				EbeanServer h2 = EbeanServerFactory.create(c);
-				SqlUpdate lev = Ebean.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR \"visiblehand.VisibleHand.getLevenshteinDistance\"");
+				SqlUpdate lev = Ebean
+						.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR "
+								+ "\"visiblehand.VisibleHand.getLevenshteinDistance\"");
 				lev.execute();
-				String[] tables = new String[] { "airline", "airport", "equipment",
-						"equipment_aggregate", "fuel_data", "route", "seating", "country" };
-	
+
+				String csvDirectory = VisibleHand.class.getResource("/csv")
+						.getFile().toString()
+						+ "/";
+				String[] tables = new String[] { "airline", "airport",
+						"equipment", "equipment_aggregate", "fuel_data",
+						"route", "seating", "country" };
+
 				for (String table : tables) {
-					SqlUpdate update = Ebean.createSqlUpdate("insert into " + table
-							+ " (select * from csvread('data/csv/" + table
-							+ ".csv'))");
+					SqlUpdate update = Ebean.createSqlUpdate("insert into "
+							+ table + " (select * from csvread('"
+							+ csvDirectory + table + ".csv'))");
 					h2.execute(update);
 				}
 			}
 			ebeanInitialized = true;
 		}
 	}
-	
+
 	// h2 needs the method to take Strings, not CharSequences
 	public static int getLevenshteinDistance(String s1, String s2) {
-		return org.apache.commons.lang3.StringUtils.getLevenshteinDistance(s1, s2);
+		return org.apache.commons.lang3.StringUtils.getLevenshteinDistance(s1,
+				s2);
 	}
 
 	public static String getSearchString() {
@@ -197,14 +217,16 @@ public class VisibleHand {
 			if (fuelBurn.getValues().length > 0) {
 				fuel += fuelBurn.getMean();
 				nm += flight.getRoute().getDistance();
-				sigma.addValue(fuelBurn.getStandardDeviation() / fuelBurn.getMean());
-				nmpkg.addValue(flight.getRoute().getDistance() / fuelBurn.getMean());
+				sigma.addValue(fuelBurn.getStandardDeviation()
+						/ fuelBurn.getMean());
+				nmpkg.addValue(flight.getRoute().getDistance()
+						/ fuelBurn.getMean());
 			}
 			Ebean.save(flight);
-			
+
 		}
 		System.out.println("Fuel burned: " + fuel + " kg");
-		System.out.println("Average std dev: " + (sigma.getMean()*100) + "%");
+		System.out.println("Average std dev: " + (sigma.getMean() * 100) + "%");
 		System.out.println("Distance traveled: " + nm + " nm");
 
 		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM

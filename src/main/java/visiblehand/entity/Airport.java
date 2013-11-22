@@ -6,10 +6,8 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import visiblehand.parser.MessageParserTest;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @ToString(of = { "id", "name" })
@@ -17,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 public @Data class Airport {
 	@Id
 	private int id;
-	@JsonView(MessageParserTest.TestView.class)
 	private String name;
 	private String city;
 	private String country;
