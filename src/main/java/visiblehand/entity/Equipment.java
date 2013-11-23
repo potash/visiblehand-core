@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -37,13 +35,31 @@ class Equipment {
 	@JoinColumn(name = "similar_id")
 	private Equipment similar;
 
-	@ManyToMany
-	@JoinTable(name = "equipment_aggregate", joinColumns = { @JoinColumn(name = "parent_id") }, inverseJoinColumns = { @JoinColumn(name = "child_id") })
-	private List<Equipment> children;
-
-	@ManyToMany
-	@JoinTable(name = "equipment_aggregate", joinColumns = { @JoinColumn(name = "child_id") }, inverseJoinColumns = { @JoinColumn(name = "parent_id") })
-	private List<Equipment> parents;
+	@Transient
+	@Getter(lazy=true)
+	private final List<Equipment> children = children();
+	
+	private List<Equipment> children() {
+		List<EquipmentAggregate> aggregates = Ebean.find(EquipmentAggregate.class).where().eq("parentIATA", getIATA()).findList();
+		List<String> IATAs = new ArrayList<String>(aggregates.size());
+		for(EquipmentAggregate aggregate : aggregates) {
+			IATAs.add(aggregate.getChildIATA());
+		}
+		return Equipment.findByIATA(IATAs);
+	}
+	
+	@Transient
+	@Getter(lazy=true)
+	private final List<Equipment> parents = parent();
+	
+	private List<Equipment> parent() {
+		List<EquipmentAggregate> aggregates = Ebean.find(EquipmentAggregate.class).where().eq("childIATA", getIATA()).findList();
+		List<String> IATAs = new ArrayList<String>(aggregates.size());
+		for(EquipmentAggregate aggregate : aggregates) {
+			IATAs.add(aggregate.getParentIATA());
+		}
+		return Equipment.findByIATA(IATAs);
+	}
 
 	@Transient
 	@Getter(lazy = true)
@@ -110,5 +126,9 @@ class Equipment {
 			System.out.println("No equipment match: " + name);
 			return null;
 		}
+	}
+	
+	public static List<Equipment> findByIATA(List<String> IATAs) {
+		return Ebean.find(Equipment.class).where().in("IATA", IATAs).findList();
 	}
 }

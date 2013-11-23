@@ -1,4 +1,4 @@
-id,airline_id,source_id,destination_id,codeshare,stops,iata
+id,airline,source,destination,codeshare,stops,IATA
 8,410,4029,2952,f,0,CR2
 9,410,4029,6969,f,0,CR2
 10,410,4029,6165,f,0,CR2

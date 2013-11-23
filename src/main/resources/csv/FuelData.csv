@@ -1,4 +1,4 @@
-id,icao,lto,distance1,distance2,distance3,distance4,distance5,distance6,distance7,distance8,distance9,distance10,distance11,distance12,distance13,distance14,distance15,distance16,cruise1,cruise2,cruise3,cruise4,cruise5,cruise6,cruise7,cruise8,cruise9,cruise10,cruise11,cruise12,cruise13,cruise14,cruise15,cruise16
+id,ICAO,LTO,distance1,distance2,distance3,distance4,distance5,distance6,distance7,distance8,distance9,distance10,distance11,distance12,distance13,distance14,distance15,distance16,cruise1,cruise2,cruise3,cruise4,cruise5,cruise6,cruise7,cruise8,cruise9,cruise10,cruise11,cruise12,cruise13,cruise14,cruise15,cruise16
 1,A306,1723.14,125,250,500,750,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,2101.364,3610.945,6329.292,9199.263,12029.16,17860.764,23526.606,29274,35002.832,40682.052,,,,,,
 2,A310,1506.588,125,250,500,750,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,1905.988,3293.403,5252.426,7487.051,9698.551,14234.129,18647.392,23089.771,27573.444,32091.302,,,,,,
 3,A318,684.996,125,250,500,750,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,1038.782,1773.892,2796.509,3886.877,4998.19,7288.792,9510.171,11751.9,,,,,,,,

@@ -1,5 +1,5 @@
-id,name,alias,iata,icao,callsign,country,active
-39,Aban Air,,K5,ABE,ABAN,Iran,
+id,name,alias,IATA,ICAO,callsign,country,active
+39,Aban Air,,K5,ABE,ABAN,Iran,t
 2,135 Airways,,  ,GNL,GENERAL,United States,f
 4,2 Sqn No 1 Elementary Flying Training School,,  ,WYT,"",United Kingdom,f
 5,213 Flight Unit,,  ,TFU,"",Russia,f

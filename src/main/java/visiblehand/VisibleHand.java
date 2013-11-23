@@ -4,6 +4,8 @@ import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.PasswordAuthentication;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -17,8 +19,18 @@ import javax.mail.Session;
 import javax.mail.Store;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import visiblehand.entity.Airline;
+import visiblehand.entity.Airport;
+import visiblehand.entity.Country;
+import visiblehand.entity.Equipment;
+import visiblehand.entity.EquipmentAggregate;
 import visiblehand.entity.Flight;
+import visiblehand.entity.FuelData;
+import visiblehand.entity.Route;
+import visiblehand.entity.Seating;
 import visiblehand.parser.air.AAParser;
 import visiblehand.parser.air.AirParser;
 import visiblehand.parser.air.ContinentalParser;
@@ -37,9 +49,11 @@ import com.avaje.ebean.EbeanServerFactory;
 import com.avaje.ebean.SqlUpdate;
 import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
+import com.avaje.ebean.text.csv.CsvReader;
 
 public class VisibleHand {
-
+	static final Logger logger = LoggerFactory.getLogger(VisibleHand.class);
+	
 	// A-1 jet fuel properties (wikipedia)
 	public static final double KG_FUEL_PER_LITER = .804,
 			MEGAJOULE_PER_LITER_FUEL = 34.7;
@@ -107,8 +121,6 @@ public class VisibleHand {
 		Properties props = new Properties();
 
 		InputStream stream = VisibleHand.class.getResourceAsStream("/" + name);
-		// if (stream == null)
-		// stream = new FileInputStream("" + name);
 		props.load(stream);
 
 		return props;
@@ -140,32 +152,53 @@ public class VisibleHand {
 				config.setUrl("jdbc:h2:mem:visiblehand");
 				c.setDataSourceConfig(config);
 				c.addPackage("visiblehand.entity");
-				/*c.setClasses(Arrays.asList(new Class<?>[] { Aircraft.class,
-						Airline.class, Airport.class, Country.class,
-						Equipment.class, Flight.class, FuelData.class,
-						Route.class, Seating.class, Utility.class }));*/
 
 				EbeanServer h2 = EbeanServerFactory.create(c);
-				SqlUpdate lev = Ebean
+				SqlUpdate update = Ebean
 						.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR "
 								+ "\"visiblehand.VisibleHand.getLevenshteinDistance\"");
-				lev.execute();
+				update.execute();
 
-				String csvDirectory = VisibleHand.class.getResource("/csv")
-						.getFile().toString()
-						+ "/";
-				String[] tables = new String[] { "airline", "airport",
-						"equipment", "equipment_aggregate", "fuel_data",
-						"route", "seating", "country" };
-
-				for (String table : tables) {
-					SqlUpdate update = Ebean.createSqlUpdate("insert into "
-							+ table + " (select * from csvread('"
-							+ csvDirectory + table + ".csv'))");
-					h2.execute(update);
-				}
+				loadCsvData();
+//				 String csvDirectory = VisibleHand.class.getResource("/csv")
+//						 .getFile().toString()
+//						 + "/";
+//						 String[] tables = new String[] { /*"airline", "airport",
+//						 "equipment", "equipment_aggregate", "fuel_data",
+//						 "route", "seating", "country"*/ "equipment_aggregate" };
+//						
+//						 for (String table : tables) {
+//						 SqlUpdate update = Ebean.createSqlUpdate("insert into "
+//						 + table + " (select * from csvread('"
+//						 + csvDirectory + table + ".csv'))");
+//						 h2.execute(update);
+//						 }
 			}
 			ebeanInitialized = true;
+		}
+	}
+	
+	private static void loadCsvData() {
+		String csvDirectory = "/csv/";
+		
+		Class<?>[] entities = new Class<?>[] { Airline.class, Airport.class,
+				Equipment.class, EquipmentAggregate.class,
+				FuelData.class, Route.class, Seating.class,
+				Country.class};
+		
+		for (Class<?> entity : entities) {
+			System.out.println(csvDirectory + entity.getSimpleName() + ".csv");
+			Reader reader = new InputStreamReader(VisibleHand.class.getResourceAsStream(
+					csvDirectory + entity.getSimpleName() + ".csv"));
+			
+			CsvReader<?> csv = Ebean.createCsvReader(entity);
+			csv.setAddPropertiesFromHeader();
+			try {
+				csv.process(reader);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println(Ebean.find(entity).findList().size());
 		}
 	}
 

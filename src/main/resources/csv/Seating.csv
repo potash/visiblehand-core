@@ -1,4 +1,4 @@
-id,equipment_id,airline_id,name,class1,class2,class3,class4,seats1,seats2,seats3,seats4
+id,equipment,airline,name,class1,class2,class3,class4,seats1,seats2,seats3,seats4
 241,3080,1355,Airbus A380-800,First,Club World,World Traveller Plus,World Traveller,14,97,55,303
 242,2790,1355,Boeing 747-400 V1,First,Club World,World Traveler Plus,World Traveler,14,52,36,243
 243,2790,1355,Boeing 747-400 V2,First,Club World,World Traveler Plus,World Traveler,14,70,30,185
