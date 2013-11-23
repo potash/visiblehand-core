@@ -7,13 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.PasswordAuthentication;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Folder;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -31,6 +28,7 @@ import visiblehand.entity.Flight;
 import visiblehand.entity.FuelData;
 import visiblehand.entity.Route;
 import visiblehand.entity.Seating;
+import visiblehand.oauth2.OAuth2Authenticator;
 import visiblehand.parser.air.AAParser;
 import visiblehand.parser.air.AirParser;
 import visiblehand.parser.air.ContinentalParser;
@@ -50,10 +48,11 @@ import com.avaje.ebean.SqlUpdate;
 import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
 import com.avaje.ebean.text.csv.CsvReader;
+import com.sun.mail.imap.IMAPStore;
 
 public class VisibleHand {
 	static final Logger logger = LoggerFactory.getLogger(VisibleHand.class);
-	
+
 	// A-1 jet fuel properties (wikipedia)
 	public static final double KG_FUEL_PER_LITER = .804,
 			MEGAJOULE_PER_LITER_FUEL = 34.7;
@@ -105,6 +104,18 @@ public class VisibleHand {
 		return getFolder(props, session, getPasswordAuthentication());
 	}
 
+	public static Folder getGoogleInbox(String email, String oauthToken)
+			throws MessagingException {
+
+		OAuth2Authenticator.initialize();
+
+		IMAPStore imapStore = OAuth2Authenticator.connectToImap(
+				"imap.gmail.com", 993, email, oauthToken, false);
+		Folder inbox = imapStore.getFolder("[Gmail]/All Mail");
+		inbox.open(Folder.READ_ONLY);
+		return inbox;
+	}
+
 	public static PasswordAuthentication getPasswordAuthentication() {
 		Console console = System.console();
 
@@ -117,11 +128,15 @@ public class VisibleHand {
 	}
 
 	// get properties file either in classpath or current dir
-	public static Properties getProperties(String name) throws IOException {
+	public static Properties getProperties(String name) {
 		Properties props = new Properties();
 
 		InputStream stream = VisibleHand.class.getResourceAsStream("/" + name);
-		props.load(stream);
+		try {
+			props.load(stream);
+		} catch (Exception e) {
+			logger.warn("Error loading " + name);
+		}
 
 		return props;
 	}
@@ -137,10 +152,10 @@ public class VisibleHand {
 		if (!ebeanInitialized) {
 			Properties props = getProperties("ebean.properties");
 			String db = props.getProperty("datasource.default");
-			System.out.println(db);
-			if (!db.equals("pg")) {
+			if (db == null || db.equals("h2")) {
 				ServerConfig c = new ServerConfig();
 				c.setName("h2");
+				c.loadFromProperties();
 				c.setDdlGenerate(true);
 				c.setDdlRun(true);
 				c.setDefaultServer(true);
@@ -160,45 +175,30 @@ public class VisibleHand {
 				update.execute();
 
 				loadCsvData();
-//				 String csvDirectory = VisibleHand.class.getResource("/csv")
-//						 .getFile().toString()
-//						 + "/";
-//						 String[] tables = new String[] { /*"airline", "airport",
-//						 "equipment", "equipment_aggregate", "fuel_data",
-//						 "route", "seating", "country"*/ "equipment_aggregate" };
-//						
-//						 for (String table : tables) {
-//						 SqlUpdate update = Ebean.createSqlUpdate("insert into "
-//						 + table + " (select * from csvread('"
-//						 + csvDirectory + table + ".csv'))");
-//						 h2.execute(update);
-//						 }
 			}
 			ebeanInitialized = true;
 		}
 	}
-	
-	private static void loadCsvData() {
+
+	public static void loadCsvData() {
 		String csvDirectory = "/csv/";
-		
+
 		Class<?>[] entities = new Class<?>[] { Airline.class, Airport.class,
-				Equipment.class, EquipmentAggregate.class,
-				FuelData.class, Route.class, Seating.class,
-				Country.class};
-		
+				Equipment.class, EquipmentAggregate.class, FuelData.class,
+				Route.class, Seating.class, Country.class };
+
 		for (Class<?> entity : entities) {
-			System.out.println(csvDirectory + entity.getSimpleName() + ".csv");
-			Reader reader = new InputStreamReader(VisibleHand.class.getResourceAsStream(
-					csvDirectory + entity.getSimpleName() + ".csv"));
-			
+			Reader reader = new InputStreamReader(
+					VisibleHand.class.getResourceAsStream(csvDirectory
+							+ entity.getSimpleName() + ".csv"));
+
 			CsvReader<?> csv = Ebean.createCsvReader(entity);
 			csv.setAddPropertiesFromHeader();
 			try {
 				csv.process(reader);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			System.out.println(Ebean.find(entity).findList().size());
 		}
 	}
 
@@ -216,37 +216,15 @@ public class VisibleHand {
 		return str.substring(0, str.length() - 3);
 	}
 
-	public static void main(String[] args) throws MessagingException,
-			ParseException, IOException {
-
-		initEbean();
-		Folder inbox = getInbox();
-		List<Flight> flights = new ArrayList<Flight>();
-
-		for (AirParser parser : airParsers) {
-			if (parser.isActive()) {
-				for (Message message : inbox.search(parser.getSearchTerm())) {
-					System.out.println(message.getSubject());
-					flights.addAll(parser.parse(message).getFlights());
-				}
-			}
-		}
-
-		printStatistics(flights);
-		SqlUpdate write = Ebean
-				.createSqlUpdate("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
-		Ebean.execute(write);
-	}
-
 	public static void printStatistics(List<Flight> flights) {
 		double fuel = 0;
 		double nm = 0;
 		DescriptiveStatistics sigma = new DescriptiveStatistics(), nmpkg = new DescriptiveStatistics();
 
 		for (Flight flight : flights) {
-			System.out.println(flight);
+			logger.debug(flight.toString());
 			DescriptiveStatistics fuelBurn = flight.getFuelBurnStatistics();
-			System.out.println(fuelBurn);
+			logger.debug(fuelBurn.toString());
 			if (fuelBurn.getValues().length > 0) {
 				fuel += fuelBurn.getMean();
 				nm += flight.getRoute().getDistance();

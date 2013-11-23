@@ -28,12 +28,17 @@ public @Data class Flight {
 	private Equipment equipment;
 	
 	//@Transient
-	//private DescriptiveStatistics fuelBurnStatistics = fuelBurnStatistics();
+	//@Getter(lazy=true)
+	private DescriptiveStatistics fuelBurnStatistics;// = fuelBurnStatistics();
 	
 	public DescriptiveStatistics getFuelBurnStatistics() {
-		return fuelBurnStatistics();
+		if (fuelBurnStatistics == null) {
+			fuelBurnStatistics = fuelBurn();
+		}
+		return fuelBurnStatistics;
 	}
-	private DescriptiveStatistics fuelBurnStatistics() {
+	
+	private DescriptiveStatistics fuelBurn() {
 		DescriptiveStatistics burn = null;
 		if (getEquipment() != null) {
 			burn = getRoute().getFuelBurnStatistics(getEquipment());

@@ -104,9 +104,13 @@ public @Data class Route {
 	}
 
 	//@Transient
-	//private final DescriptiveStatistics fuelBurnStatistics = fuelBurn();
+	//@Getter(lazy=true)
+	private DescriptiveStatistics fuelBurnStatistics; //= fuelBurn();
 	public DescriptiveStatistics getFuelBurnStatistics() {
-		return fuelBurn();
+		if (fuelBurnStatistics == null) {
+			fuelBurnStatistics = fuelBurn();
+		}
+		return fuelBurnStatistics;
 	}
 	
 	@Transient

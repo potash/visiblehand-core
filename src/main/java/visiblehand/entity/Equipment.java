@@ -14,6 +14,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.avaje.ebean.Ebean;
 
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
@@ -24,6 +27,8 @@ import com.avaje.ebean.Ebean;
 @EqualsAndHashCode(of={"id"})
 public @Data
 class Equipment {
+	static final Logger logger = LoggerFactory.getLogger(Equipment.class);
+	
 	@Id
 	private Integer id;
 	private String IATA;
@@ -119,11 +124,11 @@ class Equipment {
 				.findList();
 		if (e.size() > 0) {
 			if (e.size() > 1) {
-				System.out.println(" More than one equipment match: " + name);
+				logger.warn(" More than one equipment match: " + name);
 			}
 			return e.get(0);
 		} else {
-			System.out.println("No equipment match: " + name);
+			logger.warn("No equipment match: " + name);
 			return null;
 		}
 	}

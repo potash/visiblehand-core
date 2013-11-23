@@ -78,7 +78,7 @@ class JetBlueParser extends AirParser {
 				+ "td:containsOwn(Seats) ~ td:containsOwn(Terminal)").first().parent();
 		
 		boolean frequentFlyer = (flightHeader.select("> td:containsOwn(Frequent Flyer)").size() > 0);
-		System.out.println(frequentFlyer);
+
 		Element flightTable = flightHeader.parent().parent();
 		// the flight rows are the ones with times in them
 		for (Element flightRow : flightTable.select("tr:gt(0):has(td:gt(4))")) {

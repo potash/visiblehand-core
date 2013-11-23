@@ -55,7 +55,6 @@ public class MessageParserTest extends EbeanTest {
 
 	public static final FilenameFilter msgFileFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
-			System.out.println(name);
 			return name.matches("\\d+.msg");
 		}
 	};
@@ -77,11 +76,8 @@ public class MessageParserTest extends EbeanTest {
 	// corresponding to the given parser
 	public static Message[] getTestMessages(MessageParser parser)
 			throws FileNotFoundException, MessagingException {
-		System.out.println(getTestDirectory(parser));
 		File dir = new File(getTestDirectory(parser));
-		System.out.println(dir.exists());
 		File[] files = dir.listFiles(msgFileFilter);
-		System.out.println(Arrays.toString(files));
 		Arrays.sort(files);
 		Message[] messages = new Message[files.length];
 		Session session = Session.getDefaultInstance(new Properties());

@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.avaje.ebean.Ebean;
 
 @ToString(of = { "id", "name" })
@@ -16,6 +19,8 @@ import com.avaje.ebean.Ebean;
 @Entity
 public @Data
 class Airline {
+	static final Logger logger = LoggerFactory.getLogger(Airline.class);
+	
 	@Id
 	private int id;
 	private String name;
@@ -35,7 +40,7 @@ class Airline {
 		} else if (airlines.size() == 1){
 			return airlines.get(0);
 		} else {
-			System.out.println("More than one airline with IATA: " + IATA);
+			logger.warn("More than one airline with IATA: " + IATA);
 			for (Airline airline : airlines) {
 				List<Route> routes = Ebean.find(Route.class).where()
 						.eq("airline", airline)

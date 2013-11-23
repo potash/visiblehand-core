@@ -1,5 +1,7 @@
 package visiblehand;
 
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
@@ -10,28 +12,39 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import visiblehand.entity.Flight;
 import visiblehand.parser.MessageParserTest;
 import visiblehand.parser.air.AirParser;
+import visiblehand.parser.air.AirReceipt;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlUpdate;
 
 public class VisibleHandTest extends EbeanTest {
-
+	static final Logger logger = LoggerFactory.getLogger(VisibleHandTest.class);
+	
 	@Test
 	public void test() throws FileNotFoundException, MessagingException, ParseException, IOException {
 		List<Flight> flights = new ArrayList<Flight>();
+		int receipts = 0;
 		for (AirParser parser : VisibleHand.airParsers) {
 			if (parser.isActive()) {
 				for (Message message : MessageParserTest.getTestMessages(parser)) {
-					System.out.println(message.getSubject());
-					flights.addAll(parser.parse(message).getFlights());
+					AirReceipt receipt = parser.parse(message);
+					if (receipt.getFlights().size() == 0) {
+						fail("No flights parsed from receipt!");
+					} else {
+						flights.addAll(parser.parse(message).getFlights());
+					}
+					receipts++;
 				}
 			}
 		}
-
+		System.out.println("Receipts: " + receipts);
+		System.out.println("Flights: " + flights.size());
 		VisibleHand.printStatistics(flights);
 		SqlUpdate write = Ebean
 				.createSqlUpdate("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
