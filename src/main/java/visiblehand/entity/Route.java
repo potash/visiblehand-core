@@ -22,7 +22,7 @@ import com.avaje.ebean.Ebean;
 public @Data class Route {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "airline_id")
 	private Airline airline;

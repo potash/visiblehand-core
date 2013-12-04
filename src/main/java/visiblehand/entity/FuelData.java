@@ -17,7 +17,7 @@ import com.avaje.ebean.Ebean;
 public @Data
 class FuelData {
 	@Id
-	private int id;
+	private Long id;
 	private String ICAO;
 	private Double LTO;
 	private Integer distance1, distance2, distance3, distance4, distance5,

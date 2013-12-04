@@ -6,6 +6,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Getter;
+import visiblehand.entity.UtilityReceipt;
 import visiblehand.parser.MessageParser;
 
 import com.sun.mail.imap.Utility;
@@ -17,5 +18,5 @@ public abstract class UtilityParser extends MessageParser {
 	public abstract UtilityReceipt parse(Message message) throws java.text.ParseException, MessagingException, IOException;
 
 	@Getter
-	private final Class receiptClass = UtilityReceipt.class;
+	private final Class<UtilityReceipt> receiptClass = UtilityReceipt.class;
 }

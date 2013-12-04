@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Flight;
@@ -38,17 +39,17 @@ class SouthwestParser extends AirParser {
 	
 	private boolean active = true;
 
-	private static final DateFormat flightDateFormat = getGMTSimpleDateFormat("EEE MMM d");
+	private static final String flightDatePattern = "EEE MMM d h:mm aa";
 	private static final DateFormat confirmationDateFormat = getGMTSimpleDateFormat("M/d/yyyy");
 	
 	private static final Pattern confirmationDatePattern = Pattern.compile("\\s*Confirmation Date:\\s*(?<date>\\d{2}/\\d{1,2}/\\d{4})\\s*"),
 								 confirmationCodePattern = Pattern.compile("\\s*AIR Confirmation:\\s*(?<confirmation>\\w*)\\s*"),
-							     flightPattern = Pattern.compile("[^(]*\\((\\w{3})\\)[^(]*\\((\\w{3})\\).*");
+							     flightPattern = Pattern.compile(".*\\((?<depart>\\w{3})\\).*(?<time>\\d{1,2}:\\d{2} (A|P)M).*\\((?<arrive>\\w{3})\\).*");
 	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt();
+		AirReceipt receipt = new AirReceipt(message);
 		String content = getContent(message);
 		content = content.replaceAll("<!-- Start Flight Info -->",
 				"<flightInfo></flightInfo>");
@@ -82,7 +83,7 @@ class SouthwestParser extends AirParser {
 		Elements flightTables = doc.select("flightInfo + table");
 
 		// store last date, for connections
-		Date date = null;
+		String lastDateString = null;
 
 		for (Element flightTable : flightTables) {
 			if (flightTable.hasText()) {
@@ -92,27 +93,31 @@ class SouthwestParser extends AirParser {
 				}
 				String dateString = cells.get(1).text(), number = cells.get(2)
 						.text(), itinerary = cells.get(3).text();
-
-				Flight flight = new Flight();
-				flight.setAirline(getAirline());
-				flight.setNumber(Integer.parseInt(number));
-				if (dateString.matches("\\s*")) {
-					flight.setDate(date);
+				if (!dateString.isEmpty()) {
+					lastDateString = dateString;
 				} else {
-					date = getDate(sentDate, dateString);
-					flight.setDate(date);
+					dateString = lastDateString;
 				}
 
+				Flight flight = new Flight();
+				flight.setNumber(Integer.parseInt(number));
+
 				Matcher matcher = flightPattern.matcher(itinerary);
+				System.out.println(itinerary);
 				if (matcher.find()) {
-					String depart = matcher.group(1);
-					String arrive = matcher.group(2);
+					String depart = matcher.group("depart");
+					System.out.println(depart);
+					String arrive = matcher.group("arrive");
 					Airport source = Ebean.find(Airport.class).where()
 							.eq("code", depart).findUnique();
 					Airport destination = Ebean.find(Airport.class).where()
 							.eq("code", arrive).findUnique();
 					Route route = Route.find(getAirline(), source, destination);
 					flight.setRoute(route);
+					
+					String timeString = matcher.group("time");
+					flight.setDate(getNextDate(flightDatePattern, dateString + ' ' + timeString, sentDate));
+					
 					flights.add(flight);
 				}
 			}

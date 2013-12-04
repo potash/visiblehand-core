@@ -10,7 +10,7 @@ import lombok.Data;
 public @Data
 class Aircraft {
 	@Id
-	private Integer id;
+	private Long id;
 	private String manufacturer;
 	private String type;
 	private String model;

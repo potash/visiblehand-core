@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -22,12 +21,10 @@ public @Data
 class Seating {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Id
-	private int id;
+	private Long id;
 	@ManyToOne
-	@JoinColumn(name = "equipment_id")
 	private Equipment equipment;
 	@ManyToOne
-	@JoinColumn(name = "airline_id")
 	private Airline airline;
 	String name;
 	// names of seat classes

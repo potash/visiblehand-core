@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Flight;
@@ -49,7 +50,7 @@ class JetBlueParser extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt();
+		AirReceipt receipt = new AirReceipt(message);
 		String content = getContent(message);
 		receipt.setFlights(getFlights(getContent(message), message.getSentDate()));
 		receipt.setAirline(getAirline());

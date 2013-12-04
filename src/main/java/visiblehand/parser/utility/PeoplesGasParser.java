@@ -6,6 +6,7 @@ import java.text.ParseException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import visiblehand.entity.UtilityReceipt;
 import lombok.Data;
 import lombok.Getter;
 

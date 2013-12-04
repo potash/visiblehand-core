@@ -30,7 +30,7 @@ class Equipment {
 	static final Logger logger = LoggerFactory.getLogger(Equipment.class);
 	
 	@Id
-	private Integer id;
+	private Long id;
 	private String IATA;
 	private String ICAO;
 	private String name;
@@ -71,7 +71,7 @@ class Equipment {
 	private final List<Equipment> siblings = siblings();
 
 	private List<Equipment> siblings() {
-		List<Integer> ids = new ArrayList<Integer>();
+		List<Long> ids = new ArrayList<Long>();
 		for (Equipment parent : getParents()) {
 			for (Equipment child : parent.getChildren()) {
 				ids.add(child.getId());

@@ -25,6 +25,7 @@ import lombok.Getter;
 import org.junit.Test;
 
 import visiblehand.EbeanTest;
+import visiblehand.entity.Receipt;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;

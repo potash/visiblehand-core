@@ -127,5 +127,10 @@
 			<version>1.9.13</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>1.8.2</version>
+		</dependency>
 	</dependencies>
 </project>

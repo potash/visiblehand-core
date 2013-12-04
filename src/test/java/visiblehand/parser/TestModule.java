@@ -8,6 +8,8 @@ import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Equipment;
 import visiblehand.entity.Flight;
+import visiblehand.entity.Receipt;
+import visiblehand.entity.ReceiptMessage;
 import visiblehand.entity.Route;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -34,15 +36,20 @@ public class TestModule extends SimpleModule {
 	abstract class ReceiptMixIn {
 		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 		abstract Date getDate();
+		@JsonIgnore
+		abstract ReceiptMessage getMessage();
 	}
 	
 	abstract class FlightMixIn {
+		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
+		abstract Date getDate();
 		@JsonIgnore
 		abstract int getId();
 		@JsonIgnore
 		abstract DescriptiveStatistics getFuelBurnStatistics();
-		@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
-		abstract Date getDate();
+		@JsonIgnore
+		abstract double getFuelBurn();
+		
 	}
 	
 	@JsonAutoDetect(getterVisibility=JsonAutoDetect.Visibility.NONE)

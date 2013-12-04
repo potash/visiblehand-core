@@ -15,13 +15,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Flight;
 import visiblehand.parser.MessageParserTest;
 import visiblehand.parser.air.AirParser;
-import visiblehand.parser.air.AirReceipt;
-
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlUpdate;
 
 public class VisibleHandTest extends EbeanTest {
 	static final Logger logger = LoggerFactory.getLogger(VisibleHandTest.class);
@@ -46,9 +43,6 @@ public class VisibleHandTest extends EbeanTest {
 		System.out.println("Receipts: " + receipts);
 		System.out.println("Flights: " + flights.size());
 		VisibleHand.printStatistics(flights);
-		SqlUpdate write = Ebean
-				.createSqlUpdate("call csvwrite('data/csv/flight.csv', 'SELECT * FROM FLIGHT')");
-		Ebean.execute(write);
 	}
 
 }

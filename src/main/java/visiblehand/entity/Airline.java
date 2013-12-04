@@ -22,7 +22,7 @@ class Airline {
 	static final Logger logger = LoggerFactory.getLogger(Airline.class);
 	
 	@Id
-	private int id;
+	private Long id;
 	private String name;
 	private String alias;
 	private String IATA;

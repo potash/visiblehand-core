@@ -14,7 +14,7 @@ import com.avaje.ebean.Ebean;
 @EqualsAndHashCode(of={"id"})
 public @Data class Airport {
 	@Id
-	private int id;
+	private Long id;
 	private String name;
 	private String city;
 	private String country;

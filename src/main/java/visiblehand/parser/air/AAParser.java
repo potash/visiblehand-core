@@ -14,6 +14,7 @@ import javax.mail.MessagingException;
 
 import lombok.Data;
 import lombok.Getter;
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Country;
@@ -47,7 +48,7 @@ public @Data class AAParser extends AirParser {
 	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
-		AirReceipt receipt = new AirReceipt();
+		AirReceipt receipt = new AirReceipt(message);
 		String content = getContent(message);
 		Date date = getIssueDate(content);
 		receipt.setFlights(getFlights(content,
@@ -110,7 +111,6 @@ public @Data class AAParser extends AirParser {
 			Flight flight = new Flight();
 			flight.setDate(date);
 			flight.setRoute(route);
-			flight.setAirline(airline);
 			flight.setNumber(Integer.parseInt(matcher.group("number")));
 			flights.add(flight);
 		}

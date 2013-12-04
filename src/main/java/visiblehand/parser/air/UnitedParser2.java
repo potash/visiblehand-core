@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Equipment;
@@ -47,7 +48,7 @@ public @Data class UnitedParser2 extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt();
+		AirReceipt receipt = new AirReceipt(message);
 		String content = getContent(message);
 		Document doc = Jsoup.parse(content);
 		receipt.setFlights(getFlights(doc));

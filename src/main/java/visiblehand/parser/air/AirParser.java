@@ -9,6 +9,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Getter;
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Airport;
 import visiblehand.entity.Route;

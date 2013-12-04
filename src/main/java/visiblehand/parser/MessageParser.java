@@ -24,6 +24,8 @@ import lombok.Getter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import visiblehand.entity.Receipt;
+
 public abstract class MessageParser {
 	public abstract String getFromString();
 	public abstract String[] getSubjectStrings();
@@ -77,7 +79,7 @@ public abstract class MessageParser {
 		return "(from:" + getFromString() + " and (subject:\"" + StringUtils.join(getSubjectStrings(), "subject:\"") + "\")";
 	}
 	
-	protected static DateFormat getGMTSimpleDateFormat(String format) {
+	public static DateFormat getGMTSimpleDateFormat(String format) {
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		dateFormat.setTimeZone(GMT);
 		return dateFormat;

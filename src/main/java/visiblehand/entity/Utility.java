@@ -21,7 +21,7 @@ class Utility {
 		GAS
 	};
 	@Id
-	private int id;
+	private Long id;
 	private String name;
 	private Type type;
 }

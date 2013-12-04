@@ -11,6 +11,7 @@ import javax.mail.MessagingException;
 
 import lombok.Data;
 import lombok.Getter;
+import visiblehand.entity.AirReceipt;
 import visiblehand.entity.Airline;
 import visiblehand.entity.Flight;
 
@@ -31,7 +32,7 @@ public @Data class DeltaParser extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt();
+		AirReceipt receipt = new AirReceipt(message);
 		String content = getContent(message);
 		receipt.setFlights(getFlights(getContent(message)));
 		receipt.setAirline(getAirline());
