@@ -1,10 +1,10 @@
-# VisibleHand-Core
-
+visiblehand-core
+===============
 VisibleHand is a system for tracking personal resource usage. Currently this means scraping an email inbox for airline flight receipts and then 
 using a variety of data sources (airline timetables, aircraft fuel models and seating charts) to infer carbon dioxide emisions data.
 
 ## Usage
-See [Visiblehand-CLI](https://github.com/potash/visiblehand-cli)
+See [visiblehand-cli](https://github.com/potash/visiblehand-cli)
 
 ## Data
 The basic data about airlines, airports and routes comes from [OpenFlights](http://openflights.org/data.html).
