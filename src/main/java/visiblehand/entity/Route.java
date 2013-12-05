@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.avaje.ebean.Ebean;
 
 @Entity
+@UniqueConstraint(columnNames={"airline_id", "source_id", "destination_id"})
 public @Data class Route {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

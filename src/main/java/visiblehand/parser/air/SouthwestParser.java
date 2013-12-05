@@ -98,9 +98,7 @@ class SouthwestParser extends AirParser {
 				} else {
 					dateString = lastDateString;
 				}
-
-				Flight flight = new Flight();
-				flight.setNumber(Integer.parseInt(number));
+				
 
 				Matcher matcher = flightPattern.matcher(itinerary);
 				if (matcher.find()) {
@@ -111,11 +109,11 @@ class SouthwestParser extends AirParser {
 					Airport destination = Ebean.find(Airport.class).where()
 							.eq("code", arrive).findUnique();
 					Route route = Route.find(getAirline(), source, destination);
-					flight.setRoute(route);
 					
 					String timeString = matcher.group("time");
-					flight.setDate(getNextDate(flightDatePattern, dateString + ' ' + timeString, sentDate));
+					Date date = getNextDate(flightDatePattern, dateString + ' ' + timeString, sentDate);
 					
+					Flight flight = Flight.get(route, date, Integer.parseInt(number), null);
 					flights.add(flight);
 				}
 			}

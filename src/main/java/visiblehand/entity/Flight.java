@@ -9,13 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
 import lombok.Getter;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import com.avaje.ebean.Ebean;
+
 @Entity
+@UniqueConstraint(columnNames={"route_id", "date","number","equipment_id"})
 public @Data class Flight {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -38,6 +42,21 @@ public @Data class Flight {
 			fuelBurnStatistics = fuelBurn();
 		}
 		return fuelBurnStatistics;
+	}
+	
+	// find existing flight or create new one
+	public static Flight get(Route route, Date date, Integer number, Equipment equipment) {
+		Flight flight = Ebean.find(Flight.class).where().eq("route", route).eq("date", date)
+				.eq("number", number).eq("equipment", equipment).findUnique();
+		
+		if (flight == null) {
+			flight = new Flight();
+			flight.setRoute(route);
+			flight.setDate(date);
+			flight.setNumber(number);
+			flight.setEquipment(equipment);
+		}
+		return flight;
 	}
 	
 	private DescriptiveStatistics fuelBurn() {

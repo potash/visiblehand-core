@@ -44,4 +44,5 @@ public @Data class AirReceipt implements Receipt {
 	
 	@Embedded
 	private ReceiptMessage message;
+	
 }

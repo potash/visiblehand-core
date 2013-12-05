@@ -83,21 +83,19 @@ class JetBlueParser extends AirParser {
 		Element flightTable = flightHeader.parent().parent();
 		// the flight rows are the ones with times in them
 		for (Element flightRow : flightTable.select("tr:gt(0):has(td:gt(4))")) {
-			Flight flight = new Flight();
 			Elements cells = flightRow.select("td");
 			
 			Date date = getDate(sentDate, cells.get(0).text(), cells.get(1).text());
-			flight.setDate(date);
+			
 			
 			String[] airports = cells.get(2).text().split(" to ");
 			Airport source = getAirport(airports[0]),
 					destination = getAirport(airports[1]);
 			Route route = Route.find(getAirline(), source, destination);
-			flight.setRoute(route);
 			
 			int number = Integer.parseInt(cells.get(3).text());
-			flight.setNumber(number);
 			
+			Flight flight = Flight.get(route, date, number, null);
 			flights.add(flight);
 		}
 		return flights;

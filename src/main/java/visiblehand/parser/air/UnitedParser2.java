@@ -76,11 +76,10 @@ public @Data class UnitedParser2 extends AirParser {
 		
 		for (Element flightRow : flightTable.select("tr:gt(1):has(td:gt(0))")) {
 			Elements cells = flightRow.select("td");
-			Flight flight = new Flight();
 			
 			Matcher matcher = flightCodePattern.matcher(cells.get(1).select("span").html());
 			matcher.find();
-			flight.setNumber(Integer.parseInt(matcher.group("number")));
+			Integer number = Integer.parseInt(matcher.group("number"));
 			Airline airline = Airline.findByIATA(matcher.group("airline"));
 			
 			matcher = airportPattern.matcher(cells.get(3).text());
@@ -90,18 +89,17 @@ public @Data class UnitedParser2 extends AirParser {
 			matcher = timePattern.matcher(cells.get(3).text());
 			matcher.find();
 			String time = matcher.group("time");
-			flight.setDate(dateFormat.parse(cells.get(0).text() + time));
+			Date date = dateFormat.parse(cells.get(0).text() + time);
 			
 			matcher = airportPattern.matcher(cells.get(4).text());
 			matcher.find();
 			Airport destination = Airport.findByCode(matcher.group("code"));
 			
 			Route route = Route.find(getAirline(), source, destination);
-			flight.setRoute(route);
 			
 			Equipment equipment = Equipment.findByName(cells.get(5).text());
-			flight.setEquipment(equipment);
 			
+			Flight flight = Flight.get(route, date, number, equipment);
 			flights.add(flight);
 		}
 		return flights;

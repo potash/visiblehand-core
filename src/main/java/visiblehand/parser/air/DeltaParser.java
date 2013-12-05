@@ -17,8 +17,6 @@ import visiblehand.entity.Flight;
 
 import com.avaje.ebean.Ebean;
 
-// United Airlines email receipt parser
-
 public @Data class DeltaParser extends AirParser {
 	private final String fromString = "DeltaAirLines@e.delta.com";
 	private final String[] subjectStrings = null;

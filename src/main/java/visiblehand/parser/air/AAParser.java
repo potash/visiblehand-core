@@ -108,10 +108,7 @@ public @Data class AAParser extends AirParser {
 				Ebean.save(route);
 			}
 			
-			Flight flight = new Flight();
-			flight.setDate(date);
-			flight.setRoute(route);
-			flight.setNumber(Integer.parseInt(matcher.group("number")));
+			Flight flight = Flight.get(route, date, Integer.parseInt(matcher.group("number")), null);
 			flights.add(flight);
 		}
 

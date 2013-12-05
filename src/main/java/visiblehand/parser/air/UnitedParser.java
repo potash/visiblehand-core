@@ -93,39 +93,38 @@ class UnitedParser extends AirParser {
 					}
 				}
 				if (cells.size() == 5) {
-					String number = cells.get(0).text(), depart = cells.get(1)
+					String numberString = cells.get(0).text(), depart = cells.get(1)
 							.text(), arrive = cells.get(2).text(), seatClass = cells
 							.get(3).text();
-
-					Flight flight = new Flight();
+					Integer number = null;
 					try {
-						flight.setNumber(new Integer(number
-								.split("(United | )")[1]));
+						number = new Integer(numberString
+								.split("(United | )")[1]);
 					} catch (NumberFormatException e) {
 						throw new ParseException(
-								"Could not parse flight number: " + number, 0);
+								"Could not parse flight number: " + numberString, 0);
 					}
 					Airport source = Airport.findByCode(depart.substring(0, 3));
 					Airport destination = Airport.findByCode(arrive.substring(0, 3));
 
 					Date date = dateFormat.parse(depart.substring(4));
-					flight.setDate(date);
-
+					
 					Route route = Route.find(getAirline(), source, destination);
 
-					flight.setRoute(route);
 					// next line has equipment, duration, fare code, etc.
+					Equipment equipment = null;
 					flightRow = flightRow.nextElementSibling();
 					if (flightRow != null) {
 						Elements infoCells = flightRow.select("td");
 						if (infoCells.size() > 0) {
 							String info = infoCells.get(0).text();
-							String equipment = info
+							String equipmentString = info
 									.split("(Equipment:\\s*|\\W*\\|)")[1];
-							flight.setEquipment(Equipment.findByName(equipment));
+							equipment = Equipment.findByName(equipmentString);
 						}
 					}
 
+					Flight flight = Flight.get(route,date,number,equipment);
 					flights.add(flight);
 				}
 			}
