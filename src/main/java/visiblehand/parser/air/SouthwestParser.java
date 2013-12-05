@@ -103,10 +103,8 @@ class SouthwestParser extends AirParser {
 				flight.setNumber(Integer.parseInt(number));
 
 				Matcher matcher = flightPattern.matcher(itinerary);
-				System.out.println(itinerary);
 				if (matcher.find()) {
 					String depart = matcher.group("depart");
-					System.out.println(depart);
 					String arrive = matcher.group("arrive");
 					Airport source = Ebean.find(Airport.class).where()
 							.eq("code", depart).findUnique();
