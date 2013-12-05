@@ -44,8 +44,11 @@ public @Data class Flight {
 		return fuelBurnStatistics;
 	}
 	
+	public Flight() {
+		
+	}
 	// find existing flight or create new one
-	public static Flight get(Route route, Date date, Integer number, Equipment equipment) {
+	public static Flight find(Route route, Date date, Integer number, Equipment equipment) {
 		Flight flight = Ebean.find(Flight.class).where().eq("route", route).eq("date", date)
 				.eq("number", number).eq("equipment", equipment).findUnique();
 		
@@ -56,6 +59,7 @@ public @Data class Flight {
 			flight.setNumber(number);
 			flight.setEquipment(equipment);
 		}
+		
 		return flight;
 	}
 	

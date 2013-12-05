@@ -163,13 +163,19 @@ public @Data class Route {
 	}
 	
 	public static Route find(Airline airline, Airport source, Airport destination) {
-		return Ebean.find(Route.class).where().eq("airline", airline)
+		Route route = Ebean.find(Route.class).where().eq("airline", airline)
 				.eq("source", source).eq("destination", destination).findUnique();
-	}
-
-	// TODO: search for routes of this airline to the destination, from the origin of a similar distance
-	// and get their most common equipment
-	public String findIATA() {
-		return null;
+		
+		if (route == null) {
+			route = new Route();
+			route.setAirline(airline);
+			route.setSource(source);
+			route.setDestination(destination);
+			
+			route.setCodeshare(false);
+			route.setStops(0);
+		}
+		
+		return route;
 	}
 }

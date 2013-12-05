@@ -124,7 +124,7 @@ class UnitedParser extends AirParser {
 						}
 					}
 
-					Flight flight = Flight.get(route,date,number,equipment);
+					Flight flight = Flight.find(route,date,number,equipment);
 					flights.add(flight);
 				}
 			}

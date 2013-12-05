@@ -99,7 +99,7 @@ public @Data class UnitedParser2 extends AirParser {
 			
 			Equipment equipment = Equipment.findByName(cells.get(5).text());
 			
-			Flight flight = Flight.get(route, date, number, equipment);
+			Flight flight = Flight.find(route, date, number, equipment);
 			flights.add(flight);
 		}
 		return flights;

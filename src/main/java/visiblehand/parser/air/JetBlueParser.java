@@ -95,7 +95,7 @@ class JetBlueParser extends AirParser {
 			
 			int number = Integer.parseInt(cells.get(3).text());
 			
-			Flight flight = Flight.get(route, date, number, null);
+			Flight flight = Flight.find(route, date, number, null);
 			flights.add(flight);
 		}
 		return flights;

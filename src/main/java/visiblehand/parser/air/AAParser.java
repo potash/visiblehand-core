@@ -95,20 +95,8 @@ public @Data class AAParser extends AirParser {
 				}
 			}
 			Route route = Route.find(airline, source, destination);
-			if (route == null) {
-				route = new Route();
-				route.setAirline(airline);
-				// TODO: if airline is not aa, need an AA entry with codeshare=true
-				route.setCodeshare(false);
-				route.setSource(source);
-				route.setDestination(destination);
-				route.setStops(0);
-				route.setIATA(route.findIATA());
-				// TODO route.datasource?
-				Ebean.save(route);
-			}
 			
-			Flight flight = Flight.get(route, date, Integer.parseInt(matcher.group("number")), null);
+			Flight flight = Flight.find(route, date, Integer.parseInt(matcher.group("number")), null);
 			flights.add(flight);
 		}
 

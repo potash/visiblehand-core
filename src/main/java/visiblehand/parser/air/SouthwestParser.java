@@ -113,7 +113,7 @@ class SouthwestParser extends AirParser {
 					String timeString = matcher.group("time");
 					Date date = getNextDate(flightDatePattern, dateString + ' ' + timeString, sentDate);
 					
-					Flight flight = Flight.get(route, date, Integer.parseInt(number), null);
+					Flight flight = Flight.find(route, date, Integer.parseInt(number), null);
 					flights.add(flight);
 				}
 			}
