@@ -49,7 +49,8 @@ public class TestModule extends SimpleModule {
 		abstract DescriptiveStatistics getFuelBurnStatistics();
 		@JsonIgnore
 		abstract double getFuelBurn();
-		
+		@JsonIgnore
+		abstract double getCO2();
 	}
 	
 	@JsonAutoDetect(getterVisibility=JsonAutoDetect.Visibility.NONE)

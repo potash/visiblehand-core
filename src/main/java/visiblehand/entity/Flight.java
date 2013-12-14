@@ -1,5 +1,6 @@
 package visiblehand.entity;
 
+import static visiblehand.VisibleHand.*;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -78,4 +79,7 @@ public @Data class Flight {
 	@Getter(lazy=true)
 	private final double fuelBurn = getFuelBurnStatistics().getMean();
 	
+	@Transient
+	@Getter(lazy=true)
+	private final double CO2 = getFuelBurn() / KG_FUEL_PER_LITER / LITERS_PER_GALLON * KG_CO2_PER_GALLON_FUEL;
 }
