@@ -30,7 +30,8 @@ public @Data class AAParser extends AirParser {
 	private final String[] subjectStrings = {"E-Ticket Confirmation-"};
 	private final String bodyString = "";
 	
-	private boolean active = true;
+	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	private static final String datePattern ="ddMMMhh:mm aa";
 	private static final DateFormat issueFormat = getGMTSimpleDateFormat("ddMMMyy");

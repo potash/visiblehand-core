@@ -35,6 +35,9 @@ public @Data class UnitedParser2 extends AirParser {
 	private final String fromString = "unitedairlines@united.com";
 	private final String[] subjectStrings = {"eTicket Itinerary and Receipt for Confirmation"};
 	private final String bodyString = "";
+	
+	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "United Airlines").findUnique();

@@ -41,11 +41,11 @@ class UnitedParser extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "United Airlines").findUnique();
 	
+	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
+	
 	private static final DateFormat dateFormat = getGMTSimpleDateFormat("h:mm a EEE, MMM d, yyyy");
-	
 	private static Pattern confirmationPattern =  Pattern.compile("Confirmation (?:#|number)[^\\w]*(\\w{6})");
-	
-	private boolean active = true;
 
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {

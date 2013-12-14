@@ -37,7 +37,8 @@ class SouthwestParser extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Southwest Airlines").findUnique();
 	
-	private boolean active = true;
+	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 
 	private static final String flightDatePattern = "EEE MMM d h:mm aa";
 	private static final DateFormat confirmationDateFormat = getGMTSimpleDateFormat("M/d/yyyy");

@@ -38,7 +38,8 @@ class JetBlueParser extends AirParser {
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "JetBlue Airways").findUnique();
 	
-	private boolean active = true;
+	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	private static final Pattern confirmationPattern = Pattern.compile("Your confirmation number is (?<confirmation>\\w*)"),
 								 timePattern = Pattern.compile("\u00a0(a|p)\\.m\\..*");

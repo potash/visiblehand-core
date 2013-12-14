@@ -38,8 +38,12 @@ public abstract class MessageParser {
 	protected static final String dddRegex = "(MON|TUE|WED|THU|FRI|SAT|SUN)";
 	protected static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 	
-	@Getter
-	private boolean active = false;	// inactive by default
+	public boolean isActive() {
+		return getParserDate() == null;
+	}
+	
+	public abstract Date getSearchDate();
+	public abstract Date getParserDate();
 	
 	@Getter(lazy = true)
 	private final SearchTerm searchTerm = searchTerm();

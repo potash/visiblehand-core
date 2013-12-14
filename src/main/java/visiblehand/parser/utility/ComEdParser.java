@@ -2,6 +2,7 @@ package visiblehand.parser.utility;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -18,6 +19,9 @@ public @Data class ComEdParser extends UtilityParser {
 	private final String fromString = "mycheckfree@customercenter.net";
 	private final String[] subjectStrings = {"You have a new bill from ComEd - Commonwealth Edison."};
 	private final String  bodyString = "";
+	
+	private final Date parserDate = null;
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
 	private final Utility utility = null;

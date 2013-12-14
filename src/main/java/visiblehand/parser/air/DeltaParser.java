@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.Message;
@@ -21,6 +22,9 @@ public @Data class DeltaParser extends AirParser {
 	private final String fromString = "DeltaAirLines@e.delta.com";
 	private final String[] subjectStrings = null;
 	private final String  bodyString = "Delta Reservation Receipt";
+	
+	private final Date parserDate = null;
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Delta Air Lines").findUnique();

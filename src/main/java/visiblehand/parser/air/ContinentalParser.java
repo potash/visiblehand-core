@@ -3,6 +3,7 @@ package visiblehand.parser.air;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.Message;
@@ -22,6 +23,9 @@ public @Data class ContinentalParser extends AirParser {
 	private final  String fromString = "continentalairlines@continental.com";
 	private final String[] subjectStrings = {"eTicket Itinerary and Receipt"};
 	private final String bodyString = null;
+	
+	private final Date parserDate = null;
+	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
 	private final Airline airline = Ebean.find(Airline.class).where().eq("name", "Continental Airlines").findUnique();
