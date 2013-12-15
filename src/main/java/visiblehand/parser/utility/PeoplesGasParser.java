@@ -25,7 +25,7 @@ public @Data class PeoplesGasParser extends UtilityParser {
 	private final String[] subjectStrings = {"Your latest Peoples Gas e-Bill is now available"};
 	private final String  bodyString = "";
 	
-	private final Date parserDate = null;
+	private final Date parserDate = new Date(1387147448);	// December 15, 2013
 	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)

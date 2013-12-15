@@ -24,7 +24,7 @@ public @Data class ComEdParser extends UtilityParser {
 	private final String[] subjectStrings = {"You have a new bill from ComEd - Commonwealth Edison."};
 	private final String  bodyString = "";
 	
-	private final Date parserDate = null;
+	private final Date parserDate = new Date(1387147448);	// December 15, 2013
 	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
