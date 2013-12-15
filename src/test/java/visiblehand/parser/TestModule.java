@@ -11,6 +11,7 @@ import visiblehand.entity.Flight;
 import visiblehand.entity.Receipt;
 import visiblehand.entity.ReceiptMessage;
 import visiblehand.entity.Route;
+import visiblehand.entity.Utility;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,11 +27,14 @@ public class TestModule extends SimpleModule {
 	@Override
 	public void setupModule(SetupContext context) {
 		context.setMixInAnnotations(Receipt.class, ReceiptMixIn.class);
+		
 		context.setMixInAnnotations(Flight.class, FlightMixIn.class);
 		context.setMixInAnnotations(Equipment.class, EquipmentMixIn.class);
 		context.setMixInAnnotations(Airline.class, AirlineMixIn.class);
 		context.setMixInAnnotations(Route.class, RouteMixIn.class);
 		context.setMixInAnnotations(Airport.class, AirportMixIn.class);
+		
+		context.setMixInAnnotations(Utility.class, UtilityMixIn.class);
 	}
 
 	abstract class ReceiptMixIn {
@@ -75,6 +79,12 @@ public class TestModule extends SimpleModule {
 	
 	@JsonAutoDetect(getterVisibility=JsonAutoDetect.Visibility.NONE)
 	abstract class AirportMixIn {
+		@JsonProperty
+		abstract String getName();
+	}
+	
+	@JsonAutoDetect(getterVisibility=JsonAutoDetect.Visibility.NONE)
+	abstract class UtilityMixIn {
 		@JsonProperty
 		abstract String getName();
 	}

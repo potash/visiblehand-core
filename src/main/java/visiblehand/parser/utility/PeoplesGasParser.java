@@ -7,9 +7,14 @@ import java.util.Date;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import visiblehand.entity.UtilityReceipt;
 import lombok.Data;
 import lombok.Getter;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import visiblehand.entity.UtilityReceipt;
 
 import com.sun.mail.imap.Utility;
 
@@ -32,7 +37,18 @@ public @Data class PeoplesGasParser extends UtilityParser {
 		UtilityReceipt receipt = new UtilityReceipt();
 		String content = getContent(message);
 		receipt.setUtility(getUtility());
+		receipt.setDate(message.getSentDate());
+		receipt.setCost(getCost(content));
 	
 		return receipt;
 	}
+
+	protected static double getCost(String content) {
+		Document doc = Jsoup.parse(content);
+		Element td = doc.select("td:containsOwn(Amount Due on) + td").first();
+		
+		return Double.parseDouble(td.text().substring(1));
+	}
+	
+	
 }
