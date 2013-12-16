@@ -3,7 +3,7 @@ visiblehand-core
 VisibleHand is a system for tracking personal resource usage.
 
 Currently this means scraping an email inbox for airline flight receipts and utility e-bills and then 
-using a variety of data (airline timetables, aircraft fuel models, seating charts, utility prices, electricity emissions) to infer carbon dioxide emisions data.
+using a variety of data (airline timetables, aircraft fuel models, seating charts, utility prices, electricity generation) to infer carbon dioxide emisions data.
 
 ## Usage
 See [visiblehand-cli](https://github.com/potash/visiblehand-cli)
