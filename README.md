@@ -7,6 +7,9 @@ using a variety of data sources (airline timetables, aircraft fuel models and se
 See [visiblehand-cli](https://github.com/potash/visiblehand-cli)
 
 ## Data
+Currently all of the data is in csv files in the repository. It would make sense to programmatically fetch and process the data in from the original sources.
+
+### Air travel
 The basic data about airlines, airports and routes comes from [OpenFlights](http://openflights.org/data.html).
 
 The equipment data (aircraft names and ICAO and IATA identifiers) were mostly parsed from [avcodes.co.uk](http://www.avcodes.co.uk/acrtypes.asp). Missing entries were added manually. Aggregate equipment data was generated using ad hoc code that is not currently in the repository.
@@ -15,4 +18,5 @@ The majority of the fuel data comes from the European Environmental Agency's 201
 
 Seating data for various airlines come from custom web scrapers that are messy and not currently in the repository.
 
-Currently all of this data is in csv files in the repository. It would make sense to write code that pulls this data in from the original sources.
+### Utilities
+Electricity emissions data comes from the EPA's [eGrid](http://www.epa.gov/cleanenergy/documents/egridzips/Power_Profiler_Zipcode_Tool_v4-1.xlsx). The electricity cost and natural gas price data is fetched from the EIA's [API](http://www.eia.gov/beta/api/).
