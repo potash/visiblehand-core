@@ -6,12 +6,12 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import visiblehand.entity.Receipt;
 import visiblehand.entity.ReceiptMessage;
-import visiblehand.entity.Utility;
 import visiblehand.entity.air.Airline;
 import visiblehand.entity.air.Airport;
 import visiblehand.entity.air.Equipment;
 import visiblehand.entity.air.Flight;
 import visiblehand.entity.air.Route;
+import visiblehand.entity.utility.Utility;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.utility;
 
 import javax.persistence.Embeddable;
 

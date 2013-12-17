@@ -6,8 +6,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Getter;
-import visiblehand.entity.ElectricityReceipt;
-import visiblehand.entity.Utility;
+import visiblehand.entity.utility.ElectricityReceipt;
+import visiblehand.entity.utility.Utility;
 import visiblehand.parser.MessageParser;
 
 // A skeleton for an utility email receipt parser

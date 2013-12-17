@@ -35,7 +35,7 @@
 							<goal>enhance</goal>
 						</goals>
 						<configuration>
-							<packages>visiblehand.entity.**</packages>
+							<packages>visiblehand.entity.utility.**,visiblehand.entity.air.**,visiblehand.entity.**</packages>
 							<transformArgs>debug=0;transientInternalFields=true</transformArgs>
 							<classSource>${project.build.outputDirectory}</classSource>
 							<classDestination>${project.build.outputDirectory}</classDestination>

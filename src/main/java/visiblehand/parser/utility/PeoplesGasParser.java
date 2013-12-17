@@ -14,7 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import visiblehand.entity.UtilityReceipt;
+import visiblehand.entity.utility.UtilityReceipt;
 
 import com.sun.mail.imap.Utility;
 

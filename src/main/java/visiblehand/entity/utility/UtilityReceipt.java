@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.utility;
 
 import java.util.Date;
 
@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import visiblehand.entity.Receipt;
+import visiblehand.entity.ReceiptMessage;
 import lombok.Data;
 
 import com.sun.mail.imap.Utility;

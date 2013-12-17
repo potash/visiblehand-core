@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import visiblehand.entity.Country;
-import visiblehand.entity.Utility;
 import visiblehand.entity.air.Airline;
 import visiblehand.entity.air.Airport;
 import visiblehand.entity.air.Equipment;
@@ -31,6 +30,7 @@ import visiblehand.entity.air.Flight;
 import visiblehand.entity.air.FuelData;
 import visiblehand.entity.air.Route;
 import visiblehand.entity.air.Seating;
+import visiblehand.entity.utility.Utility;
 import visiblehand.oauth2.OAuth2Authenticator;
 import visiblehand.parser.MessageParser;
 import visiblehand.parser.air.AAParser;

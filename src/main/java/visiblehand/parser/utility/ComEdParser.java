@@ -14,9 +14,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import visiblehand.entity.Electricity;
-import visiblehand.entity.ElectricityReceipt;
-import visiblehand.entity.Utility;
+import visiblehand.entity.utility.Electricity;
+import visiblehand.entity.utility.ElectricityReceipt;
+import visiblehand.entity.utility.Utility;
 
 import com.avaje.ebean.Ebean;
 

@@ -6,7 +6,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Getter;
-import visiblehand.entity.UtilityReceipt;
+import visiblehand.entity.utility.UtilityReceipt;
 import visiblehand.parser.MessageParser;
 
 import com.sun.mail.imap.Utility;
