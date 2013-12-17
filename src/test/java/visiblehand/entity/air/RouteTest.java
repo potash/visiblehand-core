@@ -1,12 +1,15 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
-import visiblehand.VisibleHand;
 import visiblehand.EbeanTest;
+import visiblehand.VisibleHand;
+import visiblehand.entity.air.Airline;
+import visiblehand.entity.air.Equipment;
+import visiblehand.entity.air.Route;
 import visiblehand.parser.air.AirParser;
 
 import com.avaje.ebean.Ebean;

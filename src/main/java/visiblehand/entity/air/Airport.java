@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

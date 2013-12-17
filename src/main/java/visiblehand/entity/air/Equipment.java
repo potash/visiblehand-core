@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import java.util.ArrayList;
 import java.util.List;

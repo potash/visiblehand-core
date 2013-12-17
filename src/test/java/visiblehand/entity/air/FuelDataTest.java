@@ -1,10 +1,11 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import java.util.List;
 
 import org.junit.Test;
 
 import visiblehand.EbeanTest;
+import visiblehand.entity.air.FuelData;
 
 import com.avaje.ebean.Ebean;
 

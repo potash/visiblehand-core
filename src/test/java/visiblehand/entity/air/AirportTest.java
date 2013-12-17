@@ -1,6 +1,8 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import org.junit.Test;
+
+import visiblehand.entity.air.Airport;
 
 import com.avaje.ebean.Ebean;
 

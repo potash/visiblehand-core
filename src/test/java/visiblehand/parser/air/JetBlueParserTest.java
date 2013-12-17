@@ -7,7 +7,7 @@ import java.text.ParseException;
 import org.junit.Test;
 
 import visiblehand.EbeanTest;
-import visiblehand.entity.Airport;
+import visiblehand.entity.air.Airport;
 
 import com.avaje.ebean.Ebean;
 

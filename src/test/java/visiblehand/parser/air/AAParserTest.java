@@ -10,7 +10,7 @@ import java.util.TimeZone;
 import org.junit.Test;
 
 import visiblehand.EbeanTest;
-import visiblehand.entity.Airport;
+import visiblehand.entity.air.Airport;
 
 public class AAParserTest extends EbeanTest {
 	@Test

@@ -20,12 +20,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import visiblehand.entity.AirReceipt;
-import visiblehand.entity.Airline;
-import visiblehand.entity.Airport;
-import visiblehand.entity.Equipment;
-import visiblehand.entity.Flight;
-import visiblehand.entity.Route;
+import visiblehand.entity.air.AirReceipt;
+import visiblehand.entity.air.Airline;
+import visiblehand.entity.air.Airport;
+import visiblehand.entity.air.Equipment;
+import visiblehand.entity.air.Flight;
+import visiblehand.entity.air.Route;
 
 import com.avaje.ebean.Ebean;
 

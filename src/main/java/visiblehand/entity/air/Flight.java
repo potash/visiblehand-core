@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import static visiblehand.VisibleHand.*;
 

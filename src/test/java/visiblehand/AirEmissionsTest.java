@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import visiblehand.entity.AirReceipt;
-import visiblehand.entity.Flight;
+import visiblehand.entity.air.AirReceipt;
+import visiblehand.entity.air.Flight;
 import visiblehand.parser.MessageParserTest;
 import visiblehand.parser.air.AirParser;
 

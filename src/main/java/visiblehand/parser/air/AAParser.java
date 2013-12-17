@@ -14,12 +14,12 @@ import javax.mail.MessagingException;
 
 import lombok.Data;
 import lombok.Getter;
-import visiblehand.entity.AirReceipt;
-import visiblehand.entity.Airline;
-import visiblehand.entity.Airport;
 import visiblehand.entity.Country;
-import visiblehand.entity.Flight;
-import visiblehand.entity.Route;
+import visiblehand.entity.air.AirReceipt;
+import visiblehand.entity.air.Airline;
+import visiblehand.entity.air.Airport;
+import visiblehand.entity.air.Flight;
+import visiblehand.entity.air.Route;
 
 import com.avaje.ebean.Ebean;
 

@@ -1,4 +1,4 @@
-package visiblehand.entity;
+package visiblehand.entity.air;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

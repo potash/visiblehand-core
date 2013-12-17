@@ -9,10 +9,10 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import lombok.Getter;
-import visiblehand.entity.AirReceipt;
-import visiblehand.entity.Airline;
-import visiblehand.entity.Airport;
-import visiblehand.entity.Route;
+import visiblehand.entity.air.AirReceipt;
+import visiblehand.entity.air.Airline;
+import visiblehand.entity.air.Airport;
+import visiblehand.entity.air.Route;
 import visiblehand.parser.MessageParser;
 
 import com.avaje.ebean.Ebean;
