@@ -1,6 +1,7 @@
 package visiblehand.entity;
 
 import static visiblehand.VisibleHand.*;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -59,6 +60,7 @@ public @Data class Flight {
 			flight.setDate(date);
 			flight.setNumber(number);
 			flight.setEquipment(equipment);
+			Ebean.save(flight);
 		}
 		
 		return flight;

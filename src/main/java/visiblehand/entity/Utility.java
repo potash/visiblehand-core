@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import com.avaje.ebean.annotation.EnumMapping;
 import com.avaje.ebean.annotation.EnumValue;
 
 @ToString(of = { "id", "name" })
@@ -16,9 +17,9 @@ public @Data
 class Utility {
 	public enum Type {
 		@EnumValue("E")
-		ELECTRIC,
+		Electricity,
 		@EnumValue("G")
-		GAS
+		Gas
 	};
 	@Id
 	private Long id;

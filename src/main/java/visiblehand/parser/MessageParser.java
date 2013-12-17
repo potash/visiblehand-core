@@ -39,11 +39,11 @@ public abstract class MessageParser {
 	protected static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 	
 	public boolean isActive() {
-		return getParserDate() == null;
+		return getParserDate() != null;
 	}
 	
-	public abstract Date getSearchDate();
 	public abstract Date getParserDate();
+	public abstract Date getSearchDate();
 	
 	@Getter(lazy = true)
 	private final SearchTerm searchTerm = searchTerm();

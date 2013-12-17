@@ -33,11 +33,7 @@ public class SendMessages {
 		InternetAddress[] toAddress = InternetAddress.parse(console.readLine());
 		boolean sendAll = false;
 		
-		List<MessageParser> parsers = new ArrayList<MessageParser>();
-		parsers.addAll(Arrays.asList(VisibleHand.airParsers));
-		parsers.addAll(Arrays.asList(VisibleHand.utilityParsers));
-		
-		for (MessageParser parser : parsers) {
+		for (MessageParser parser : VisibleHand.parsers) {
 			System.out.println("Fetching messages for " + parser.getClass().getSimpleName() + "...");
 			for (Message message : inbox.search(parser.getSearchTerm())) {
 				System.out.println(message.getFrom()[0].toString() + " on " + message.getSentDate() + ": " + message.getSubject());

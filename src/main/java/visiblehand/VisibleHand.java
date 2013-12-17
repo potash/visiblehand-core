@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,7 +30,9 @@ import visiblehand.entity.Flight;
 import visiblehand.entity.FuelData;
 import visiblehand.entity.Route;
 import visiblehand.entity.Seating;
+import visiblehand.entity.Utility;
 import visiblehand.oauth2.OAuth2Authenticator;
+import visiblehand.parser.MessageParser;
 import visiblehand.parser.air.AAParser;
 import visiblehand.parser.air.AirParser;
 import visiblehand.parser.air.ContinentalParser;
@@ -38,6 +42,7 @@ import visiblehand.parser.air.SouthwestParser;
 import visiblehand.parser.air.UnitedParser;
 import visiblehand.parser.air.UnitedParser2;
 import visiblehand.parser.utility.ComEdParser;
+import visiblehand.parser.utility.ElectricityParser;
 import visiblehand.parser.utility.PeoplesGasParser;
 import visiblehand.parser.utility.UtilityParser;
 
@@ -69,8 +74,14 @@ public class VisibleHand {
 			new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
 
-	public static final UtilityParser[] utilityParsers = { new ComEdParser(),
-			new PeoplesGasParser() };
+	public static final ElectricityParser[] electricParsers = { new ComEdParser() };
+	public static final UtilityParser[] gasParsers = {	new PeoplesGasParser() };
+	
+	public static final List<MessageParser> parsers = new ArrayList<MessageParser>(); {
+		parsers.addAll(Arrays.asList(airParsers));
+		parsers.addAll(Arrays.asList(electricParsers));
+		parsers.addAll(Arrays.asList(gasParsers));
+	}
 
 	public static Folder getFolder(Properties props, Session session,
 			PasswordAuthentication auth) throws FileNotFoundException,
@@ -185,7 +196,7 @@ public class VisibleHand {
 
 		Class<?>[] entities = new Class<?>[] { Airline.class, Airport.class,
 				Equipment.class, EquipmentAggregate.class, FuelData.class,
-				Route.class, Seating.class, Country.class };
+				Route.class, Seating.class, Country.class, Utility.class };
 
 		for (Class<?> entity : entities) {
 			Reader reader = new InputStreamReader(

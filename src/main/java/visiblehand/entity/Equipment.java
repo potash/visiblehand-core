@@ -3,16 +3,13 @@ package visiblehand.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +19,10 @@ import com.avaje.ebean.Ebean;
 // Data sources: http://realbigtree.com/resources/iataicao-aircraft-codes/
 //				 http://www.avcodes.co.uk/acrtypes.asp
 
-@Entity
-@ToString(of = { "id", "IATA", "name" })
-@EqualsAndHashCode(of={"id"})
-public @Data
-class Equipment {
+//@Entity
+//@ToString(of = { "id", "IATA", "name" })
+//@EqualsAndHashCode(of={"id"})
+public @Data class Equipment {
 	static final Logger logger = LoggerFactory.getLogger(Equipment.class);
 	
 	@Id

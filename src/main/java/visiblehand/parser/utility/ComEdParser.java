@@ -7,19 +7,22 @@ import java.util.Date;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import lombok.Data;
+import lombok.Getter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import visiblehand.entity.UtilityReceipt;
-import lombok.Data;
-import lombok.Getter;
+import visiblehand.entity.Electricity;
+import visiblehand.entity.ElectricityReceipt;
+import visiblehand.entity.Utility;
 
-import com.sun.mail.imap.Utility;
+import com.avaje.ebean.Ebean;
 
 // United Airlines email receipt parser
 
-public @Data class ComEdParser extends UtilityParser {
+public @Data class ComEdParser extends ElectricityParser {
 	private final String fromString = "mycheckfree@customercenter.net";
 	private final String[] subjectStrings = {"You have a new bill from ComEd - Commonwealth Edison."};
 	private final String  bodyString = "";
@@ -28,16 +31,20 @@ public @Data class ComEdParser extends UtilityParser {
 	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
-	private final Utility utility = null;
+	private final Utility utility = Ebean.find(Utility.class)
+			.where().eq("name", "Commonwealth Edison").findUnique();
 
-	public UtilityReceipt parse(Message message) throws ParseException,
+	public ElectricityReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		UtilityReceipt receipt = new UtilityReceipt();
+		ElectricityReceipt receipt = new ElectricityReceipt();
 		String content = getContent(message);
-		receipt.setUtility(getUtility());
 		receipt.setDate(message.getSentDate());
-		receipt.setCost(getCost(content));
+		
+		Electricity electricity = new Electricity();
+		electricity.setUtility(getUtility());
+		electricity.setCost(getCost(content));
+		receipt.setElectricity(electricity);
 	
 		return receipt;
 	}
