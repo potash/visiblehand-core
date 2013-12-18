@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import visiblehand.entity.Country;
+import visiblehand.entity.UnitedState;
 import visiblehand.entity.ZipCode;
 import visiblehand.entity.air.Airline;
 import visiblehand.entity.air.Airport;
@@ -32,6 +33,7 @@ import visiblehand.entity.air.FuelData;
 import visiblehand.entity.air.Route;
 import visiblehand.entity.air.Seating;
 import visiblehand.entity.utility.EGridSubregion;
+import visiblehand.entity.utility.ElectricityPrice;
 import visiblehand.entity.utility.Utility;
 import visiblehand.oauth2.OAuth2Authenticator;
 import visiblehand.parser.MessageParser;
@@ -58,7 +60,9 @@ import com.avaje.ebean.text.csv.CsvReader;
 import com.sun.mail.imap.IMAPStore;
 
 public class VisibleHand {
-	static final Logger logger = LoggerFactory.getLogger(VisibleHand.class);
+	private static final Logger logger = LoggerFactory.getLogger(VisibleHand.class);
+
+	private static final String csvDirectory = "/csv/";
 
 	// A-1 jet fuel properties (wikipedia)
 	public static final double KG_FUEL_PER_LITER = .804,
@@ -160,8 +164,11 @@ public class VisibleHand {
 		return session;
 	}
 
-	// loads data from csv into in memory database
 	public static void initEbean() throws IOException {
+		initEbean(true);
+	}
+	
+	public static void initEbean(boolean loadData) throws IOException {
 		if (!ebeanInitialized) {
 			Properties props = getProperties("ebean.properties");
 			String db = props.getProperty("datasource.default");
@@ -186,38 +193,41 @@ public class VisibleHand {
 						.createSqlUpdate("CREATE ALIAS LEVENSHTEIN FOR "
 								+ "\"visiblehand.VisibleHand.getLevenshteinDistance\"");
 				update.execute();
-
-				loadCsvData();
+				
+				if (loadData) {
+					loadCsvData();
+				}
 			}
 			ebeanInitialized = true;
 		}
 	}
 
 	public static void loadCsvData() {
-		String csvDirectory = "/csv/";
-
-		Class<?>[] entities = new Class<?>[] { Airline.class, Airport.class,
-				Equipment.class, EquipmentAggregate.class, FuelData.class,
-				Route.class, Seating.class, Country.class, Utility.class, 
-				EGridSubregion.class, ZipCode.class };
+		Class<?>[] entities = new Class<?>[] { UnitedState.class, Country.class, 
+				Airline.class, Airport.class, Equipment.class, EquipmentAggregate.class, 
+				FuelData.class,	Route.class, Seating.class,  Utility.class, 
+				EGridSubregion.class, ZipCode.class, ElectricityPrice.class };
 
 		for (Class<?> entity : entities) {
-			System.out.println(csvDirectory
-							+ entity.getSimpleName() + ".csv");
-			Reader reader = new InputStreamReader(
-					VisibleHand.class.getResourceAsStream(csvDirectory
-							+ entity.getSimpleName() + ".csv"));
-
-			CsvReader<?> csv = Ebean.createCsvReader(entity);
-			csv.setAddPropertiesFromHeader();
-			try {
-				csv.process(reader);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			loadCsvData(entity);
 		}
 	}
-
+	
+	public static int loadCsvData(Class<?> entity) {
+		Reader reader = new InputStreamReader(
+				VisibleHand.class.getResourceAsStream(csvDirectory
+						+ entity.getSimpleName() + ".csv"));
+	
+		CsvReader<?> csv = Ebean.createCsvReader(entity);
+		csv.setAddPropertiesFromHeader();
+		try {
+			csv.process(reader);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Ebean.find(entity).findRowCount();
+	}
+	
 	// h2 needs the method to take Strings, not CharSequences
 	public static int getLevenshteinDistance(String s1, String s2) {
 		return org.apache.commons.lang3.StringUtils.getLevenshteinDistance(s1,
