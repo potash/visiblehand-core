@@ -18,11 +18,13 @@ import lombok.Getter;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import visiblehand.entity.Emission;
+
 import com.avaje.ebean.Ebean;
 
 @Entity
 @UniqueConstraint(columnNames={"route_id", "date","number","equipment_id"})
-public @Data class Flight {
+public @Data class Flight implements Emission {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;

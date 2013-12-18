@@ -42,8 +42,11 @@ public @Data class ComEdParser extends ElectricityParser {
 		receipt.setDate(message.getSentDate());
 		
 		Electricity electricity = new Electricity();
-		electricity.setUtility(getUtility());
+		//electricity.setUtility(getUtility());
 		electricity.setCost(getCost(content));
+		//TODO: change this to the previous month!
+		electricity.setDate(message.getSentDate());
+		
 		receipt.setElectricity(electricity);
 	
 		return receipt;

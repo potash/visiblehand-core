@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import visiblehand.entity.Country;
+import visiblehand.entity.ZipCode;
 import visiblehand.entity.air.Airline;
 import visiblehand.entity.air.Airport;
 import visiblehand.entity.air.Equipment;
@@ -30,6 +31,7 @@ import visiblehand.entity.air.Flight;
 import visiblehand.entity.air.FuelData;
 import visiblehand.entity.air.Route;
 import visiblehand.entity.air.Seating;
+import visiblehand.entity.utility.EGridSubregion;
 import visiblehand.entity.utility.Utility;
 import visiblehand.oauth2.OAuth2Authenticator;
 import visiblehand.parser.MessageParser;
@@ -196,9 +198,12 @@ public class VisibleHand {
 
 		Class<?>[] entities = new Class<?>[] { Airline.class, Airport.class,
 				Equipment.class, EquipmentAggregate.class, FuelData.class,
-				Route.class, Seating.class, Country.class, Utility.class };
+				Route.class, Seating.class, Country.class, Utility.class, 
+				EGridSubregion.class, ZipCode.class };
 
 		for (Class<?> entity : entities) {
+			System.out.println(csvDirectory
+							+ entity.getSimpleName() + ".csv");
 			Reader reader = new InputStreamReader(
 					VisibleHand.class.getResourceAsStream(csvDirectory
 							+ entity.getSimpleName() + ".csv"));

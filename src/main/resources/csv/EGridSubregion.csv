@@ -1,4 +1,4 @@
-name,subregion,co2,ch4,n2o
+name,id,CO2EmissionRate,CH4EmissionRate,N2OEmissionRate
 "ASCC Alaska Grid",AKGD,1280.8582,0.027737,0.0076877
 "ASCC Miscellaneous",AKMS,521.2619,0.0217818,0.0042814
 "WECC Southwest",AZNM,1191.3503,0.0191317,0.0155818
