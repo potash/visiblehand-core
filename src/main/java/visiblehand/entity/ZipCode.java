@@ -14,9 +14,9 @@ public @Data class ZipCode {
 	private String state;
 	
 	@ManyToOne
-	private EGridSubregion eGridSubregion;
+	private EGridSubregion eGridSubregion;	// primary
 	@ManyToOne
-	private EGridSubregion eGridSubregion2;
+	private EGridSubregion eGridSubregion2;	// secondary
 	@ManyToOne
-	private EGridSubregion eGridSubregion3;
+	private EGridSubregion eGridSubregion3; // tertiary
 }

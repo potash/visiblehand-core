@@ -10,8 +10,9 @@ import lombok.Getter;
 public @Data class EGridSubregion {
 	@Id
 	private String id;
-	
 	private String name;
+	
+	// emission factors are in pound per megawatt-hour
 	private double CO2EmissionRate;
 	private double CH4EmissionRate;
 	private double N2OEmissionRate;
