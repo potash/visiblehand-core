@@ -1,24 +1,17 @@
-# VisibleHand
+visiblehand-core
+===============
+VisibleHand is a system for tracking personal resource usage.
 
-VisibleHand is a system for tracking personal resource usage. Currently this means scraping an email inbox for airline flight receipts and then 
-using a variety of data sources (airline timetables, aircraft fuel models and seating charts) to infer carbon dioxide emisions data.
+Currently this means scraping an email inbox for airline flight receipts and utility e-bills and then 
+using a variety of data (airline timetables, aircraft fuel models, seating charts, utility prices, electricity generation) to infer carbon dioxide emisions data.
 
 ## Usage
-To test VisibleHand you will need Java and Maven installed. First clone the repository
-
-    git clone https://github.com/potash/visiblehand.git
-then enter the directory
-
-    cd visiblehand
-and compile the code
-
-    mvn clean compile
-and finally execute it
-
-    mvn exec:java
-When prompted enter you username and password. The default mail store is gmail but can be configured using the mail.properties file (see [here](https://javamail.java.net/nonav/docs/api/javax/mail/Session.html#getInstance(java.util.Properties%29)). The program will search your Inbox for flight receipts and output a lot of information about fuel consumption.
+See [visiblehand-cli](https://github.com/potash/visiblehand-cli)
 
 ## Data
+Currently all of the data is in csv files in the repository. It would make sense to programmatically fetch and process the data in from the original sources.
+
+### Air travel
 The basic data about airlines, airports and routes comes from [OpenFlights](http://openflights.org/data.html).
 
 The equipment data (aircraft names and ICAO and IATA identifiers) were mostly parsed from [avcodes.co.uk](http://www.avcodes.co.uk/acrtypes.asp). Missing entries were added manually. Aggregate equipment data was generated using ad hoc code that is not currently in the repository.
@@ -27,4 +20,5 @@ The majority of the fuel data comes from the European Environmental Agency's 201
 
 Seating data for various airlines come from custom web scrapers that are messy and not currently in the repository.
 
-Currently all of this data is in csv files in the repository. It would make sense to write code that pulls this data in from the original sources.
+### Utilities
+Electricity emissions data comes from the EPA's [eGrid](http://www.epa.gov/cleanenergy/documents/egridzips/Power_Profiler_Zipcode_Tool_v4-1.xlsx). The electricity cost and natural gas price data is fetched from the EIA's [API](http://www.eia.gov/beta/api/).
