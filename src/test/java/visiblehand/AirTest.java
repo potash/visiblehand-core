@@ -20,8 +20,8 @@ import visiblehand.entity.air.Flight;
 import visiblehand.parser.MessageParserTest;
 import visiblehand.parser.air.AirParser;
 
-public class AirEmissionsTest extends EbeanTest {
-	static final Logger logger = LoggerFactory.getLogger(AirEmissionsTest.class);
+public class AirTest extends EbeanTest {
+	static final Logger logger = LoggerFactory.getLogger(AirTest.class);
 	
 	@Test
 	public void test() throws FileNotFoundException, MessagingException, ParseException, IOException {

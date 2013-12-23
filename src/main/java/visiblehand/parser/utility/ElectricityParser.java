@@ -1,6 +1,8 @@
 package visiblehand.parser.utility;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -18,4 +20,11 @@ public abstract class ElectricityParser extends MessageParser {
 
 	@Getter
 	private final Class<ElectricityReceipt> receiptClass = ElectricityReceipt.class;
+	
+	public static Date subtractMonth(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MONTH, -1);
+		return cal.getTime();
+	}
 }

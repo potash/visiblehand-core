@@ -36,6 +36,7 @@ public @Data class Flight implements Emission {
 	@ManyToOne
 	@JoinColumn(name="equipment_id")
 	private Equipment equipment;
+	private Integer split = 1;
 	
 	//@Transient
 	//@Getter(lazy=true)
@@ -85,5 +86,5 @@ public @Data class Flight implements Emission {
 	
 	@Transient
 	@Getter(lazy=true)
-	private final double CO2 = getFuelBurn() / KG_FUEL_PER_LITER / LITERS_PER_GALLON * KG_CO2_PER_GALLON_FUEL;
+	private final Double CO2 = getFuelBurn() / KG_FUEL_PER_LITER / LITERS_PER_GALLON * KG_CO2_PER_GALLON_FUEL;
 }

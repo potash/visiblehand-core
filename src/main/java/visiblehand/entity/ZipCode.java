@@ -7,11 +7,14 @@ import javax.persistence.ManyToOne;
 import lombok.Data;
 import visiblehand.entity.utility.EGridSubregion;
 
+import com.avaje.ebean.Ebean;
+
 @Entity
 public @Data class ZipCode {
 	@Id
 	private Integer id;
-	private String state;
+	@ManyToOne
+	private UnitedState state;
 	
 	@ManyToOne
 	private EGridSubregion eGridSubregion;	// primary
@@ -19,4 +22,7 @@ public @Data class ZipCode {
 	private EGridSubregion eGridSubregion2;	// secondary
 	@ManyToOne
 	private EGridSubregion eGridSubregion3; // tertiary
+	public static ZipCode find(int id) {
+		return Ebean.find(ZipCode.class, id);
+	}
 }

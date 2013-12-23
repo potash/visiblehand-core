@@ -2,6 +2,7 @@ package visiblehand.parser.utility;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.mail.Message;
@@ -42,10 +43,12 @@ public @Data class ComEdParser extends ElectricityParser {
 		receipt.setDate(message.getSentDate());
 		
 		Electricity electricity = new Electricity();
+		
+		//TODO
 		//electricity.setUtility(getUtility());
+		
 		electricity.setCost(getCost(content));
-		//TODO: change this to the previous month!
-		electricity.setDate(message.getSentDate());
+		electricity.setDate(subtractMonth(message.getSentDate()));
 		
 		receipt.setElectricity(electricity);
 	
