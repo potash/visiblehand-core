@@ -14,13 +14,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import visiblehand.entity.utility.UtilityReceipt;
-
-import com.sun.mail.imap.Utility;
+import visiblehand.entity.utility.NaturalGas;
+import visiblehand.entity.utility.NaturalGasReceipt;
+import visiblehand.entity.utility.Utility;
 
 // United Airlines email receipt parser
 
-public @Data class PeoplesGasParser extends UtilityParser {
+public @Data class PeoplesGasParser extends NaturalGasParser {
 	private final String fromString = "CustomerService@peoplesgas.ebillservice.net";
 	private final String[] subjectStrings = {"Your latest Peoples Gas e-Bill is now available"};
 	private final String  bodyString = "";
@@ -31,14 +31,17 @@ public @Data class PeoplesGasParser extends UtilityParser {
 	@Getter(lazy = true)
 	private final Utility utility = null;
 
-	public UtilityReceipt parse(Message message) throws ParseException,
+	public NaturalGasReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		UtilityReceipt receipt = new UtilityReceipt();
+		NaturalGasReceipt receipt = new NaturalGasReceipt();
 		String content = getContent(message);
-		receipt.setUtility(getUtility());
-		receipt.setDate(message.getSentDate());
-		receipt.setCost(getCost(content));
+		
+		NaturalGas gas = new NaturalGas();
+		gas.setUtility(getUtility());
+		gas.setDate(subtractMonth(message.getSentDate()));
+		gas.setCost(getCost(content));
+		receipt.setNaturalGas(gas);
 	
 		return receipt;
 	}

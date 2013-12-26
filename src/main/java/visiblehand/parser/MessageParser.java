@@ -115,4 +115,11 @@ public abstract class MessageParser {
 					string.substring(index+str.length())};
 		}
 	}
+	
+	public static Date subtractMonth(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MONTH, -1);
+		return cal.getTime();
+	}
 }

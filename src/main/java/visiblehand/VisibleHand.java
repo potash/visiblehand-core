@@ -34,6 +34,7 @@ import visiblehand.entity.air.Route;
 import visiblehand.entity.air.Seating;
 import visiblehand.entity.utility.EGridSubregion;
 import visiblehand.entity.utility.ElectricityPrice;
+import visiblehand.entity.utility.NaturalGasPrice;
 import visiblehand.entity.utility.Utility;
 import visiblehand.oauth2.OAuth2Authenticator;
 import visiblehand.parser.MessageParser;
@@ -47,8 +48,8 @@ import visiblehand.parser.air.UnitedParser;
 import visiblehand.parser.air.UnitedParser2;
 import visiblehand.parser.utility.ComEdParser;
 import visiblehand.parser.utility.ElectricityParser;
+import visiblehand.parser.utility.NaturalGasParser;
 import visiblehand.parser.utility.PeoplesGasParser;
-import visiblehand.parser.utility.UtilityParser;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.EbeanServer;
@@ -64,12 +65,6 @@ public class VisibleHand {
 
 	private static final String csvDirectory = "/csv/";
 
-	// A-1 jet fuel properties (wikipedia)
-	public static final double KG_FUEL_PER_LITER = .804,
-			MEGAJOULE_PER_LITER_FUEL = 34.7;
-	// emission factor of jet fuel
-	// (http://www.eia.gov/oiaf/1605/coefficients.html)
-	public static final double KG_CO2_PER_GALLON_FUEL = 9.57;
 	// unit conversions
 	public static final double MILES_PER_NM = 1.15078,
 			LITERS_PER_GALLON = 3.78541, BTU_PER_MEGAJOULE = 947.81712;
@@ -81,12 +76,12 @@ public class VisibleHand {
 			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
 
 	public static final ElectricityParser[] electricParsers = { new ComEdParser() };
-	public static final UtilityParser[] gasParsers = {	new PeoplesGasParser() };
+	public static final NaturalGasParser[] naturalGasParsers = { new PeoplesGasParser() };
 	
 	public static final List<MessageParser> parsers = new ArrayList<MessageParser>(); {
 		parsers.addAll(Arrays.asList(airParsers));
 		parsers.addAll(Arrays.asList(electricParsers));
-		parsers.addAll(Arrays.asList(gasParsers));
+		parsers.addAll(Arrays.asList(naturalGasParsers));
 	}
 
 	public static Folder getFolder(Properties props, Session session,
@@ -206,24 +201,28 @@ public class VisibleHand {
 		Class<?>[] entities = new Class<?>[] { UnitedState.class, Country.class, 
 				Airline.class, Airport.class, Equipment.class, EquipmentAggregate.class, 
 				FuelData.class,	Route.class, Seating.class,  Utility.class, 
-				EGridSubregion.class, ZipCode.class, ElectricityPrice.class };
+				EGridSubregion.class, ZipCode.class, 
+				ElectricityPrice.class, NaturalGasPrice.class};
 
 		for (Class<?> entity : entities) {
-			loadCsvData(entity);
+			int count = loadCsvData(entity);
+			logger.info("Loaded " + count + " " + entity.getSimpleName());
 		}
 	}
 	
 	public static int loadCsvData(Class<?> entity) {
-		Reader reader = new InputStreamReader(
-				VisibleHand.class.getResourceAsStream(csvDirectory
-						+ entity.getSimpleName() + ".csv"));
-	
-		CsvReader<?> csv = Ebean.createCsvReader(entity);
-		csv.setAddPropertiesFromHeader();
-		try {
-			csv.process(reader);
-		} catch (Exception e) {
-			e.printStackTrace();
+		InputStream in = VisibleHand.class.getResourceAsStream(csvDirectory
+				+ entity.getSimpleName() + ".csv");
+		if (in != null) {
+			Reader reader = new InputStreamReader(in);
+		
+			CsvReader<?> csv = Ebean.createCsvReader(entity);
+			csv.setAddPropertiesFromHeader();
+			try {
+				csv.process(reader);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return Ebean.find(entity).findRowCount();
 	}
@@ -267,10 +266,10 @@ public class VisibleHand {
 		System.out.println("Distance traveled: " + nm + " nm");
 
 		System.out.println("Fuel economy: " + nmpkg.getMean() * MILES_PER_NM
-				* KG_FUEL_PER_LITER * LITERS_PER_GALLON + " mpg");
+				* Flight.KG_FUEL_PER_LITER * LITERS_PER_GALLON + " mpg");
 
 		System.out.println("Carbon dioxide emissions: " + fuel
-				/ KG_FUEL_PER_LITER / LITERS_PER_GALLON
-				* KG_CO2_PER_GALLON_FUEL + " kg");
+				/ Flight.KG_FUEL_PER_LITER / LITERS_PER_GALLON
+				* Flight.KG_CO2_PER_GALLON_FUEL + " kg");
 	}
 }

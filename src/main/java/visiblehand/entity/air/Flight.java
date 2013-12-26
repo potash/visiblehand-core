@@ -25,6 +25,13 @@ import com.avaje.ebean.Ebean;
 @Entity
 @UniqueConstraint(columnNames={"route_id", "date","number","equipment_id"})
 public @Data class Flight implements Emission {
+	public static final double MEGAJOULE_PER_LITER_FUEL = 34.7;
+	// A-1 jet fuel properties (wikipedia)
+	public static final double KG_FUEL_PER_LITER = .804;
+	// emission factor of jet fuel
+	// (http://www.eia.gov/oiaf/1605/coefficients.html)
+	public static final double KG_CO2_PER_GALLON_FUEL = 9.57;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;

@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 import lombok.Data;
 import lombok.Getter;
 import visiblehand.entity.Emission;
+import visiblehand.entity.UnitedState;
 import visiblehand.entity.ZipCode;
 
 import com.avaje.ebean.Ebean;
@@ -19,7 +20,7 @@ public @Data class Electricity implements Emission {
 	private Double cost;
 	private Double energy; // kWh
 	private ZipCode zipCode;
-	private Integer split;
+	private Integer split = 1;
 	
 	@Transient
 	private EGridSubregion eGridSubregion;
@@ -32,16 +33,17 @@ public @Data class Electricity implements Emission {
 	}
 	
 	public Double getEnergy() {
-		if (energy == null && getCost() != null) {
-			Double rate = null;
-			if (getZipCode() != null) {
-				System.out.println(getDate());
-				rate = ElectricityPrice.find(getZipCode().getState(), getDate())/100;
+		if (energy == null) {
+			if (getCost() != null) {
+				Double rate = null;
+				if (getZipCode() != null) {
+					rate = ElectricityPrice.find(getZipCode().getState(), getDate());
+				} else {
+					rate = ElectricityPrice.find(UnitedState.find("US"), getDate());
+				}
 				if (rate != null) {
 					energy = getCost() / rate / split;
 				}
-			} else {
-				//TODO: national average
 			}
 		}
 		return energy;
