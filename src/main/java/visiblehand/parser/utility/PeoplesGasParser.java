@@ -18,6 +18,8 @@ import visiblehand.entity.utility.NaturalGas;
 import visiblehand.entity.utility.NaturalGasReceipt;
 import visiblehand.entity.utility.Utility;
 
+import com.avaje.ebean.Ebean;
+
 // United Airlines email receipt parser
 
 public @Data class PeoplesGasParser extends NaturalGasParser {
@@ -29,7 +31,8 @@ public @Data class PeoplesGasParser extends NaturalGasParser {
 	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 	
 	@Getter(lazy = true)
-	private final Utility utility = null;
+	private final Utility utility = Ebean.find(Utility.class)
+			.where().eq("name", "Peoples Gas").findUnique();
 
 	public NaturalGasReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {

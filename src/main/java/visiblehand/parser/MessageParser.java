@@ -26,12 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import visiblehand.entity.Receipt;
 
-public abstract class MessageParser {
+public abstract class MessageParser<R extends Receipt> {
+	public abstract R parse(Message message) throws ParseException, MessagingException, IOException;
+	
 	public abstract String getFromString();
 	public abstract String[] getSubjectStrings();
 	public abstract String getBodyString();
 	
-	public abstract Class<? extends Receipt> getReceiptClass();
+	public abstract Class<R> getReceiptClass();
 	
 	protected static final String mmmmRegex = "(JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)";
 	protected static final String mmmRegex = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)";
@@ -64,8 +66,6 @@ public abstract class MessageParser {
 		}
 		return searchTerm;
 	}
-	
-	public abstract Receipt parse(Message message) throws ParseException, MessagingException, IOException;
 	
 	public static String getContent(Message message) throws MessagingException, IOException {
 		String content;

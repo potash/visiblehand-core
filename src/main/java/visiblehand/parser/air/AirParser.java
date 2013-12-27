@@ -22,11 +22,8 @@ import com.avaje.ebean.RawSqlBuilder;
 
 // A skeleton for an airline email receipt parser
 
-public abstract class AirParser extends MessageParser {
+public abstract class AirParser extends MessageParser<AirReceipt> {
 	public abstract Airline getAirline();
-
-	public abstract AirReceipt parse(Message message)
-			throws java.text.ParseException, MessagingException, IOException;
 
 	@Getter
 	private final Class<AirReceipt> receiptClass = AirReceipt.class;
