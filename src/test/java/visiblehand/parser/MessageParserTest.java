@@ -105,7 +105,7 @@ public class MessageParserTest extends EbeanTest {
 
 	// return (alphabetical-order) array of serialized AirReceipts
 	// corresponding to expected parse results
-	public static Receipt[] getTestReceipts(MessageParser parser)
+	public static Receipt[] getTestReceipts(MessageParser<Receipt> parser)
 			throws JsonParseException, JsonMappingException, IOException {
 		File dir = new File(getTestDirectory(parser));
 		File[] files = dir.listFiles(jsonFileFilter);
