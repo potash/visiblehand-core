@@ -80,7 +80,9 @@ public abstract class MessageParser<R extends Receipt> {
 	}
 	
 	public String getSearchString() {
-		return "(from:" + getFromString() + " and (subject:\"" + StringUtils.join(getSubjectStrings(), "subject:\"") + "\")";
+		return "(from:" + getFromString() + 
+				(getSubjectStrings() != null ? (" and (subject:\"" + StringUtils.join(getSubjectStrings(), "\" || subject:\"") + "\")") : "") 
+				+ ")";
 	}
 	
 	public static DateFormat getGMTSimpleDateFormat(String format) {

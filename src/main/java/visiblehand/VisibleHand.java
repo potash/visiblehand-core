@@ -100,11 +100,14 @@ public class VisibleHand {
 		store.connect(null, port, auth.getUserName(),
 				new String(auth.getPassword()));
 
-		String name = props.getProperty("mail.folder");
-		if (name == null)
+		String name = props.getProperty("mail.inbox");
+		if (name == null) {
 			name = "Inbox";
+		}
 		Folder folder = store.getFolder(name);
 		folder.open(Folder.READ_ONLY);
+	
+		logger.info("Opened " + folder.getName() + " with " + folder.getMessageCount() + " messages.");
 
 		return folder;
 	}
