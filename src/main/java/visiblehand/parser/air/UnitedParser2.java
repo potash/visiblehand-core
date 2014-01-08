@@ -36,7 +36,7 @@ public @Data class UnitedParser2 extends AirParser {
 	private final String[] subjectStrings = {"eTicket Itinerary and Receipt for Confirmation"};
 	private final String bodyString = "";
 	
-	private final Date parserDate = new Date(1387047326);	// December 14, 2013
+	private final Date parserDate = new Date(1389156546);	// January 7, 2014
 	private final Date searchDate = new Date(1387047326);	// December 14, 2013
 
 	@Getter(lazy = true)
@@ -84,6 +84,9 @@ public @Data class UnitedParser2 extends AirParser {
 			matcher.find();
 			Integer number = Integer.parseInt(matcher.group("number"));
 			Airline airline = Airline.findByIATA(matcher.group("airline"));
+			if (airline == null) {
+				airline = getAirline();
+			}
 			
 			matcher = airportPattern.matcher(cells.get(3).text());
 			matcher.find();
@@ -98,7 +101,7 @@ public @Data class UnitedParser2 extends AirParser {
 			matcher.find();
 			Airport destination = Airport.findByCode(matcher.group("code"));
 			
-			Route route = Route.find(getAirline(), source, destination);
+			Route route = Route.find(airline, source, destination);
 			
 			Equipment equipment = Equipment.findByName(cells.get(5).text());
 			
