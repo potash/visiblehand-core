@@ -1,3 +1,3 @@
-id,name,type
-1,"Commonwealth Edison",Electricity
-2,"People's Gas",Gas
+id,name
+1,"Commonwealth Edison"
+2,"People's Gas"

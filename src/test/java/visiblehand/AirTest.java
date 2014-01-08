@@ -27,13 +27,12 @@ public class AirTest extends EbeanTest {
 	public void test() throws FileNotFoundException, MessagingException, ParseException, IOException {
 		List<Flight> flights = new ArrayList<Flight>();
 		int receipts = 0;
-		for (AirParser parser : VisibleHand.airParsers) {
-			System.out.println(parser.getParserDate());
+		for (AirParser parser : VisibleHand.getAirParsers()) {
 			if (parser.isActive()) {
 				for (Message message : MessageParserTest.getTestMessages(parser)) {
 					AirReceipt receipt = parser.parse(message);
 					if (receipt.getFlights().size() == 0) {
-						System.err.println(message.getContent());
+						logger.error(message.getContent().toString());
 						fail("No flights parsed from receipt!");
 					} else {
 						flights.addAll(parser.parse(message).getFlights());

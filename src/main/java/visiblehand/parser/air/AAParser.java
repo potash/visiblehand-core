@@ -49,7 +49,7 @@ public @Data class AAParser extends AirParser {
 	
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
-		AirReceipt receipt = new AirReceipt(message);
+		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
 		Date date = getIssueDate(content);
 		receipt.setFlights(getFlights(content,

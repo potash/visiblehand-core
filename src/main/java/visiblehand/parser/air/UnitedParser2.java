@@ -51,7 +51,7 @@ public @Data class UnitedParser2 extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt(message);
+		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
 		Document doc = Jsoup.parse(content);
 		receipt.setFlights(getFlights(doc));

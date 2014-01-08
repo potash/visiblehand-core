@@ -16,7 +16,7 @@ import visiblehand.VisibleHand;
 public class AirParserTest extends EbeanTest {
 	@Test
 	public void testGetAirlines() {
-		for (AirParser parser : VisibleHand.airParsers) {
+		for (AirParser parser : VisibleHand.getAirParsers()) {
 			assertNotEquals(parser.getAirline(), null);
 		}
 	}

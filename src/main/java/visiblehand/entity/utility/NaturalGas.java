@@ -18,8 +18,7 @@ public @Data class NaturalGas implements Emission {
 	// national average
 	public static final double BTU_PER_SCF = 1029;
 	
-	private Date date;
-	private Utility utility;
+	private Date emissionDate;
 	private Double cost;
 	private Double volume; // standard cubic feet
 	private ZipCode zipCode;
@@ -30,9 +29,9 @@ public @Data class NaturalGas implements Emission {
 			if (getCost() != null) {
 				Double rate = null;
 				if (getZipCode() != null) {
-					rate = NaturalGasPrice.find(getZipCode().getState(), getDate());
+					rate = NaturalGasPrice.find(getZipCode().getState(), getEmissionDate());
 				} else {
-					rate = NaturalGasPrice.find(UnitedState.find("US"), getDate());
+					rate = NaturalGasPrice.find(UnitedState.find("US"), getEmissionDate());
 				}
 				if (rate != null) {
 					volume = getCost() / rate / split * 1000;
@@ -46,7 +45,11 @@ public @Data class NaturalGas implements Emission {
 	@Getter(lazy = true)
 	private final Double CO2 = co2();
 	
-	private double co2() {
-		return getVolume() * BTU_PER_SCF * KG_CO2_PER_MMBTU / 1000000;
+	private Double co2() {
+		if (getVolume() != null) {
+			return getVolume() * BTU_PER_SCF * KG_CO2_PER_MMBTU / 1000000;
+		} else {
+			return null;
+		}
 	}
 }

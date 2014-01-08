@@ -33,7 +33,7 @@ public @Data class ContinentalParser extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt(message);
+		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
 		receipt.setFlights(getFlights(getContent(message)));
 		receipt.setAirline(getAirline());

@@ -14,12 +14,14 @@ import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.avaje.ebean.Ebean;
 
 @Entity
+@ToString(exclude={"fuelBurnStatistics", "fuelBurn"})
 @UniqueConstraint(columnNames={"airline_id", "source_id", "destination_id"})
 public @Data class Route {
 	@Id 
@@ -165,7 +167,6 @@ public @Data class Route {
 	public static Route find(Airline airline, Airport source, Airport destination) {
 		Route route = Ebean.find(Route.class).where().eq("airline", airline)
 				.eq("source", source).eq("destination", destination).findUnique();
-		
 		if (route == null) {
 			route = new Route();
 			route.setAirline(airline);

@@ -14,12 +14,10 @@ public class UtilityTest extends EbeanTest {
 	public void test() {
 		Utility comed = new Utility();
 		comed.setName("Commonwealth Edison");
-		comed.setType(Utility.Type.Electricity);
 		Ebean.save(comed);
 		
 		Utility peoples = new Utility();
 		peoples.setName("People's Gas");
-		peoples.setType(Utility.Type.Gas);
 		Ebean.save(peoples);
 		
 		SqlQuery writeQuery = Ebean

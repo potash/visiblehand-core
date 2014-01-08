@@ -50,7 +50,7 @@ class SouthwestParser extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt(message);
+		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
 		content = content.replaceAll("<!-- Start Flight Info -->",
 				"<flightInfo></flightInfo>");

@@ -25,9 +25,16 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import visiblehand.entity.Receipt;
+import visiblehand.entity.ReceiptMessage;
 
 public abstract class MessageParser<R extends Receipt> {
 	public abstract R parse(Message message) throws ParseException, MessagingException, IOException;
+	
+	public R parse(ReceiptMessage message) throws ParseException, MessagingException, IOException {
+		R receipt = parse(message.getMessage());
+		receipt.setMessage(message);
+		return receipt;
+	}
 	
 	public abstract String getFromString();
 	public abstract String[] getSubjectStrings();
@@ -51,9 +58,7 @@ public abstract class MessageParser<R extends Receipt> {
 	private final SearchTerm searchTerm = searchTerm();
 	
 	private SearchTerm searchTerm() {
-		SearchTerm searchTerm = new OrTerm(
-				new FromStringTerm(getFromString()),
-				new HeaderTerm("reply-to", getFromString()));
+		SearchTerm searchTerm = new FromStringTerm(getFromString());
 		if (!(getSubjectStrings() == null || getSubjectStrings().length == 0)) {
 			SearchTerm subjectTerm = new SubjectTerm(getSubjectStrings()[0]);
 			for (int i = 1; i < getSubjectStrings().length; i++) {

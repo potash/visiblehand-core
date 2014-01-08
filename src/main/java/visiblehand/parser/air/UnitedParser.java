@@ -50,7 +50,7 @@ class UnitedParser extends AirParser {
 	public AirReceipt parse(Message message) throws ParseException,
 			MessagingException, IOException {
 
-		AirReceipt receipt = new AirReceipt(message);
+		AirReceipt receipt = new AirReceipt();
 		String content = getContent(message);
 		receipt.setFlights(getFlights(content));
 		receipt.setAirline(getAirline());

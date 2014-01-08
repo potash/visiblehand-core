@@ -15,14 +15,7 @@ import com.avaje.ebean.annotation.EnumValue;
 @Entity
 public @Data
 class Utility {
-	public enum Type {
-		@EnumValue("E")
-		Electricity,
-		@EnumValue("G")
-		Gas
-	};
 	@Id
 	private Long id;
 	private String name;
-	private Type type;
 }

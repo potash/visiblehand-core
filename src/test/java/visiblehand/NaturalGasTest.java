@@ -23,7 +23,7 @@ public class NaturalGasTest extends EbeanTest {
 	@Test
 	public void test() throws FileNotFoundException, MessagingException, ParseException, IOException {
 		int receipts = 0;
-		for (NaturalGasParser parser : VisibleHand.naturalGasParsers) {
+		for (NaturalGasParser parser : VisibleHand.getNaturalGasParsers()) {
 			if (parser.isActive()) {
 				for (Message message : MessageParserTest.getTestMessages(parser)) {
 					NaturalGasReceipt receipt = parser.parse(message);

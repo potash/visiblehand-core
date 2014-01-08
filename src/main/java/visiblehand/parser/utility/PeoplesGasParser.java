@@ -39,10 +39,11 @@ public @Data class PeoplesGasParser extends NaturalGasParser {
 
 		NaturalGasReceipt receipt = new NaturalGasReceipt();
 		String content = getContent(message);
+		receipt.setDate(message.getSentDate());
+		receipt.setUtility(getUtility());
 		
 		NaturalGas gas = new NaturalGas();
-		gas.setUtility(getUtility());
-		gas.setDate(subtractMonth(message.getSentDate()));
+		gas.setEmissionDate(subtractMonth(message.getSentDate()));
 		gas.setCost(getCost(content));
 		receipt.setNaturalGas(gas);
 	

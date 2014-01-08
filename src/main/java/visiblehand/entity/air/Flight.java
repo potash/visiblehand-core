@@ -56,8 +56,8 @@ public @Data class Flight implements Emission {
 		return fuelBurnStatistics;
 	}
 	
-	public Flight() {
-		
+	public Date getEmissionDate() {
+		return getDate();
 	}
 	// find existing flight or create new one
 	public static Flight find(Route route, Date date, Integer number, Equipment equipment) {

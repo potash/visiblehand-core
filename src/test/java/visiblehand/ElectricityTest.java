@@ -23,9 +23,10 @@ public class ElectricityTest extends EbeanTest {
 	public void test() throws FileNotFoundException, MessagingException, ParseException, IOException {
 		//List<Flight> flights = new ArrayList<Flight>();
 		int receipts = 0;
-		for (ElectricityParser parser : VisibleHand.electricParsers) {
+		for (ElectricityParser parser : VisibleHand.getElectricityParsers()) {
 			if (parser.isActive()) {
 				for (Message message : MessageParserTest.getTestMessages(parser)) {
+					System.out.println(parser.getUtility());
 					ElectricityReceipt receipt = parser.parse(message);
 					receipt.getElectricity().setZipCode(ZipCode.find(60647));
 					receipt.getElectricity().setSplit(2);

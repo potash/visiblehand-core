@@ -20,7 +20,7 @@ public class RouteTest extends EbeanTest {
 	@Test
 	public void test() {
 		List<Airline> airlines = new ArrayList<Airline>();
-		for (AirParser parser : VisibleHand.airParsers) {
+		for (AirParser parser : VisibleHand.getAirParsers()) {
 			airlines.add(parser.getAirline());
 		}
 		List<Route> routes = Ebean.find(Route.class)

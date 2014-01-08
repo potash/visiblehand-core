@@ -3,6 +3,8 @@ package visiblehand.entity.utility;
 import java.util.Date;
 
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import lombok.Data;
@@ -11,12 +13,9 @@ import visiblehand.entity.Emission;
 import visiblehand.entity.UnitedState;
 import visiblehand.entity.ZipCode;
 
-import com.avaje.ebean.Ebean;
-
 @Embeddable
 public @Data class Electricity implements Emission {
-	private Date date;
-	private Utility utility;
+	private Date emissionDate;
 	private Double cost;
 	private Double energy; // kWh
 	private ZipCode zipCode;
@@ -37,9 +36,9 @@ public @Data class Electricity implements Emission {
 			if (getCost() != null) {
 				Double rate = null;
 				if (getZipCode() != null) {
-					rate = ElectricityPrice.find(getZipCode().getState(), getDate());
+					rate = ElectricityPrice.find(getZipCode().getState(), getEmissionDate());
 				} else {
-					rate = ElectricityPrice.find(UnitedState.find("US"), getDate());
+					rate = ElectricityPrice.find(UnitedState.find("US"), getEmissionDate());
 				}
 				if (rate != null) {
 					energy = getCost() / rate / split;
@@ -53,7 +52,11 @@ public @Data class Electricity implements Emission {
 	@Getter(lazy = true)
 	private final Double CO2 = co2();
 	
-	private double co2() {
-		return getEnergy() * getEGridSubregion().getCO2EmissionRate()/1000;
+	private Double co2() {
+		if (getEnergy() != null && getEGridSubregion() != null) {
+			return getEnergy() * getEGridSubregion().getCO2EmissionRate()/1000;
+		} else {
+			return null;
+		}
 	}
 }

@@ -17,13 +17,17 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 
+import lombok.Getter;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import visiblehand.entity.Country;
+import visiblehand.entity.Receipt;
 import visiblehand.entity.UnitedState;
 import visiblehand.entity.ZipCode;
+import visiblehand.entity.air.AirReceipt;
 import visiblehand.entity.air.Airline;
 import visiblehand.entity.air.Airport;
 import visiblehand.entity.air.Equipment;
@@ -71,17 +75,28 @@ public class VisibleHand {
 
 	private static boolean ebeanInitialized = false;
 
-	public static final AirParser[] airParsers = { new AAParser(),
-			new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
-			new DeltaParser(), new JetBlueParser(), new ContinentalParser() };
+	@Getter
+	private static final List<AirParser> airParsers = Arrays.asList(new AirParser[] 
+			{ new AAParser(), new UnitedParser(), new SouthwestParser(), new UnitedParser2(),
+			new DeltaParser(), new JetBlueParser(), new ContinentalParser() });
 
-	public static final ElectricityParser[] electricParsers = { new ComEdParser() };
-	public static final NaturalGasParser[] naturalGasParsers = { new PeoplesGasParser() };
+	@Getter
+	private static final List<ElectricityParser> electricityParsers = Arrays.asList(new ElectricityParser[] 
+			{ new ComEdParser() });
 	
-	public static final List<MessageParser> parsers = new ArrayList<MessageParser>(); {
-		parsers.addAll(Arrays.asList(airParsers));
-		parsers.addAll(Arrays.asList(electricParsers));
-		parsers.addAll(Arrays.asList(naturalGasParsers));
+	@Getter
+	private static final List<NaturalGasParser> naturalGasParsers = Arrays.asList(new NaturalGasParser[]
+			{ new PeoplesGasParser() });
+	
+	@Getter
+	private static final List<MessageParser<Receipt>> messageParsers = messageParsers();
+	
+	private static List<MessageParser<Receipt>> messageParsers() {
+		List<MessageParser<Receipt>> parsers = new ArrayList((List)getAirParsers());
+		parsers.addAll((List)getElectricityParsers());
+		parsers.addAll((List)getNaturalGasParsers());
+		
+		return parsers;
 	}
 
 	public static Folder getFolder(Properties props, Session session,

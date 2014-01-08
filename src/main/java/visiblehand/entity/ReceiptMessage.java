@@ -9,28 +9,39 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import lombok.Data;
 
-@Embeddable
+@Entity
 public @Data class ReceiptMessage {
 	private static Session session = Session.getDefaultInstance(new Properties());
+	
+	@Id
+	private Long id;
+	
 	@Column(columnDefinition="varchar")
-	public String message;
+	private String messageString;
+	
+	@Transient
+	private Message message;
 	
 	public ReceiptMessage() {
 	}
+	
 	public ReceiptMessage(Message message) {
 		setMessage(message);
 	}
 	
 	public Message getMessage() {
-		MimeMessage message = null;
-		try {
-			message = new MimeMessage(session,	new ByteArrayInputStream(this.message.getBytes()));
-		} catch (MessagingException e) {
-			e.printStackTrace();
+		if (message == null) {
+			try {
+				message = new MimeMessage(session,	new ByteArrayInputStream(getMessageString().getBytes()));
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
 		}
 		return message;
 	}
@@ -42,6 +53,6 @@ public @Data class ReceiptMessage {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.message = new String(out.toByteArray());
+		setMessageString(new String(out.toByteArray()));
 	}
 }
